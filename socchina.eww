@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+
+<workspace>
+  <project>
+    <path>$WS_DIR$\project\cc1_hmi\cc1_hmi.ewp</path>
+  </project>
+  <project>
+    <path>$WS_DIR$\project\cc2_motor\cc2_motor.ewp</path>
+  </project>
+  <project>
+    <path>$WS_DIR$\project\cc3_iot\cc3_iot.ewp</path>
+  </project>
+  <project>
+    <path>$WS_DIR$\project\cc4_wireless\cc4_wireless.ewp</path>
+  </project>
+  <batchBuild/>
+</workspace>
+
+

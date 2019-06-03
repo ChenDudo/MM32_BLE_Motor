@@ -1,3 +1,7 @@
+# mm32 utility
+*.log
+
+*.bak *.ddk *.edk *.lst *.lnp *.mpf *.mpj *.obj *.omf *.plg *.rpt *.tmp *.__i *.crf *.o *.d *.axf *.tra *.dep JLinkLog.txt *.iex *.htm *.sct *.map *.hex *.uvoptx *.uvguix *.pbi *.pbi.cout *.out *.cout *.browse *.pbd *.TMP *.uvguix.* *.uvmpw.uvgui.* *.scc *.sim *.i *.pbi.xcl *.pbd.linf *.wsdt *.dbgdt *.wspos *.Debug.general.xcl *.Debug.driver.xcl
 # Prerequisites
 *.d
 
@@ -17,7 +21,7 @@
 *.pch
 
 # Libraries
-*.lib
+# *.lib
 *.a
 *.la
 *.lo
@@ -29,7 +33,6 @@
 *.dylib
 
 # Executables
-*.exe
 *.out
 *.app
 *.i*86
@@ -50,3 +53,69 @@ modules.order
 Module.symvers
 Mkfile.old
 dkms.conf
+
+*.crun
+*.dni
+*.jlink
+*.bak
+*.ddk
+*.edk
+*.lst
+*.lnp
+*.mpf
+*.mpj
+*.omf
+*.plg
+*.rpt
+*.tmp
+*.__i
+*.crf
+*.axf
+*.tra
+JLinkLog.txt
+*.iex
+*.htm
+#*.sct
+#*.uvoptx
+#*.uvguix
+*.pbi
+*.pbi.cout
+*.cout
+*.browse
+*.linf
+*.pbd
+*.TMP
+*.uvguix.*
+*.uvmpw.uvgui.*
+*.scc
+*.sim
+*.i
+*.pbi.xcl
+*.pbd.linf
+*.wsdt
+*.dbgdt
+*.wspos
+*.Debug.general.xcl
+*.Debug.driver.xcl
+
+# IAR Temp files
+*.dep
+*.ewt
+*.dnx
+*.ps1
+*.pbw
+
+
+*.xml
+*.xcl
+*.bat
+
+#doxygen
+**/html/
+**/latex/
+
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
