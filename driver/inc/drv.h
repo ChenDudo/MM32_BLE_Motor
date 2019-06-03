@@ -59,22 +59,22 @@ typedef enum {
     emIP_ADC,                       ///< 2
     emIP_AES,                       ///< 3
     emIP_BKP,                       ///< 4
-//  emIP_COMP,                      ///< 
+//  emIP_COMP,                      ///<
     emIP_CRC,                       ///< 5
-//  emIP_CRS,                       ///< 
+//  emIP_CRS,                       ///<
     emIP_DAC,                       ///< 6
-//  emIP_DIV,                       ///< 
+//  emIP_DIV,                       ///<
     emIP_DMA,                       ///< 7
     emIP_EXTI,                      ///< 8
     emIP_GPIO,                      ///< 9
     emIP_I2C,                       ///< 10
     emIP_IWDG,                      ///< 11
-//  emIP_OPAMP,                     ///< 
+//  emIP_OPAMP,                     ///<
     emIP_POWER,                     ///< 12
     emIP_RCC,                       ///< 13
     emIP_RTC,                       ///< 14
     emIP_SPI,                       ///< 15
-//  emIP_SQRT,                      ///< 
+//  emIP_SQRT,                      ///<
     emIP_TIM,                       ///< 16
     emIP_UART,                      ///< 17
     emIP_WWDG,                      ///< 18
@@ -943,7 +943,7 @@ typedef struct {
 	u8					cmd;				///< Command
 	u16					para;				///< parameter
 	u8 					paraSize;			///< parameter size
-    
+
     bool                fastMode;
     u8                  protocol;
     u8                  command;

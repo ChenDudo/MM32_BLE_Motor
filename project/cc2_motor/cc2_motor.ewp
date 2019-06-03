@@ -3,7 +3,7 @@
 <project>
   <fileVersion>2</fileVersion>
   <configuration>
-    <name>Debug</name>
+    <name>DC_motor</name>
     <toolchain>
       <name>ARM</name>
     </toolchain>
@@ -17,15 +17,15 @@
         <debug>1</debug>
         <option>
           <name>ExePath</name>
-          <state>Debug\Exe</state>
+          <state>DC_motor\Exe</state>
         </option>
         <option>
           <name>ObjPath</name>
-          <state>Debug\Obj</state>
+          <state>DC_motor\Obj</state>
         </option>
         <option>
           <name>ListPath</name>
-          <state>Debug\List</state>
+          <state>DC_motor\List</state>
         </option>
         <option>
           <name>GEndianMode</name>
@@ -55,7 +55,7 @@
         </option>
         <option>
           <name>OGCoreOrChip</name>
-          <state>0</state>
+          <state>1</state>
         </option>
         <option>
           <name>GRuntimeLibSelect</name>
@@ -89,7 +89,7 @@
         </option>
         <option>
           <name>OGChipSelectEditMenu</name>
-          <state>Default	None</state>
+          <state>MM32F031C8T	MindMotion MM32F031C8T</state>
         </option>
         <option>
           <name>GenLowLevelInterface</name>
@@ -97,7 +97,7 @@
         </option>
         <option>
           <name>GEndianModeBE</name>
-          <state>0</state>
+          <state>1</state>
         </option>
         <option>
           <name>OGBufferedTerminalOutput</name>
@@ -128,7 +128,7 @@
         <option>
           <name>GBECoreSlave</name>
           <version>24</version>
-          <state>38</state>
+          <state>34</state>
         </option>
         <option>
           <name>OGUseCmsis</name>
@@ -145,11 +145,11 @@
         <option>
           <name>CoreVariant</name>
           <version>24</version>
-          <state>38</state>
+          <state>34</state>
         </option>
         <option>
           <name>GFPUDeviceSlave</name>
-          <state>Default	None</state>
+          <state>MM32F031C8T	MindMotion MM32F031C8T</state>
         </option>
         <option>
           <name>FPU2</name>
@@ -168,7 +168,7 @@
         <option>
           <name>GFPUCoreSlave2</name>
           <version>24</version>
-          <state>38</state>
+          <state>34</state>
         </option>
       </data>
     </settings>
@@ -182,11 +182,14 @@
         <option>
           <name>CCDefines</name>
           <state>__IAR</state>
-          <state>__MT304</state>
-          <state>__MM32_MINIBOARD</state>
+          <state>__MZ306</state>
+          <state>__EX_ADC</state>
+          <state>_USE_STEPPER</state>
+          <state>__MM32_MOTOR</state>
+          <state>_MM32_MINIBOARD</state>
           <state>OVERTIME=0</state>
           <state>CLOCK=8000000</state>
-          <state>_USER_RESOURCE</state>
+          <state>__USER_RESOURCE</state>
           <state>_SYS_RESOURCE_IT</state>
           <state>__SYS_RESOURCE_POLLING</state>
         </option>
@@ -736,7 +739,7 @@
         </option>
         <option>
           <name>IlinkIcfFile</name>
-          <state>$TOOLKIT_DIR$\CONFIG\generic_cortex.icf</state>
+          <state>$TOOLKIT_DIR$\config\linker\MindMotion\MM32F031x8.icf</state>
         </option>
         <option>
           <name>IlinkIcfFileSlave</name>
@@ -977,29 +980,29 @@
     </settings>
   </configuration>
   <configuration>
-    <name>Release</name>
+    <name>Step_motor</name>
     <toolchain>
       <name>ARM</name>
     </toolchain>
-    <debug>0</debug>
+    <debug>1</debug>
     <settings>
       <name>General</name>
       <archiveVersion>3</archiveVersion>
       <data>
         <version>24</version>
         <wantNonLocal>1</wantNonLocal>
-        <debug>0</debug>
+        <debug>1</debug>
         <option>
           <name>ExePath</name>
-          <state>Release\Exe</state>
+          <state>Step_motor\Exe</state>
         </option>
         <option>
           <name>ObjPath</name>
-          <state>Release\Obj</state>
+          <state>Step_motor\Obj</state>
         </option>
         <option>
           <name>ListPath</name>
-          <state>Release\List</state>
+          <state>Step_motor\List</state>
         </option>
         <option>
           <name>GEndianMode</name>
@@ -1012,7 +1015,7 @@
         </option>
         <option>
           <name>Input description</name>
-          <state></state>
+          <state>Automatic choice of formatter.</state>
         </option>
         <option>
           <name>Output variant</name>
@@ -1021,7 +1024,7 @@
         </option>
         <option>
           <name>Output description</name>
-          <state></state>
+          <state>Automatic choice of formatter.</state>
         </option>
         <option>
           <name>GOutputBinary</name>
@@ -1029,7 +1032,7 @@
         </option>
         <option>
           <name>OGCoreOrChip</name>
-          <state>0</state>
+          <state>1</state>
         </option>
         <option>
           <name>GRuntimeLibSelect</name>
@@ -1043,7 +1046,7 @@
         </option>
         <option>
           <name>RTDescription</name>
-          <state></state>
+          <state>Use the normal configuration of the C/C++ runtime library. No locale interface, C locale, no file descriptor support, no multibytes in printf and scanf, and no hex floats in strtod.</state>
         </option>
         <option>
           <name>OGProductVersion</name>
@@ -1051,7 +1054,7 @@
         </option>
         <option>
           <name>OGLastSavedByProductVersion</name>
-          <state></state>
+          <state>7.80.4.12487</state>
         </option>
         <option>
           <name>GeneralEnableMisra</name>
@@ -1063,15 +1066,15 @@
         </option>
         <option>
           <name>OGChipSelectEditMenu</name>
-          <state></state>
+          <state>MM32F031C8T	MindMotion MM32F031C8T</state>
         </option>
         <option>
           <name>GenLowLevelInterface</name>
-          <state>0</state>
+          <state>1</state>
         </option>
         <option>
           <name>GEndianModeBE</name>
-          <state>0</state>
+          <state>1</state>
         </option>
         <option>
           <name>OGBufferedTerminalOutput</name>
@@ -1097,16 +1100,16 @@
         </option>
         <option>
           <name>RTConfigPath2</name>
-          <state></state>
+          <state>$TOOLKIT_DIR$\INC\c\DLib_Config_Normal.h</state>
         </option>
         <option>
           <name>GBECoreSlave</name>
           <version>24</version>
-          <state>38</state>
+          <state>34</state>
         </option>
         <option>
           <name>OGUseCmsis</name>
-          <state>0</state>
+          <state>1</state>
         </option>
         <option>
           <name>OGUseCmsisDspLib</name>
@@ -1119,11 +1122,11 @@
         <option>
           <name>CoreVariant</name>
           <version>24</version>
-          <state>38</state>
+          <state>34</state>
         </option>
         <option>
           <name>GFPUDeviceSlave</name>
-          <state>-</state>
+          <state>MM32F031C8T	MindMotion MM32F031C8T</state>
         </option>
         <option>
           <name>FPU2</name>
@@ -1142,7 +1145,7 @@
         <option>
           <name>GFPUCoreSlave2</name>
           <version>24</version>
-          <state>38</state>
+          <state>34</state>
         </option>
       </data>
     </settings>
@@ -1152,10 +1155,19 @@
       <data>
         <version>31</version>
         <wantNonLocal>1</wantNonLocal>
-        <debug>0</debug>
+        <debug>1</debug>
         <option>
           <name>CCDefines</name>
-          <state>NDEBUG</state>
+          <state>__IAR</state>
+          <state>__MZ306</state>
+          <state>__USE_STEPPER</state>
+          <state>__MM32_MOTOR</state>
+          <state>_MM32_MINIBOARD</state>
+          <state>OVERTIME=0</state>
+          <state>CLOCK=8000000</state>
+          <state>__USER_RESOURCE</state>
+          <state>_SYS_RESOURCE_IT</state>
+          <state>__SYS_RESOURCE_POLLING</state>
         </option>
         <option>
           <name>CCPreprocFile</name>
@@ -1216,11 +1228,11 @@
         <option>
           <name>CCAllowList</name>
           <version>1</version>
-          <state>11111110</state>
+          <state>00000000</state>
         </option>
         <option>
           <name>CCDebugInfo</name>
-          <state>0</state>
+          <state>1</state>
         </option>
         <option>
           <name>IEndianMode</name>
@@ -1268,7 +1280,7 @@
         </option>
         <option>
           <name>OutputFile</name>
-          <state></state>
+          <state>$FILE_BNAME$.o</state>
         </option>
         <option>
           <name>CCLibConfigHeader</name>
@@ -1284,7 +1296,11 @@
         </option>
         <option>
           <name>CCIncludePath2</name>
-          <state></state>
+          <state>$PROJ_DIR$\..\..\bsp\inc</state>
+          <state>$PROJ_DIR$\..\..\driver\inc</state>
+          <state>$PROJ_DIR$\..\..\lib\HAL_lib\inc</state>
+          <state>$PROJ_DIR$\..\..\lib\startup\inc</state>
+          <state>$PROJ_DIR$\..\..\app\cc2_motor\inc</state>
         </option>
         <option>
           <name>CCStdIncCheck</name>
@@ -1304,7 +1320,7 @@
         </option>
         <option>
           <name>CCOptLevel</name>
-          <state>3</state>
+          <state>1</state>
         </option>
         <option>
           <name>CCOptStrategy</name>
@@ -1402,7 +1418,7 @@
       <data>
         <version>9</version>
         <wantNonLocal>1</wantNonLocal>
-        <debug>0</debug>
+        <debug>1</debug>
         <option>
           <name>AObjPrefix</name>
           <state>1</state>
@@ -1442,7 +1458,7 @@
         </option>
         <option>
           <name>ADebug</name>
-          <state>0</state>
+          <state>1</state>
         </option>
         <option>
           <name>AltRegisterNames</name>
@@ -1526,7 +1542,7 @@
         </option>
         <option>
           <name>AOutputFile</name>
-          <state></state>
+          <state>$FILE_BNAME$.o</state>
         </option>
         <option>
           <name>AMultibyteSupport</name>
@@ -1568,7 +1584,7 @@
       <data>
         <version>1</version>
         <wantNonLocal>1</wantNonLocal>
-        <debug>0</debug>
+        <debug>1</debug>
         <option>
           <name>OOCOutputFormat</name>
           <version>3</version>
@@ -1580,7 +1596,7 @@
         </option>
         <option>
           <name>OOCOutputFile</name>
-          <state></state>
+          <state>cc2_motor.srec</state>
         </option>
         <option>
           <name>OOCCommandLineProducer</name>
@@ -1620,7 +1636,7 @@
       <data>
         <version>18</version>
         <wantNonLocal>1</wantNonLocal>
-        <debug>0</debug>
+        <debug>1</debug>
         <option>
           <name>IlinkLibIOConfig</name>
           <state>1</state>
@@ -1635,7 +1651,7 @@
         </option>
         <option>
           <name>IlinkOutputFile</name>
-          <state>###Unitialized###</state>
+          <state>cc2_motor.out</state>
         </option>
         <option>
           <name>IlinkDebugInfoEnable</name>
@@ -1699,7 +1715,7 @@
         </option>
         <option>
           <name>IlinkIcfFile</name>
-          <state>lnk0t.icf</state>
+          <state>$TOOLKIT_DIR$\config\linker\MindMotion\MM32F031x8.icf</state>
         </option>
         <option>
           <name>IlinkIcfFileSlave</name>
@@ -1759,7 +1775,7 @@
         </option>
         <option>
           <name>IlinkProgramEntryLabel</name>
-          <state></state>
+          <state>__iar_program_start</state>
         </option>
         <option>
           <name>DoFill</name>
@@ -1850,7 +1866,7 @@
         </option>
         <option>
           <name>IlinkOptInline</name>
-          <state>1</state>
+          <state>0</state>
         </option>
         <option>
           <name>IlinkOptExceptionsAllow</name>
@@ -1918,7 +1934,7 @@
       <data>
         <version>0</version>
         <wantNonLocal>1</wantNonLocal>
-        <debug>0</debug>
+        <debug>1</debug>
         <option>
           <name>IarchiveInputs</name>
           <state></state>
@@ -1942,7 +1958,19 @@
   <group>
     <name>app</name>
     <file>
-      <name>$PROJ_DIR$\..\..\app\cc2_motor\motor.c</name>
+      <name>$PROJ_DIR$\..\..\app\cc2_motor\dc_motor.c</name>
+      <excluded>
+        <configuration>Step_motor</configuration>
+      </excluded>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\app\cc2_motor\step_motor.c</name>
+      <excluded>
+        <configuration>DC_motor</configuration>
+      </excluded>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\app\cc2_motor\tb6612.c</name>
     </file>
   </group>
   <group>

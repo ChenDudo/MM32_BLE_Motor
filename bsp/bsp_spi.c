@@ -117,7 +117,7 @@ void BSP_SPI_NSS_Configure(SPI_TypeDef* SPIx, bool remapEn, u16 remapIdx, Functi
 		break;
 	case (u32)SPI2:
 		if (!remapEn) 			(newState) ? GPIO_ResetBits(GPIOB, GPIO_Pin_12) : GPIO_SetBits(GPIOB, GPIO_Pin_12);
-		else if (remapIdx == 0) (newState) ? GPIO_ResetBits(GPIOB, GPIO_Pin_15)  : GPIO_SetBits(GPIOB, GPIO_Pin_15);
+		else if (remapIdx == 0) (newState) ? GPIO_ResetBits(GPIOB, GPIO_Pin_9)  : GPIO_SetBits(GPIOB, GPIO_Pin_9);
 		break;
 #endif
 
@@ -180,7 +180,8 @@ void BSP_SPI_GPIO_Configure(SPI_TypeDef* SPIx, bool remapEn, u16 remapIdx, bool 
             }
         }
         else{
-            GPIOB_ClockEnable();
+
+                        GPIOB_ClockEnable();
             if (master) {
                 if (!nss == SPI_NSS_Soft) {
                     GPIO_Mode_AF_PP_50MHz_Init(GPIOB, GPIO_Pin_15, NO_REMAP, GPIO_AF_4); 	// spi2_nss
@@ -193,9 +194,6 @@ void BSP_SPI_GPIO_Configure(SPI_TypeDef* SPIx, bool remapEn, u16 remapIdx, bool 
                 GPIO_Mode_IPU_Init			(GPIOB, GPIO_Pin_12, NO_REMAP, GPIO_AF_4);    	// spi2_miso
                 GPIO_Mode_AF_PP_50MHz_Init	(GPIOB, GPIO_Pin_13, NO_REMAP, GPIO_AF_4);    	// spi2_mosi
             }
-            
-            
-            
 			// Todo
         }
     }
@@ -490,31 +488,6 @@ void BSP_SPI_GPIO_Configure(SPI_TypeDef* SPIx, bool remapEn, u16 remapIdx, bool 
 //
 //
 //#else
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 //	// ------------------ Hardware Abstraction Layer Access ---------------------
 //	switch ((u32)pDcb->SPIx) {
 //#if defined(__MT304) || defined(__MZ306) || defined(__MZ308)

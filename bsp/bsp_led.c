@@ -50,10 +50,18 @@
 ////////////////////////////////////////////////////////////////////////////////
 void BSP_LED_Configure(void)
 {
-#if defined(__MM32_EVB)
 
-//	GPIOA_ClockEnable();
-//	GPIOC_ClockEnable();
+#if defined(__MM32_MOTOR)
+	COMMON_EnableIpClock(emCLOCK_GPIOD);
+
+    GPIO_SetBits(GPIOD, GPIO_Pin_2 | GPIO_Pin_3);  			                    // Close LD4, LD3
+
+    GPIO_Mode_OUT_OD_20MHz_Init(GPIOD, GPIO_Pin_2,  NO_REMAP, GPIO_AF_0);
+    GPIO_Mode_OUT_OD_20MHz_Init(GPIOD, GPIO_Pin_3,  NO_REMAP, GPIO_AF_0);
+#endif
+
+
+#if defined(__MM32_EVB)
 	COMMON_EnableIpClock(emCLOCK_GPIOA);
 	COMMON_EnableIpClock(emCLOCK_GPIOC);
 
@@ -61,7 +69,7 @@ void BSP_LED_Configure(void)
 	#if defined(__REGISTER)	 /* ----------- Register Access ------------- */
 		GPIOA->BSRR |= 0x0100;
 		GPIOC->BSRR |= 0x2000;
-        
+
 		GPIOA->CRH = (GPIOA->CRH & 0xFFFFFFF0) | (u32)(PORT_OUTOD | PORT_20MHz) << PORT_BIT8;	// 0x00000006; 	// GPIOA_Pin8  OUTOD
 		GPIOC->CRH = (GPIOC->CRH & 0xFF0FFFFF) | (u32)(PORT_OUTOD | PORT_20MHz) << PORT_BIT13;	// 0x00600000; 	// GPIOC_Pin13 OUTOD
 
@@ -136,6 +144,7 @@ void BSP_LED_Configure(void)
 		GPIO_Mode_OUT_OD_20MHz_Init(GPIOC, GPIO_Pin_15, NO_REMAP, GPIO_AF_0);
 	#endif
 #endif
+
 }
 
 
@@ -147,6 +156,15 @@ void BSP_LED_Configure(void)
 /// @param  None.
 /// @retval None.
 ////////////////////////////////////////////////////////////////////////////////
+#if defined(__MM32_MOTOR)
+		void LD1_on(void)	{	GPIO_ResetBits(GPIOD, GPIO_Pin_2);	}
+		void LD1_off(void)	{	GPIO_SetBits  (GPIOD, GPIO_Pin_2);	}
+		void LD2_on(void)	{	GPIO_ResetBits(GPIOD, GPIO_Pin_3);	}
+		void LD2_off(void)	{	GPIO_SetBits  (GPIOD, GPIO_Pin_3);	}
+		void CloseLED(void)	{	LD1_off();	LD2_off();				}
+		void OpenLED(void)	{	LD1_on();	LD2_on();				}
+#endif
+
 #if defined(__MM32_EVB)
 	#if defined(__REGISTER)	 /* ----------- Register Access ------------- */
 		void LD1_on(void)	{	GPIOC->BRR  = 0x2000;	}
@@ -232,7 +250,6 @@ void BSP_LED_Configure(void)
 		void OpenLED(void)	{	LD3_on(); LD4_on(); LD5_on(); LD6_on();LD7_on(); LD8_on(); LD9_on(); LD10_on();		}
 	#endif
 #endif
-
 /// @}
 
 /// @}

@@ -51,6 +51,21 @@
 ////////////////////////////////////////////////////////////////////////////////
 void BSP_KEY_Configure(void)
 {
+#if defined(__MM32_MOTOR)
+
+	COMMON_EnableIpClock(emCLOCK_GPIOA);
+	COMMON_EnableIpClock(emCLOCK_GPIOB);
+
+    //	Key1 => PB1
+    GPIO_Mode_IPU_Init(GPIOB, GPIO_Pin_1, NO_REMAP, GPIO_AF_0);
+    //	Key2 => PA12
+    GPIO_Mode_IPU_Init(GPIOA, GPIO_Pin_12, NO_REMAP, GPIO_AF_0);
+    //	Key3 => PA11
+    GPIO_Mode_IPU_Init(GPIOA, GPIO_Pin_11, NO_REMAP, GPIO_AF_0);
+    //	Key4 => PA10
+    GPIO_Mode_IPU_Init(GPIOA, GPIO_Pin_10, NO_REMAP, GPIO_AF_0);
+
+#endif
 #if defined(__MM32_EVB)
 
 	COMMON_EnableIpClock(emCLOCK_GPIOA);
@@ -71,7 +86,7 @@ void BSP_KEY_Configure(void)
 		//	Key4 => PA15
 		GPIO_Mode_IPU_Init(GPIOA, GPIO_Pin_15, NO_REMAP, GPIO_AF_0);
 	#endif
-#elif defined(__MM32_MB019)
+	#elif defined(__MM32_MB019)
     COMMON_EnableIpClock(emCLOCK_GPIOA);
 	
 	#if defined(__REGISTER)	 /* ----------- Register Access ------------- */
@@ -86,8 +101,8 @@ void BSP_KEY_Configure(void)
 		GPIO_Mode_IPD_Init(GPIOA, GPIO_Pin_0,  NO_REMAP, GPIO_AF_0);
 		//	Key2 => PA1
 		GPIO_Mode_IPU_Init(GPIOA, GPIO_Pin_1,  NO_REMAP, GPIO_AF_0);
-	#endif
-#else  // MM32_MiniBoard
+#endif
+#if defined(__MM32_MINIBOARD)  // MM32_MiniBoard
 
 	COMMON_EnableIpClock(emCLOCK_GPIOA);
 	COMMON_EnableIpClock(emCLOCK_GPIOB);
@@ -123,6 +138,12 @@ void BSP_KEY_Configure(void)
 /// @retval bool: 1: key is set
 ///			0: kei is reset
 ////////////////////////////////////////////////////////////////////////////////
+#if defined(__MM32_MOTOR)
+        bool Key4(void)	{   return !GPIO_ReadInputDataBit(GPIOB, GPIO_Pin_1);   }
+		bool Key3(void)	{	return !GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_12);  }
+		bool Key2(void)	{	return !GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_11);  }
+		bool Key1(void)	{	return !GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_10);  }
+#endif
 #if defined(__MM32_EVB)
 	#if defined(__REGISTER)	 /* ----------- Register Access ------------- */
 		bool Key1(void)	{   return  false; }
@@ -135,7 +156,7 @@ void BSP_KEY_Configure(void)
 		bool Key3(void)	{	return !GPIO_ReadInputDataBit(GPIOC, GPIO_Pin_10);	}
 		bool Key4(void)	{	return !GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_15);	}
 	#endif
-#elif defined(__MM32_MB019)
+	#elif defined(__MM32_MB019)
     #if defined(__REGISTER)	 /* ----------- Register Access ------------- */
 		bool Key1(void)	{	return  ((GPIOA->IDR & 0x0001)) ? 1 : 0;	}
 		bool Key2(void)	{	return  ((GPIOA->IDR & 0x0002)) ? 0 : 1;	}
@@ -146,8 +167,9 @@ void BSP_KEY_Configure(void)
 		bool Key2(void)	{	return !GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_1);	}
 		bool Key3(void)	{	return  false;	}
 		bool Key4(void)	{	return  false;	}
-	#endif
-#else  // MM32_MiniBoard
+#endif
+#if defined(__MM32_MINIBOARD)
+  // MM32_MiniBoard
 	#if defined(__REGISTER)	 /* ----------- Register Access ------------- */
 		bool Key1(void)	{	return  ((GPIOC->IDR & 0x2000)) ? 0 : 1;	}
 		bool Key2(void)	{	return  ((GPIOA->IDR & 0x0001)) ? 1 : 0;	}
@@ -160,6 +182,7 @@ void BSP_KEY_Configure(void)
 		bool Key4(void)	{	return !GPIO_ReadInputDataBit(GPIOB, GPIO_Pin_11);	}
 	#endif
 #endif
+
 
 /// @}
 
