@@ -53,6 +53,7 @@
 GLOBAL u32      SysTick_Count;
 GLOBAL uint8_t* ble_mac_addr;
 GLOBAL bool 	connected_flag;
+GLOBAL bool     ble_running_flag;
 
 #undef GLOBAL
 
@@ -65,6 +66,7 @@ GLOBAL bool 	connected_flag;
 void wl_ble_mode();
 void wl_ble_task();
 void wl_ble_tick_task();
+void wl_ble_irq_handler();
 
 /// @}
 

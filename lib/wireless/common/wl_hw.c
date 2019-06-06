@@ -41,45 +41,45 @@
 void wl_spi_init()
 {
     RCC_AHBPeriphClockCmd(RCC_AHBPeriph_GPIOA | RCC_AHBPeriph_GPIOB, ENABLE);
-    RCC_APB1PeriphClockCmd(RCC_APB1Periph_SPI2, ENABLE);  
-    
+    RCC_APB1PeriphClockCmd(RCC_APB1Periph_SPI2, ENABLE);
+
     GPIO_SetBits(GPIOB, GPIO_Pin_15);
-    
+
     GPIO_PinAFConfig(GPIOB, GPIO_PinSource12, GPIO_AF_4);                       // MISO  PB12
     GPIO_PinAFConfig(GPIOB, GPIO_PinSource13, GPIO_AF_4);                       // MOSI  PB13
     GPIO_PinAFConfig(GPIOB, GPIO_PinSource14, GPIO_AF_3);                       // SCK   PB14
     GPIO_PinAFConfig(GPIOB, GPIO_PinSource15, GPIO_AF_1);                       // CSN   PB15
-    
+
     GPIO_InitTypeDef GPIO_InitStructure;
-	GPIO_InitStructure.GPIO_Pin  = GPIO_Pin_15;   		                        // SPI2_CSN  
+	GPIO_InitStructure.GPIO_Pin  = GPIO_Pin_15;   		                        // SPI2_CSN
     GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
     GPIO_Init(GPIOB, &GPIO_InitStructure);
     GPIO_SetBits(GPIOB, GPIO_Pin_12);                                           // CSN High
-    
-    GPIO_InitStructure.GPIO_Pin  = GPIO_Pin_14;   		                        // SPI_SCK 
+
+    GPIO_InitStructure.GPIO_Pin  = GPIO_Pin_14;   		                        // SPI_SCK
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
     GPIO_Init(GPIOB, &GPIO_InitStructure);
-    
+
     GPIO_InitStructure.GPIO_Pin  = GPIO_Pin_13;   		                        // SPI2_MOSI
     GPIO_Init(GPIOB, &GPIO_InitStructure);
-    
+
     GPIO_InitStructure.GPIO_Pin  = GPIO_Pin_12;  		                        // SPI2_MISO
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPU;
     GPIO_Init(GPIOB, &GPIO_InitStructure);
-    
+
     SPI_InitTypeDef SPI_InitStructure;
 	SPI_InitStructure.SPI_Mode = SPI_Mode_Master;
     SPI_InitStructure.SPI_DataWidth = 8;
     SPI_InitStructure.SPI_CPOL = SPI_CPOL_Low;                                  // MODE0: SPI_CPOL_Low, SPI_CPHA_1Edge;
-    SPI_InitStructure.SPI_CPHA = SPI_CPHA_1Edge;                                
+    SPI_InitStructure.SPI_CPHA = SPI_CPHA_1Edge;
     SPI_InitStructure.SPI_NSS = SPI_NSS_Soft;
     SPI_InitStructure.SPI_BaudRatePrescaler = 6;
     SPI_InitStructure.SPI_FirstBit = SPI_FirstBit_MSB;
     SPI_Init(SPI2, &SPI_InitStructure);
-    
+
     SPI_Cmd(SPI2, ENABLE);                                                      //Enable SPI2
-    
+
     SPI_BiDirectionalLineConfig(SPI2, SPI_Direction_Tx);
     SPI_BiDirectionalLineConfig(SPI2, SPI_Direction_Rx);
 }
@@ -116,10 +116,10 @@ u8 wl_spi_rx()
 void wl_irq_init()
 {
     RCC_AHBPeriphClockCmd(RCC_AHBPeriph_GPIOB, ENABLE);
-    
+
     GPIO_InitTypeDef GPIO_InitStructure;
     GPIO_InitStructure.GPIO_Pin  = GPIO_Pin_1;
-	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_FLOATING; 
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_FLOATING;
 	GPIO_Init(GPIOB, &GPIO_InitStructure);
 }
 
@@ -130,25 +130,25 @@ void wl_irq_init()
 ////////////////////////////////////////////////////////////////////////////////
 void wl_irq_it_init()
 {
-    RCC_AHBPeriphClockCmd(RCC_AHBENR_GPIOB, ENABLE);
-    RCC_APB2PeriphClockCmd(RCC_APB2ENR_EXTI, ENABLE);
-    
     GPIO_InitTypeDef GPIO_InitStructure;
     EXTI_InitTypeDef EXTI_InitStructure;
     NVIC_InitTypeDef NVIC_InitStructure;
-	
+
+	RCC_AHBPeriphClockCmd(RCC_AHBENR_GPIOB, ENABLE);
+    RCC_APB2PeriphClockCmd(RCC_APB2ENR_EXTI, ENABLE);
+
     GPIO_InitStructure.GPIO_Pin  = GPIO_Pin_1;
-	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPU; 
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPU;
 	GPIO_Init(GPIOB, &GPIO_InitStructure);
-    
+
     EXTI_InitStructure.EXTI_Line = EXTI_Line1;
     EXTI_InitStructure.EXTI_Mode = EXTI_Mode_Interrupt;
     EXTI_InitStructure.EXTI_Trigger = EXTI_Trigger_Falling;
     EXTI_InitStructure.EXTI_LineCmd = ENABLE;
     EXTI_Init(&EXTI_InitStructure);
-    
+
     EXTI_LineConfig(EXTI_PortSourceGPIOB, EXTI_PinSource1);
-    
+
     NVIC_InitStructure.NVIC_IRQChannel = EXTI0_1_IRQn;
     NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
     NVIC_InitStructure.NVIC_IRQChannelPriority = 0;
@@ -163,10 +163,10 @@ void wl_irq_it_init()
 void wl_activate(u8 data)
 {
     GPIO_ResetBits(GPIOB, GPIO_Pin_15);
-    
+
     wl_spi_tx(0x50);
     wl_spi_tx(data);
-    
+
     GPIO_SetBits(GPIOB, GPIO_Pin_15);
 }
 
@@ -179,10 +179,10 @@ void wl_activate(u8 data)
 void wl_write_reg(u8 addr, u8 data)
 {
     GPIO_ResetBits(GPIOB, GPIO_Pin_15);
-    
+
     wl_spi_tx(addr | 0x20);
     wl_spi_tx(data);
-    
+
     GPIO_SetBits(GPIOB, GPIO_Pin_15);
 }
 
@@ -194,14 +194,14 @@ void wl_write_reg(u8 addr, u8 data)
 u8 wl_read_reg(u8 addr)
 {
     u8 data;
-    
+
     GPIO_ResetBits(GPIOB, GPIO_Pin_15);
-    
+
     wl_spi_tx(addr);
     data = wl_spi_rx();
-    
+
     GPIO_SetBits(GPIOB, GPIO_Pin_15);
-    
+
     return data;
 }
 
@@ -215,12 +215,12 @@ u8 wl_read_reg(u8 addr)
 void wl_write_buf(u8 addr,u8* buf, u8 len)
 {
     GPIO_ResetBits(GPIOB, GPIO_Pin_15);
-    
+
     wl_spi_tx(addr | 0x20);
-    
+
     for(u8 i = 0; i < len; i++)
         wl_spi_tx(buf[i]);
-    
+
     GPIO_SetBits(GPIOB, GPIO_Pin_15);
 }
 
@@ -235,10 +235,10 @@ void wl_read_buf(u8 addr, u8* buf, u8 len)
 {
     GPIO_ResetBits(GPIOB, GPIO_Pin_15);
     wl_spi_tx(addr);
-    
+
     for(u8 i = 0; i < len; i++)
         buf[i] = wl_spi_rx();
-    
+
     GPIO_SetBits(GPIOB, GPIO_Pin_15);
 }
 

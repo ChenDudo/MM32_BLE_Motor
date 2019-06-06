@@ -32,22 +32,39 @@
 #include "mg_api.h"
 #include "ble.h"
 
+u32 irq_count = 0;
+void wl_ble_irq_handler()
+{
+    if (ble_running_flag) {
+        irq_count++;
+        ble_run(0);
+    }
+}
+
 void wl_ble_mode()
 {
+    ble_running_flag = false;
     u8 device_name[] = "MM32 Test BLE";
 
 //    lowpower_mode = 0x02;
     cur_notifyhandle = 19;
 
-    SysTick_Count = 0;
     memcpy(ble_device_name, device_name, sizeof(device_name));
 
     wl_spi_init();
     wl_irq_it_init();
 
-    radio_initBle(TXPWR_3DBM, &ble_mac_addr);
-}
+    SetBleIntRunningMode();
 
+    radio_initBle(TXPWR_0DBM, &ble_mac_addr);
+
+    SysTick_Count = 0;
+    while(SysTick_Count < 5);
+
+    ble_run_interrupt_start(160*2);
+    ble_running_flag = true;
+}
+u32 tick_count = 0;
 void wl_ble_tick_task()
 {
     static u32 tx_led_count = 0;
@@ -55,18 +72,23 @@ void wl_ble_tick_task()
 
     SysTick_Count++;
 
+    if (ble_running_flag) {
+        ble_nMsRoutine();
+        tick_count++;
+    }
+
     if (ble_tx_led) {
         ble_tx_led = false;
         vdLED |= 0x04;
         SysDisplay(&vdLED);
-        tx_led_count = SysTick_Count + 20;
+        tx_led_count = SysTick_Count + 100;
     }
 
     if (ble_rx_led) {
         ble_rx_led = false;
         vdLED |= 0x08;
         SysDisplay(&vdLED);
-        rx_led_count = SysTick_Count + 20;
+        rx_led_count = SysTick_Count + 100;
     }
 
     if (tx_led_count < SysTick_Count) {
@@ -113,13 +135,15 @@ void ConnectStausUpdate(unsigned char IsConnectedFlag) //porting api
 // As central device
 void UsrProcCallback_Central(u8 fin, u8* dat_rcv, u8 dat_len)
 {
-
+    u8 i = 0;
+    i++;
 }
 
 // As peri
 void UsrProcCallback()
 {
-
+    u8 i = 0;
+    i++;
 }
 
 

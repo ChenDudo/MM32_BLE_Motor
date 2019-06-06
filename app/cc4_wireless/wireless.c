@@ -25,6 +25,9 @@ void EXTI0_1_IRQHandler()
 {
     if(EXTI_GetITStatus(EXTI_Line1)) {
         EXTI_ClearITPendingBit(EXTI_Line1);
+        if (wl_mode == emWL_BLE)
+            wl_ble_irq_handler();
+
         if (wl_mode == emWL_2_4G)
             wl_2_4g_irq_handler();
     }
@@ -84,12 +87,12 @@ int main(void)
 
     while (1) {
 
-//        if(!WT2031_READY()) {
-//            wt2031_rw();
-//        }
+        //        if(!WT2031_READY()) {
+        //            wt2031_rw();
+        //        }
 
-        if (wl_mode == emWL_BLE)    wl_ble_task();
-        if (wl_mode == emWL_2_4G)   wl_2_4g_task();
+//        if (wl_mode == emWL_BLE)    wl_ble_task();
+//        if (wl_mode == emWL_2_4G)   wl_2_4g_task();
     }
 }
 
