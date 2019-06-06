@@ -55,7 +55,7 @@
         </option>
         <option>
           <name>OGCoreOrChip</name>
-          <state>0</state>
+          <state>1</state>
         </option>
         <option>
           <name>GRuntimeLibSelect</name>
@@ -89,7 +89,7 @@
         </option>
         <option>
           <name>OGChipSelectEditMenu</name>
-          <state>Default	None</state>
+          <state>MM32L373PS	MindMotion MM32L373PS</state>
         </option>
         <option>
           <name>GenLowLevelInterface</name>
@@ -97,7 +97,7 @@
         </option>
         <option>
           <name>GEndianModeBE</name>
-          <state>0</state>
+          <state>1</state>
         </option>
         <option>
           <name>OGBufferedTerminalOutput</name>
@@ -149,7 +149,7 @@
         </option>
         <option>
           <name>GFPUDeviceSlave</name>
-          <state>Default	None</state>
+          <state>MM32L373PS	MindMotion MM32L373PS</state>
         </option>
         <option>
           <name>FPU2</name>
@@ -183,7 +183,10 @@
           <name>CCDefines</name>
           <state>__IAR</state>
           <state>__MT304</state>
-          <state>__MM32_MINIBOARD</state>
+          <state>__EX_SPI</state>
+          <state>__EX_ADC</state>
+          <state>__EX_TIM</state>
+          <state>__MM32_HMI</state>
           <state>OVERTIME=0</state>
           <state>CLOCK=8000000</state>
           <state>_USER_RESOURCE</state>
@@ -736,7 +739,7 @@
         </option>
         <option>
           <name>IlinkIcfFile</name>
-          <state>$TOOLKIT_DIR$\CONFIG\generic_cortex.icf</state>
+          <state>$TOOLKIT_DIR$\config\linker\MindMotion\MM32L37xxx.icf</state>
         </option>
         <option>
           <name>IlinkIcfFileSlave</name>
@@ -1942,7 +1945,16 @@
   <group>
     <name>app</name>
     <file>
-      <name>$PROJ_DIR$\..\..\app\cc1_hmi\hmi.c</name>
+      <name>$PROJ_DIR$\..\..\app\cc1_hmi\main_lcd.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\app\cc1_hmi\spi_flash.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\app\cc1_hmi\spi_lcd.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\app\cc1_hmi\touch.c</name>
     </file>
   </group>
   <group>

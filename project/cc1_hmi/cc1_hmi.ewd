@@ -85,7 +85,7 @@
         </option>
         <option>
           <name>OCDynDriverList</name>
-          <state>ARMSIM_ID</state>
+          <state>THIRDPARTY_ID</state>
         </option>
         <option>
           <name>OCLastSavedByProductVersion</name>
@@ -1315,7 +1315,7 @@
         <debug>1</debug>
         <option>
           <name>CThirdPartyDriverDll</name>
-          <state>###Uninitialized###</state>
+          <state>$TOOLKIT_DIR$\bin\armmm32link.dll</state>
         </option>
         <option>
           <name>CThirdPartyLogFileCheck</name>

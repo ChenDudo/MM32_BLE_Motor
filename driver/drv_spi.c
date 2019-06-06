@@ -166,17 +166,17 @@ void DRV_SPI_DMA_IRQHandler_TxCommon(u8 idx)
 //		((fpSPI)instance[idx].cbTx)(idx);
 //	}
     SPI_TypeDef* SPIx = (SPI_TypeDef*)instance[idx].sPrefix.pBase;
-    
-    
+
+
     while(!SPI_GetFlagStatus(SPIx, SPI_FLAG_TXEPT));
     instance[idx].txComplete = true;
 	instance[idx].txRealCnt = instance[idx].txCnt;
     instance[idx].txCnt = 0;
-    
+
 //    while(SPI_GetFlagStatus(SPIx, SPI_FLAG_RXAVL)){
 //        READ_REG(SPIx->RDR);
 //    }
-//    
+//
 //    if (instance[idx].master) {
 //        BSP_SPI_NSS_Configure(SPIx, 0, 0, DISABLE);
 //    }
@@ -192,11 +192,11 @@ void DRV_SPI_DMA_IRQHandler_TxCommon(u8 idx)
 /// @param  None.
 /// @retval None.
 ////////////////////////////////////////////////////////////////////////////////
-void DMA1_Channel2_IRQHandler()
-{
-	DMA_ClearFlag(DMA_ISR_TCIF2);
-    DRV_SPI_DMA_IRQHandler_RxCommon(instance[tbSubHandleIdx[0]].sPrefix.subIdx);
-}
+//void DMA1_Channel2_IRQHandler()
+//{
+//	DMA_ClearFlag(DMA_ISR_TCIF2);
+//    DRV_SPI_DMA_IRQHandler_RxCommon(instance[tbSubHandleIdx[0]].sPrefix.subIdx);
+//}
 
 ////////////////////////////////////////////////////////////////////////////////
 /// @brief  SPI DMA communication channel 3 interrupt handler.
@@ -291,10 +291,10 @@ static void DRV_SPI_IRQ_Common(u8 idx)
 
     if ((SPIx->IER & SPI_IER_TX_IEN) && SPI_GetITStatus(SPIx, SPI_IT_TX)) {
         SPI_ClearITPendingBit(SPIx, SPI_IT_TX);
-        
+
         instance[idx].txCnt --;
         instance[idx].txRealCnt ++;
-        
+
         if(instance[idx].txCnt > 0){
             WRITE_REG(SPIx->TDR, *++instance[idx].txPtr);
         }
@@ -315,14 +315,14 @@ static void DRV_SPI_IRQ_Common(u8 idx)
 
     if ((SPIx->IER & SPI_IER_RX_IEN) && SPI_GetITStatus(SPIx, SPI_IT_RX)) {
         SPI_ClearITPendingBit(SPIx, SPI_IT_RX);
-        
+
         while(SPI_GetFlagStatus(SPIx, SPI_FLAG_RXAVL)){
             instance[idx].rxCnt --;
             instance[idx].rxRealCnt ++;
-            *instance[idx].rxPtr++ = (u8)READ_REG(SPIx->RDR);            
+            *instance[idx].rxPtr++ = (u8)READ_REG(SPIx->RDR);
         }
-        
-        
+
+
         if (instance[idx].rxCnt > 0) {
             if (instance[idx].master) {
                 SPI_SendData(SPIx, 0x0F);
@@ -429,23 +429,23 @@ void DRV_SPI_DMA_ConfigChannel(SPI_TypeDef* SPIx)
 static bool SPI_PollingSendPacket(u8 idx)
 {
     SPI_TypeDef* SPIx = (SPI_TypeDef*)instance[idx].sPrefix.pBase;
-    
-#if defined(__MT309)     
-    SET_BIT(SPIx->CCR, 1 << 7);     
+
+#if defined(__MT309)
+    SET_BIT(SPIx->CCR, 1 << 7);
 #endif
-    
+
 //    if (instance[idx].master) {
 //        BSP_SPI_NSS_Configure(SPIx, 0, 0, ENABLE);
 //    }
-//    
+//
 //    if(instance[idx].command != 0){
 //        WRITE_REG(SPIx->TDR, instance[idx].command);
 //    }
-    
+
     WRITE_REG(SPIx->TDR, *instance[idx].txPtr++);
     instance[idx].txCnt --;
     instance[idx].txRealCnt ++;
-    
+
     while(instance[idx].txCnt > 0) {
         if (SPI_GetITStatus(SPIx, SPI_IT_TX)){
             SPI_ClearITPendingBit(SPIx, SPI_IT_TX);
@@ -456,7 +456,7 @@ static bool SPI_PollingSendPacket(u8 idx)
     }
     while(SPI_GetFlagStatus(SPIx, SPI_FLAG_TXEPT) == 0) {
     }
-    
+
 //    while(SPI_GetFlagStatus(SPIx, SPI_FLAG_RXAVL)){
 //        READ_REG(SPIx->RDR);
 //    }
@@ -500,7 +500,7 @@ static bool SPI_PollingRcvPacket(u8 idx)
         instance[idx].rxCnt --;
         instance[idx].rxRealCnt ++;
     }
-    
+
     instance[idx].rxComplete = true;
 //    if (instance[idx].master) {
 //        BSP_SPI_NSS_Configure(SPIx, 0, 0, DISABLE);
@@ -527,12 +527,12 @@ static void SPI_ItSendPacket(u8 idx)
 //    if (instance[idx].master) {
 //        BSP_SPI_NSS_Configure(SPIx, 0, 0, ENABLE);
 //    }
-    
+
     SPI_ClearITPendingBit(SPIx, SPI_IT_TX);
-    
+
     SET_BIT(SPIx->GCR, SPI_GCR_IEN);
     SET_BIT(SPIx->IER, SPI_IER_TX_IEN);
-    
+
     WRITE_REG(SPIx->TDR, *instance[idx].txPtr);
 }
 
@@ -544,10 +544,10 @@ static void SPI_ItSendPacket(u8 idx)
 static void SPI_ItRcvPacket(u8 idx)
 {
     SPI_TypeDef* SPIx = (SPI_TypeDef*)instance[idx].sPrefix.pBase;
-        
+
     if (instance[idx].master) {
 //        BSP_SPI_NSS_Configure(SPIx, 0, 0, ENABLE);
-//        
+//
 //        if(instance[idx].command != 0){
 //            WRITE_REG(SPIx->TDR, instance[idx].command);
 //            while(!SPI_GetFlagStatus(SPIx, SPI_FLAG_RXAVL));
@@ -557,12 +557,12 @@ static void SPI_ItRcvPacket(u8 idx)
         SPI_ClearITPendingBit(SPIx, SPI_IT_TX);
         SPI_SendData(SPIx, 0xFF);
         while(!SPI_GetFlagStatus(SPIx, SPI_FLAG_TXEPT));
-        
+
 //        while(!SPI_GetITStatus(SPIx, SPI_IT_TX));
-            
-        
+
+
     }
-    
+
     SET_BIT(SPIx->GCR, SPI_GCR_IEN);
     SET_BIT(SPIx->IER, SPI_IER_RX_IEN);
 }
@@ -585,7 +585,7 @@ static void SPI_DMASendPacket(u8 idx)
 //    }
     SPI_DMACmd(SPIx, ENABLE);
 
-    
+
     DRV_DMA_TransmitPacket(Get_SPI_DMA_TxChannel(SPIx), (u32)instance[idx].txPtr, instance[idx].txCnt);
 }
 
@@ -597,7 +597,7 @@ static void SPI_DMASendPacket(u8 idx)
 static void SPI_DMARcvPacket(u8 idx)
 {
     SPI_TypeDef* SPIx = (SPI_TypeDef*)instance[idx].sPrefix.pBase;
-    
+
 //    SPI_ClearITPendingBit(SPIx, SPI_IT_RX);
     SPI_DMACmd(SPIx, ENABLE);
 
@@ -636,7 +636,7 @@ static void InstanceConfig(tAPP_SPI_DCB* pDcb, u8 idx)
     instance[idx].rxComplete 	= false;
     instance[idx].txRealCnt 	= 0;
     instance[idx].rxRealCnt 	= 0;
-    
+
     instance[idx].command		    = pDcb->command;
     instance[idx].protocol          = pDcb->protocol;
 //    *(u32 *)instance[idx].parameter = *(u32 *)pDcb->parameter;
@@ -700,14 +700,14 @@ static void HardwareConfig(tAPP_SPI_DCB* pDcb, u8 idx)
 
     SPI_BiDirectionalLineConfig(SPIx, SPI_Direction_Tx);
     SPI_BiDirectionalLineConfig(SPIx, SPI_Direction_Rx);
-    
+
     if (pDcb->fastMode == true){
         SET_BIT(SPIx->CCR, SPI_CCR_RXEDGE | SPI_CCR_TXEDGE);
     }
     else{
         CLEAR_BIT(SPIx->CCR, SPI_CCR_RXEDGE | SPI_CCR_TXEDGE);
     }
-    
+
 
     SPI_Cmd(SPIx, ENABLE);
 }
@@ -762,7 +762,7 @@ static int SPI_ReadFile(HANDLE handle, s8 hSub, u8* ptr, u16 len)
 {
 	s8 idx = DRV_FindTrueIdx(hSub, (u8*)&instance, sizeof(instance[0]), INSTANCE_NUM);
     SPI_TypeDef* SPIx = (SPI_TypeDef*)instance[idx].sPrefix.pBase;
-    
+
 	if (idx == -1) 	return false;
 
     if (!instance[idx].rxProcess) {
@@ -771,26 +771,26 @@ static int SPI_ReadFile(HANDLE handle, s8 hSub, u8* ptr, u16 len)
 
         instance[idx].rxPtr = ptr;
 		instance[idx].rxCnt = len;
-        
+
         if (instance[idx].master) {
             BSP_SPI_NSS_Configure(SPIx, 0, 0, ENABLE);
-            
+
             if(instance[idx].protocol == 1){
                 WRITE_REG(SPIx->TDR, instance[idx].command);
-                
+
                 for(u8 i = 0; i < instance[idx].parameterLength; i++){
-                    WRITE_REG(SPIx->TDR, instance[idx].parameter[i]);                
+                    WRITE_REG(SPIx->TDR, instance[idx].parameter[i]);
                 }
-                
+
                 while(SPI_GetFlagStatus(SPIx, SPI_FLAG_TXEPT) == 0) {
                 }
                 while(SPI_GetFlagStatus(SPIx, SPI_FLAG_RXAVL)){
                     READ_REG(SPIx->RDR);
                 }
-                
+
             }
         }
-        
+
 
         if (instance[idx].type == emTYPE_Polling)    SPI_PollingRcvPacket(idx);
         else if (instance[idx].type == emTYPE_IT)    SPI_ItRcvPacket(idx);
@@ -830,7 +830,7 @@ static int SPI_WriteFile(HANDLE handle, s8 hSub, u8* ptr, u16 len)
 {
 	s8 idx = DRV_FindTrueIdx(hSub, (u8*)&instance, sizeof(instance[0]), INSTANCE_NUM);
     SPI_TypeDef* SPIx = (SPI_TypeDef*)instance[idx].sPrefix.pBase;
-    
+
 	if (idx == -1) 	return false;
 
 	if (!instance[idx].txProcess) {
@@ -839,22 +839,22 @@ static int SPI_WriteFile(HANDLE handle, s8 hSub, u8* ptr, u16 len)
 
         instance[idx].txPtr = ptr;
 		instance[idx].txCnt = len;
-        
+
         if (instance[idx].master) {
             BSP_SPI_NSS_Configure(SPIx, 0, 0, ENABLE);
-            
+
             if(instance[idx].protocol == 1){
                 WRITE_REG(SPIx->TDR, instance[idx].command);
-                
+
                 for(u8 i = 0; i < instance[idx].parameterLength; i++){
-                    WRITE_REG(SPIx->TDR, instance[idx].parameter[i]);                
+                    WRITE_REG(SPIx->TDR, instance[idx].parameter[i]);
                 }
-                
+
                 while(SPI_GetFlagStatus(SPIx, SPI_FLAG_TXEPT) == 0) {
                 }
             }
         }
-        
+
 
         if (instance[idx].type == emTYPE_Polling)    SPI_PollingSendPacket(idx);
         else if (instance[idx].type == emTYPE_IT)    SPI_ItSendPacket(idx);
@@ -866,7 +866,7 @@ static int SPI_WriteFile(HANDLE handle, s8 hSub, u8* ptr, u16 len)
         while(SPI_GetFlagStatus(SPIx, SPI_FLAG_RXAVL)){
             READ_REG(SPIx->RDR);
         }
-        
+
         if (instance[idx].master) {
             BSP_SPI_NSS_Configure(SPIx, 0, 0, DISABLE);
         }
@@ -880,7 +880,7 @@ static int SPI_WriteFile(HANDLE handle, s8 hSub, u8* ptr, u16 len)
             while(SPI_GetFlagStatus(SPIx, SPI_FLAG_RXAVL)){
                 READ_REG(SPIx->RDR);
             }
-            
+
             if (instance[idx].master) {
                 BSP_SPI_NSS_Configure(SPIx, 0, 0, DISABLE);
             }

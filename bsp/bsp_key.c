@@ -66,6 +66,14 @@ void BSP_KEY_Configure(void)
     GPIO_Mode_IPU_Init(GPIOA, GPIO_Pin_10, NO_REMAP, GPIO_AF_0);
 
 #endif
+
+#if defined(__MM32_HMI)
+    COMMON_EnableIpClock(emCLOCK_GPIOA);
+    COMMON_EnableIpClock(emCLOCK_GPIOB);
+    GPIO_Mode_IPU_Init(GPIOA, GPIO_Pin_7,  NO_REMAP, GPIO_AF_0);    //K1
+    GPIO_Mode_IPU_Init(GPIOB, GPIO_Pin_0,  NO_REMAP, GPIO_AF_0);    //K2
+    GPIO_Mode_IPU_Init(GPIOB, GPIO_Pin_1,  NO_REMAP, GPIO_AF_0);    //K3
+#endif
 #if defined(__MM32_EVB)
 
 	COMMON_EnableIpClock(emCLOCK_GPIOA);
@@ -186,6 +194,12 @@ bool Key4(void)	{	return !GPIO_ReadInputDataBit(GPIOB, GPIO_Pin_11);	}
 #endif
 #endif
 
+#if defined(__MM32_HMI)
+        bool Key1(void) {   return !GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_7);   }
+        bool Key2(void) {   return !GPIO_ReadInputDataBit(GPIOB, GPIO_Pin_0);   }
+        bool Key3(void) {   return !GPIO_ReadInputDataBit(GPIOB, GPIO_Pin_1);   }
+        bool Key4(void) {   return 0;}
+#endif
 
 /// @}
 
