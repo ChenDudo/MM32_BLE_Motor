@@ -164,6 +164,10 @@ void writeOutBStop();
 void writeOutABrake();
 void writeOutBBrake();
 
+
+// --- dc motor encoder func ---------------------------------------------------
+void initECA();
+void initECB();
 /// @}
 
 /// @}

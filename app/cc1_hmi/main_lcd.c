@@ -383,3 +383,73 @@ int main(void)
 
     }
 }
+
+////////////////////////////////////////////////////////////////////////////////
+//void main()
+//{
+//    MCUID = SetSystemClock(emSYSTICK_On, (u32*)&AppTaskTick);
+//
+////    SPI_DeInit(SPI2);
+//    HANDLE hTIM = CreateFile(emIP_TIM);
+//    if (hTIM == NULL)       while(1);
+//
+//    tAPP_TIM_DCB dcb = {
+//        .hSub       = emFILE_TIM4,
+//        .mode       = emTIM_PWM,
+//        .cntFreq    = 1000000,
+//        .period     = 1000,
+//        .ch         = emTIM_CH4,
+//        .pulse      = 500,
+//        .remapEn    = false,
+//        .remapIdx   = 0,
+//    };
+//
+//    if (!OpenFile(hTIM, (void*)&dcb))       while(1);
+//
+//    HANDLE hADC = CreateFile(emIP_ADC);
+//    if (hADC == NULL)       while(1);
+//
+//    tAPP_ADC_DCB dcb2 = {
+//        .hSub   = emFILE_ADC1,
+//        .type   = emTYPE_DMA,
+//        .mode   = emADC_Scan,
+//        .sync   = emTYPE_ASync,
+//        .trig   = emTRIGGER_Software,
+//        .chs    = LEFT_SHIFT_BIT(4),
+//        .temp   = false,
+//        .vRef   = false,
+//        .cb     = NULL,
+//    };
+//
+//    if (!OpenFile(hADC, (void*)&dcb2))      while(1);
+//
+//    lcd_init();
+//
+//    POINT_COLOR = BLUE;
+//    BACK_COLOR = WHITE;
+//    lcd_showString(20, 5, 240, 24, 24, "BlueTooth Display");
+//
+//    POINT_COLOR = GREEN;
+//    lcd_drawRectangle(10 ,40, 230, 220);
+//    lcd_drawLine(10, 60, 230, 60);
+//    lcd_drawLine(10, 80, 230, 80);
+//    lcd_drawLine(10,100, 230,100);
+//    lcd_drawLine(10,120, 230,120);
+//    lcd_drawLine(10,140, 230,140);
+//    lcd_drawLine(10,160, 230,160);
+//    lcd_drawLine(10,180, 230,180);
+//    lcd_drawLine(10,200, 230,200);
+//
+//
+//    while(1){
+//        WriteFile(hADC, emFILE_ADC1, 0, 0);
+//        ReadFile(hADC, emFILE_ADC1, (u8*)&adc_temp, 16);
+//        pwmValue = (u16)((double)adc_temp / 4096 * 1000);
+//        WriteFile(hTIM, emFILE_TIM4, (u8*)&pwmValue, 1);
+//
+//
+//    }
+//
+//
+//}
+

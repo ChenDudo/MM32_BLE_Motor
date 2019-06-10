@@ -29,6 +29,12 @@
 #include "motor.h"
 #include "tb6612.h"
 
+#include "hal_tim.h"
+bool samSpeedFlag;
+u32 speed1, speed2;
+u32 samCnt = 0;
+
+
 ////////////////////////////////////////////////////////////////////////////////
 /// @brief  This function handles App SysTick Handler.
 /// @param  None.
@@ -39,6 +45,10 @@ void AppTaskTick()
     if (tickCnt++ >= 500) {
         tickCnt  = 0;
         tickFlag = true;
+    }
+    if (samCnt++ >= 1000) {
+        samCnt = 0;
+        samSpeedFlag = true;
     }
 }
 
@@ -108,7 +118,27 @@ int main(void)
     u32 adc_temp = 0;
     u16 dcSpeed = 0;
 
+    initECA();
+    initECB();
+
+    samSpeedFlag = false;
+    speed1 = speed2 = 0;
+    u8 begin;
+
     while (1) {
+
+        if (samSpeedFlag) {
+            if (begin++ == 0) {
+                TIM_SetCounter(TIM1, 0);
+                TIM_SetCounter(TIM3, 0);
+            }
+            else {
+                speed1 = TIM_GetCounter(TIM1);
+                speed2 = TIM_GetCounter(TIM3);
+                begin = 0;
+            }
+            samSpeedFlag = false;
+        }
 
         WriteFile(hADC, emFILE_ADC1, 0, 0);
         ReadFile(hADC, emFILE_ADC1, (u8*)&adc_temp, 16);

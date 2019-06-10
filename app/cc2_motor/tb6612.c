@@ -434,6 +434,67 @@ void TIM14_IRQHandler()
 }
 #endif
 
+
+#define ECA1_Port   GPIOA
+#define ECA1_Pin    GPIO_Pin_6
+#define ECB1_Port   GPIOA
+#define ECB1_Pin    GPIO_Pin_8
+////////////////////////////////////////////////////////////////////////////////
+void initECA()
+{
+    COMMON_EnableIpClock(emCLOCK_TIM3);
+    GPIO_Mode_IPU_Init(ECA1_Port, ECA1_Pin, NO_REMAP, GPIO_AF_1);
+
+    TIM_TimeBaseInitTypeDef pBase = {
+        .TIM_Prescaler         = 0,
+        .TIM_Period            = 0xFFFF,
+        .TIM_ClockDivision     = TIM_CKD_DIV1,
+        .TIM_CounterMode       = TIM_CounterMode_Up,
+        .TIM_RepetitionCounter = 0
+    };
+    TIM_TimeBaseInit(TIM3, &pBase);
+
+    TIM_TIxExternalClockConfig(TIM3, TIM_TIxExternalCLK1Source_TI1, TIM_ICPolarity_Rising, 0);
+    //TIM_EncoderInterfaceConfig(TIM3, TIM_EncoderMode_TI1, TIM_ICPolarity_Rising, TIM_ICPolarity_Rising);
+
+    TIM_ARRPreloadConfig(TIM3, ENABLE);
+
+    //COMMON_NVIC_Configure(TIM3_IRQn,  1,  1);
+    //TIM_ITConfig(TIM3, TIM_IT_Update, ENABLE);
+
+    TIM_CtrlPWMOutputs(TIM3, ENABLE);
+    TIM_Cmd(TIM3, ENABLE);
+}
+
+
+////////////////////////////////////////////////////////////////////////////////
+void initECB()
+{
+    COMMON_EnableIpClock(emCLOCK_TIM1);
+    GPIO_Mode_IPU_Init(ECB1_Port, ECB1_Pin, NO_REMAP, GPIO_AF_2);
+
+    TIM_TimeBaseInitTypeDef pBase = {
+        .TIM_Prescaler         = 0,
+        .TIM_Period            = 0xFFFF,
+        .TIM_ClockDivision     = TIM_CKD_DIV1,
+        .TIM_CounterMode       = TIM_CounterMode_Up,
+        .TIM_RepetitionCounter = 0
+    };
+    TIM_TimeBaseInit(TIM1, &pBase);
+
+    //TIM_EncoderInterfaceConfig(TIM1, TIM_EncoderMode_TI1, TIM_ICPolarity_Rising, TIM_ICPolarity_Rising);
+    TIM_TIxExternalClockConfig(TIM1, TIM_TIxExternalCLK1Source_TI1, TIM_ICPolarity_Rising, 0);
+
+    TIM_ARRPreloadConfig(TIM1, ENABLE);
+
+    //COMMON_NVIC_Configure(TIM1_BRK_UP_TRG_COM_IRQn,  1,  1);
+    //TIM_ITConfig(TIM1, TIM_IT_Update, ENABLE);
+
+    TIM_CtrlPWMOutputs(TIM1, ENABLE);
+    TIM_Cmd(TIM1, ENABLE);
+}
+
+
 /// @}
 
 /// @}
