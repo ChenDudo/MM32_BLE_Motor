@@ -46,7 +46,7 @@ void AppTaskTick()
         tickCnt  = 0;
         tickFlag = true;
     }
-    if (samCnt++ >= 1000) {
+    if (samCnt++ >= 500) {
         samCnt = 0;
         samSpeedFlag = true;
     }
@@ -79,15 +79,15 @@ int main(void)
     MCUID = SetSystemClock(emSYSTICK_On, (u32*)&AppTaskTick);
 
     emDC_handle dcHandle = {
-        .dcPulseMax     = 100,
+        .dcPulseMax     = 1000,
 
         .dc1Sta         = emDC_Run,
         .dc1Dir         = 0,
-        .dc1PulseWidth  = 50,
+        .dc1PulseWidth  = 500,
 
         .dc2Sta         = emDC_Run,
         .dc2Dir         = 0,
-        .dc2PulseWidth  = 50,
+        .dc2PulseWidth  = 0,
     };
 
     emMotor_handle motor1 = {
@@ -127,6 +127,10 @@ int main(void)
 
     while (1) {
 
+        WriteFile(hADC, emFILE_ADC1, 0, 0);
+        ReadFile(hADC, emFILE_ADC1, (u8*)&adc_temp, 16);
+        dcSpeed = (u16)((double)adc_temp / 4096 * 48);
+
         if (samSpeedFlag) {
             if (begin++ == 0) {
                 TIM_SetCounter(TIM1, 0);
@@ -138,13 +142,18 @@ int main(void)
                 begin = 0;
             }
             samSpeedFlag = false;
+
+            if(speed1 < dcSpeed)
+                dcHandle.dc1PulseWidth += 10;
+            else
+                dcHandle.dc1PulseWidth -= 10;
         }
 
-        WriteFile(hADC, emFILE_ADC1, 0, 0);
-        ReadFile(hADC, emFILE_ADC1, (u8*)&adc_temp, 16);
-        dcSpeed = (u16)((double)adc_temp / 4096 * dcHandle.dcPulseMax);
-        dcHandle.dc1PulseWidth = dcSpeed;
-        dcHandle.dc2PulseWidth = dcSpeed;
+
+
+
+//        dcHandle.dc1PulseWidth = dcSpeed;
+//        dcHandle.dc2PulseWidth = dcSpeed;
 
         dcMotorRun(&dcHandle);
 
