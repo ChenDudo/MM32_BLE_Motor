@@ -212,15 +212,14 @@ void step4of4()
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-u8 stepIdx;
-void (*fpStep)(void);
-typedef void (*fp)();
-fp stepInterface[4] = {
-    step1of4,
-    step2of4,
-    step3of4,
-    step4of4
-};
+//void (*fpStep)(void);
+//typedef void (*fp)();
+//fp stepInterface[4] = {
+//    step1of4,
+//    step2of4,
+//    step3of4,
+//    step4of4
+//};
 
 ////////////////////////////////////////////////////////////////////////////////
 void initStepFreq(u16 timPsc, u32 stepFreq)
@@ -352,36 +351,36 @@ emSta_M initMotor(emMotor_handle m)
 
 
 ////////////////////////////////////////////////////////////////////////////////
-void stepperRun(emStepper_handle* s)
-{
-    if (stepRunFlag) {
-        motorStandby(false);
-        if (!s->stepStart) {
-            s->stepPulseWidth = (u16)(s->stepPulseMax * 0.05);
-            s->stepIdx = 0;
-            motorStandby(true);
-        }
-        else {
-            if (s->stepDir) {
-                if (++s->stepIdx == 4)
-                    s->stepIdx = 0;
-            }
-            else {
-                if (--s->stepIdx == -1)
-                    s->stepIdx = 3;
-            }
-            if(--(s->stepSum) == 0)
-                s->stepStart = false;
-
-        }
-        writeStepPulseWidth(s->stepPulseWidth);
-        writeStepFreq(s->stepFreq);
-        fpStep = stepInterface[s->stepIdx];
-        fpStep();
-
-        stepRunFlag = false;
-    }
-}
+//void stepperRun(emStepper_handle* s)
+//{
+//    if (stepRunFlag) {
+//        motorStandby(false);
+//        if (!s->stepStart) {
+//            s->stepPulseWidth = (u16)(s->stepPulseMax * 0.05);
+//            s->stepIdx = 0;
+//            motorStandby(true);
+//        }
+//        else {
+//            if (s->stepDir) {
+//                if (++s->stepIdx == 4)
+//                    s->stepIdx = 0;
+//            }
+//            else {
+//                if (--s->stepIdx == -1)
+//                    s->stepIdx = 3;
+//            }
+//            if(--(s->stepSum) == 0)
+//                s->stepStart = false;
+//
+//        }
+//        writeStepPulseWidth(s->stepPulseWidth);
+//        writeStepFreq(s->stepFreq);
+//        fpStep = stepInterface[s->stepIdx];
+//        fpStep();
+//
+//        stepRunFlag = false;
+//    }
+//}
 
 
 ////////////////////////////////////////////////////////////////////////////////

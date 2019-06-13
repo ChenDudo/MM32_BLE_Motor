@@ -1066,7 +1066,7 @@
         </option>
         <option>
           <name>OGChipSelectEditMenu</name>
-          <state>MM32F031C8T	MindMotion MM32F031C8T</state>
+          <state>MM32L073PF	MindMotion MM32L073PF</state>
         </option>
         <option>
           <name>GenLowLevelInterface</name>
@@ -1126,7 +1126,7 @@
         </option>
         <option>
           <name>GFPUDeviceSlave</name>
-          <state>MM32F031C8T	MindMotion MM32F031C8T</state>
+          <state>MM32L073PF	MindMotion MM32L073PF</state>
         </option>
         <option>
           <name>FPU2</name>

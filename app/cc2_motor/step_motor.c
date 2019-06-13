@@ -63,51 +63,103 @@ bool delay(u16 ms)
     return false;
 }
 
+void (*fpStep)(void);
+typedef void (*fp)();
+fp stepInterface[4] = {
+    step1of4,
+    step2of4,
+    step3of4,
+    step4of4
+};
+emStepper_handle stepHandle;
+emMotor_handle motor1;
+u32 stepFreqMax = 1300;
+u8  S_Flexible = 5;
+u16 S_StartCnt = 0;
+u16 S_Len = 1000;
+u16 stepLen = 10000;
+#pragma location=0x0800f800
+static const u16 sModeData[1000] __attribute__((at(0X800F000))) = {
+    0
+
+
+
+};
+
 ////////////////////////////////////////////////////////////////////////////////
 int main(void)
 {
     MCUID = SetSystemClock(emSYSTICK_On, (u32*)&AppTaskTick);
 
-    u32 stepFreqMax = 800;
+    stepHandle.stepStart      = true       ;
+    stepHandle.stepDir        = 0          ;
+    stepHandle.stepIdx        = 0          ;
+    stepHandle.stepPulseMax   = 100        ;
+    stepHandle.stepPulseWidth = 100        ;
+    stepHandle.stepSum        = stepLen      ;
+    stepHandle.stepFreq       = stepFreqMax;
 
-    emStepper_handle stepHandle = {
-        .stepStart      = true,
-        .stepDir        = 0,
-        .stepIdx        = 0,
-        .stepPulseMax   = 100,
-        .stepPulseWidth = 50,
-        .stepSum        = 5000,
-        .stepFreq       = stepFreqMax
-    };
-
-    emMotor_handle motor1 = {
-        .motorType  = emMotor_Step,
-        .motorSta   = emMotor_Standby,
-        .handle     = (int*)&stepHandle
-    };
+    motor1.motorType  = emMotor_Step     ;
+    motor1.motorSta   = emMotor_Standby  ;
+    motor1.handle     = (int*)&stepHandle;
 
     initMotor(motor1);
 
     bool S_Start    = true;
-    u8   S_Flexible = 4;
-    u16  S_StartCnt = 0;
-    u16  S_Len      = 1000;
+
 
     while (1) {
 
-        if (sysTickFlag1mS) {
-            if(S_Start) {
-                stepHandle.stepPulseWidth = (u16)(stepHandle.stepPulseMax * 1);
-                if (++S_StartCnt <= S_Len) {
-                    stepHandle.stepFreq = (u16)S_curve(S_Len, 400, stepFreqMax, S_Flexible, S_StartCnt);
-                }
-                else
-                    S_Start = false;
-            }
-            sysTickFlag1mS = false;
-        }
+//        if (sysTickFlag1mS) {
+//            if(S_Start) {
+//                stepHandle.stepPulseWidth = (u16)(stepHandle.stepPulseMax * 1);
+//                if (++S_StartCnt <= S_Len) {
+//                    stepHandle.stepFreq = (u16)S_curve(S_Len, 400, stepFreqMax, S_Flexible, S_StartCnt);
+//                }
+//                else
+//                    S_Start = false;
+//            }
+//            sysTickFlag1mS = false;
+//        }
 
-        stepperRun(&stepHandle);
+        //stepperRun(&stepHandle);
+        if (stepRunFlag) {
+            motorStandby(false);
+            if (!stepHandle.stepStart) {
+                stepHandle.stepPulseWidth = (u16)(stepHandle.stepPulseMax * 0.05);
+                stepHandle.stepIdx = 0;
+                motorStandby(true);
+            }
+            else {
+                if(S_Start) {
+                    stepHandle.stepPulseWidth = (u16)(stepHandle.stepPulseMax * 1);
+                    if (++S_StartCnt <= S_Len) {
+                        //stepHandle.stepFreq = (u16)S_curve(S_Len, 500, stepFreqMax, S_Flexible, S_StartCnt);
+                        stepHandle.stepFreq = sModeData[S_StartCnt - 1];
+                    }
+                    else
+                        S_Start = false;
+                        stepHandle.stepPulseWidth = (u16)(stepHandle.stepPulseMax * 0.8);
+                }
+                if (stepHandle.stepDir) {
+                    if (++stepHandle.stepIdx == 4)
+                        stepHandle.stepIdx = 0;
+                }
+                else {
+                    if (--stepHandle.stepIdx == -1)
+                        stepHandle.stepIdx = 3;
+                }
+                if(--(stepHandle.stepSum) == 0)
+                    stepHandle.stepStart = false;
+
+            }
+            writeStepPulseWidth(stepHandle.stepPulseWidth);
+            writeStepFreq(stepHandle.stepFreq);
+            fpStep = stepInterface[stepHandle.stepIdx];
+            fpStep();
+
+            stepRunFlag = false;
+        }
 
         if (SysKeyboard(&vkKey)) {
             switch  (vkKey) {
@@ -123,11 +175,12 @@ int main(void)
                 S_Start = true;
                 S_StartCnt = 0;
                 stepHandle.stepStart = true;
-                stepHandle.stepSum   = 4000;
+                stepHandle.stepSum   = stepLen;
                 KeyProcess_Key2();
                 break;
                 case  VK_K3:
                 stepHandle.stepStart = false;
+                stepHandle.stepSum   = 0;
                 KeyProcess_Key3();
                 break;
                 default:
