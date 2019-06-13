@@ -422,16 +422,16 @@ void dcMotorRun(emDC_handle* dc)
     writePWMB(dc->dc2PulseWidth);
 }
 
-#if defined(__USE_STEPPER)
-////////////////////////////////////////////////////////////////////////////////
-void TIM14_IRQHandler()
-{
-    if (TIM_GetITStatus(TIM14, TIM_IT_Update) != RESET) {
-        TIM_ClearITPendingBit(TIM14, TIM_IT_Update);
-        stepRunFlag = true;
-    }
-}
-#endif
+//#if defined(__USE_STEPPER)
+//////////////////////////////////////////////////////////////////////////////////
+//void TIM14_IRQHandler()
+//{
+//    if (TIM_GetITStatus(TIM14, TIM_IT_Update) != RESET) {
+//        TIM_ClearITPendingBit(TIM14, TIM_IT_Update);
+//        stepRunFlag = true;
+//    }
+//}
+//#endif
 
 
 #define ECA1_Port   GPIOA
