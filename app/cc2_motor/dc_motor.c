@@ -87,7 +87,7 @@ int main(void)
 
         .dc2Sta         = emDC_Run,
         .dc2Dir         = 0,
-        .dc2PulseWidth  = 0,
+        .dc2PulseWidth  = 500,
     };
 
     emMotor_handle motor1 = {
@@ -130,6 +130,11 @@ int main(void)
         WriteFile(hADC, emFILE_ADC1, 0, 0);
         ReadFile(hADC, emFILE_ADC1, (u8*)&adc_temp, 16);
         dcSpeed = (u16)((double)adc_temp / 4096 * 48);
+
+        if (dcSpeed < 20) {
+            dcHandle.dc1PulseWidth = 0;
+            dcHandle.dc2PulseWidth = 0;
+        }
 
         if (samSpeedFlag) {
             if (begin++ == 0) {

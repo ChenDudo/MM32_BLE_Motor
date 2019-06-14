@@ -45,10 +45,12 @@ def motorPower_Sline(lenth, start, stop, flexible, index):
 
 # print(x)
 
-lenth = 4000
+lenth = 400
 start = 500
-stop = 1600
+stop = 1450
 flexible1 = 4
+
+open("aaa.txt","w").write("")
 
 with open('aaa.txt', 'a') as f:
     i = 1
