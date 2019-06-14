@@ -170,7 +170,7 @@ void TIM14_IRQHandler()
 
 
 ////////////////////////////////////////////////////////////////////////////////
-int main(void)
+void main(void)
 {
     MCUID = SetSystemClock(emSYSTICK_On, (u32*)&AppTaskTick);
 
