@@ -38,7 +38,7 @@
 
 #define AT_CMD_BUF_SIZE 	52
 #define AT_CMD_NAME_SIZE 	16
-#define BUF_SIZE 			100
+//#define BUF_SIZE 			100
 
 /// @}
 

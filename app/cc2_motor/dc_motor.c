@@ -74,6 +74,44 @@ bool delay(u16 ms)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+#include "hal_uart.h"
+#include "hal_gpio.h"
+#include "bsp.h"
+#include "common.h"
+void initUART(UART_TypeDef* UARTx)
+{
+    UART_InitTypeDef UART_InitStructure;
+
+    UART_InitStructure.BaudRate = 115200;
+    UART_InitStructure.WordLength = UART_WordLength_8b;
+    UART_InitStructure.StopBits = UART_StopBits_1;
+    UART_InitStructure.Parity = UART_Parity_No;
+    UART_InitStructure.HWFlowControl = UART_HWFlowControl_RTS_CTS;
+    UART_InitStructure.Mode = UART_Mode_Rx | UART_Mode_Tx;
+
+    if (UARTx == UART1) {
+        COMMON_EnableIpClock(emCLOCK_UART1);
+        COMMON_EnableIpClock(emCLOCK_GPIOB);
+
+        GPIO_Mode_AF_PP_20MHz_Init(GPIOB, GPIO_Pin_6, EXTI_MAPR_UART1, 	GPIO_AF_0);
+        GPIO_Mode_IPU_Init		  (GPIOB, GPIO_Pin_7, EXTI_MAPR_UART1, 	GPIO_AF_0);
+    }
+    if (UARTx == UART2) {
+        COMMON_EnableIpClock(emCLOCK_UART2);
+        COMMON_EnableIpClock(emCLOCK_GPIOA);
+
+        GPIO_Mode_AF_PP_20MHz_Init(GPIOA, GPIO_Pin_2, NO_REMAP, 		GPIO_AF_1);
+        GPIO_Mode_IPU_Init		  (GPIOA, GPIO_Pin_3, NO_REMAP, 		GPIO_AF_1);
+    }
+
+    UART_Init(UARTx, &UART_InitStructure);
+    //UART_ITConfig(UARTx, UART_IT_RXIEN, ENABLE);
+    UART_Cmd(UARTx, ENABLE);
+}
+
+#define COMx    UART2
+
+////////////////////////////////////////////////////////////////////////////////
 int main(void)
 {
     MCUID = SetSystemClock(emSYSTICK_On, (u32*)&AppTaskTick);
@@ -83,11 +121,11 @@ int main(void)
 
         .dc1Sta         = emDC_Run,
         .dc1Dir         = 0,
-        .dc1PulseWidth  = 500,
+        .dc1PulseWidth  = 1000,
 
         .dc2Sta         = emDC_Run,
         .dc2Dir         = 0,
-        .dc2PulseWidth  = 500,
+        .dc2PulseWidth  = 0,
     };
 
     emMotor_handle motor1 = {
@@ -116,50 +154,13 @@ int main(void)
 
     if (!OpenFile(hADC, (void*)&dcb))		while(1);
     u32 adc_temp = 0;
-    u16 dcSpeed = 0;
-
-    initECA();
-    initECB();
-
-    samSpeedFlag = false;
-    speed1 = speed2 = 0;
-    u8 begin;
 
     while (1) {
 
         WriteFile(hADC, emFILE_ADC1, 0, 0);
         ReadFile(hADC, emFILE_ADC1, (u8*)&adc_temp, 16);
-        dcSpeed = (u16)((double)adc_temp / 4096 * 48);
 
-        if (dcSpeed < 20) {
-            dcHandle.dc1PulseWidth = 0;
-            dcHandle.dc2PulseWidth = 0;
-        }
-
-        if (samSpeedFlag) {
-            if (begin++ == 0) {
-                TIM_SetCounter(TIM1, 0);
-                TIM_SetCounter(TIM3, 0);
-            }
-            else {
-                speed1 = TIM_GetCounter(TIM1);
-                speed2 = TIM_GetCounter(TIM3);
-                begin = 0;
-            }
-            samSpeedFlag = false;
-
-            if(speed1 < dcSpeed)
-                dcHandle.dc1PulseWidth += 10;
-            else
-                dcHandle.dc1PulseWidth -= 10;
-        }
-
-
-
-
-//        dcHandle.dc1PulseWidth = dcSpeed;
-//        dcHandle.dc2PulseWidth = dcSpeed;
-
+        dcHandle.dc1PulseWidth = (u16)((double)adc_temp / 4096 * dcHandle.dcPulseMax);
         dcMotorRun(&dcHandle);
 
         if (SysKeyboard(&vkKey)) {

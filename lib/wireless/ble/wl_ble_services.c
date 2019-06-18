@@ -100,7 +100,8 @@ void ser_write_rsp(u8 pdu_type, u8 attOpcode, u16 att_hd, u8* attValue, u8 value
     ble_rx_led = true;
 
     if(att_hd == 22) {
-        memcpy(ble_tx_buf, attValue, valueLen_w);
+        bleWriteFlag = true;
+        memcpy(ble_rx_buf, attValue, valueLen_w);
         ser_write_rsp_pkt(pdu_type);
         return;
     }

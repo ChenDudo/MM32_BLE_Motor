@@ -787,10 +787,10 @@ static int UART_WriteFile(HANDLE handle, s8 hSub, u8* ptr, u16 len)
 
 	if (instance[idx].block == emTYPE_Block){
 		while (!instance[idx].txComplete) {
-			if (instance[idx].bTimeOut && (nTimeOutCnt >= instance[idx].txTimeOut)) {
-				instance[idx].txProcess = false;
-				return emRETURN_TimeOut;
-			}
+//			if (instance[idx].bTimeOut && (nTimeOutCnt >= instance[idx].txTimeOut)) {
+//				instance[idx].txProcess = false;
+//				return emRETURN_TimeOut;
+//			}
 		}
 		instance[idx].txProcess = false;
 	}

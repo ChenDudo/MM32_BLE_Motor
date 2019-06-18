@@ -44,7 +44,7 @@ void wl_ble_irq_handler()
 void wl_ble_mode()
 {
     ble_running_flag = false;
-    u8 device_name[] = "MM32 Test BLE";
+    u8 device_name[] = "MMNJ LogoWall";
 
 //    lowpower_mode = 0x02;
     cur_notifyhandle = 19;
@@ -81,14 +81,14 @@ void wl_ble_tick_task()
         ble_tx_led = false;
         vdLED |= 0x04;
         SysDisplay(&vdLED);
-        tx_led_count = SysTick_Count + 100;
+        tx_led_count = SysTick_Count + 300;
     }
 
     if (ble_rx_led) {
         ble_rx_led = false;
         vdLED |= 0x08;
         SysDisplay(&vdLED);
-        rx_led_count = SysTick_Count + 100;
+        rx_led_count = SysTick_Count + 300;
     }
 
     if (tx_led_count < SysTick_Count) {
@@ -144,6 +144,7 @@ void UsrProcCallback()
 {
     u8 i = 0;
     i++;
+
 }
 
 

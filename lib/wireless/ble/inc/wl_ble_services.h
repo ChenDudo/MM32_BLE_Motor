@@ -84,8 +84,8 @@
 #define ATT_ERR_UNSUPPORTED_GRP_TYPE                    0x10
 #define ATT_ERR_INSUFFICIENT_RESOURCES                  0x11
 
-#define UUID_TYPE_16BIT                                 0xFF                    // Bluetooth SIG UUID (16-bit). 
-#define UUID_TYPE_128BIT                                0x00                    // Vendor UUID types start at this index (128-bit). 
+#define UUID_TYPE_16BIT                                 0xFF                    // Bluetooth SIG UUID (16-bit).
+#define UUID_TYPE_128BIT                                0x00                    // Vendor UUID types start at this index (128-bit).
 
 // Assigned Values for BLE UUIDs
 #define BLE_UUID_UNKNOWN                                0x0000
@@ -193,15 +193,15 @@ typedef struct ble_uuid_128 {
 
 #define BUF_SIZE 			100
 
-GLOBAL uint8_t  ble_tx_buf[BUF_SIZE];
-GLOBAL uint8_t  ble_rx_buf[BUF_SIZE];
+GLOBAL u8  ble_tx_buf[BUF_SIZE];
+GLOBAL u8  ble_rx_buf[BUF_SIZE];
 
 GLOBAL char     ble_device_name[24];     // max len is 24 bytes
 GLOBAL u16      cur_notifyhandle;
 
 GLOBAL bool     ble_tx_led;
 GLOBAL bool     ble_rx_led;
-
+GLOBAL bool     bleWriteFlag;
 
 #undef GLOBAL
 
