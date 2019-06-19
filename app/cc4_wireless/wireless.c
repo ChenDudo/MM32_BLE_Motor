@@ -20,6 +20,20 @@
 
 #include "wl_2_4g_cfg.h"
 #include "HAL_exti.h"
+#include "hal_uart.h"
+#include "hal_gpio.h"
+#include "bsp.h"
+#include "common.h"
+
+#define SYNC_H  GPIO_SetBits(GPIOB, GPIO_Pin_8)
+#define SYNC_L  GPIO_ResetBits(GPIOB, GPIO_Pin_8)
+
+void initSyncPin()
+{
+    COMMON_EnableIpClock(emCLOCK_GPIOB);
+    SYNC_H;
+    GPIO_Mode_OUT_PP_Init(GPIOB, GPIO_Pin_8);
+}
 
 void EXTI0_1_IRQHandler()
 {
@@ -71,10 +85,6 @@ void AppTaskTick()
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-#include "hal_uart.h"
-#include "hal_gpio.h"
-#include "bsp.h"
-#include "common.h"
 void initUART(UART_TypeDef* UARTx)
 {
     UART_InitTypeDef UART_InitStructure;
@@ -125,18 +135,23 @@ int main(void)
 
     initUART(COMx);
     u16 len = 0;
+    initSyncPin();
     memset(ble_rx_buf, 0x00, sizeof(ble_rx_buf));
 
     while (1) {
 
         if (bleWriteFlag) {
+            SYNC_L;
+
             len = strlen(ble_rx_buf);
             u8* ptr = ble_rx_buf;
             while (len--) {
                 UART_SendData(COMx, (u8)*ptr++);
                 while (UART_GetFlagStatus(COMx, UART_IT_TXIEN) == RESET);
             }
+
             memset(ble_rx_buf, 0x00, sizeof(ble_rx_buf));
+            SYNC_H;
             bleWriteFlag = false;
         }
 

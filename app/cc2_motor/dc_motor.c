@@ -30,10 +30,14 @@
 #include "tb6612.h"
 
 #include "hal_tim.h"
-bool samSpeedFlag;
-u32 speed1, speed2;
-u32 samCnt = 0;
+#include "hal_uart.h"
+#include "hal_gpio.h"
+#include "bsp.h"
+#include "common.h"
 
+bool samSpeedFlag;
+u32 samCnt = 0;
+u8 uartSynReceive[100];
 
 ////////////////////////////////////////////////////////////////////////////////
 /// @brief  This function handles App SysTick Handler.
@@ -74,10 +78,20 @@ bool delay(u16 ms)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-#include "hal_uart.h"
-#include "hal_gpio.h"
-#include "bsp.h"
-#include "common.h"
+#define SYNC_H  GPIO_SetBits  (GPIOC, GPIO_Pin_15)
+#define SYNC_L  GPIO_ResetBits(GPIOC, GPIO_Pin_15)
+void initSyncPin()
+{
+    COMMON_EnableIpClock(emCLOCK_GPIOC);
+
+    GPIO_InitTypeDef 	GPIO_InitStructure;
+	GPIO_InitStructure.GPIO_Pin  = GPIO_Pin_15;
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_FLOATING;
+	GPIO_Init(GPIOC, &GPIO_InitStructure);
+
+}
+
+////////////////////////////////////////////////////////////////////////////////
 void initUART(UART_TypeDef* UARTx)
 {
     UART_InitTypeDef UART_InitStructure;
@@ -109,8 +123,10 @@ void initUART(UART_TypeDef* UARTx)
     UART_Cmd(UARTx, ENABLE);
 }
 
+
 #define COMx    UART2
 
+emDC_handle dcHandle;
 ////////////////////////////////////////////////////////////////////////////////
 int main(void)
 {
@@ -119,13 +135,13 @@ int main(void)
     emDC_handle dcHandle = {
         .dcPulseMax     = 1000,
 
-        .dc1Sta         = emDC_Run,
+        .dc1Sta         = emDC_Stop,
         .dc1Dir         = 0,
         .dc1PulseWidth  = 1000,
 
-        .dc2Sta         = emDC_Run,
+        .dc2Sta         = emDC_Stop,
         .dc2Dir         = 0,
-        .dc2PulseWidth  = 0,
+        .dc2PulseWidth  = 1000,
     };
 
     emMotor_handle motor1 = {
@@ -135,32 +151,94 @@ int main(void)
     };
 
     initMotor(motor1);
-
-    HANDLE hADC = CreateFile(emIP_ADC);
-	if (hADC == NULL)		while(1);
-
-    //--- adc ch1 --------------------------------------------------------------
-    tAPP_ADC_DCB dcb = {
-		.hSub	= emFILE_ADC1,					// EM_FILE_ADC
-		.type	= emTYPE_DMA,    				// polling, interrupt, dma
-		.mode	= emADC_Scan, 				    // Conversion mode: emADC_Imm,emADC_Scan,emADC_Continue
-		.sync	= emTYPE_ASync,      			// emTYPE_Sync, emTYPE_ASync
-		.trig 	= emTRIGGER_Software,           // Software Start & Trigger enum
-		.chs    = LEFT_SHIFT_BIT(1),            // channels: ADC_CH_n
-		.temp 	= false,            			// Temperature measurement:0(DISABLE),1(ENABLE)
-		.vRef	= false,            			// Reference voltage:0(DISABLE),1(ENABLE)
-		.cb		= NULL,   			            // adc callback
-	};
-
-    if (!OpenFile(hADC, (void*)&dcb))		while(1);
-    u32 adc_temp = 0;
+    initSyncPin();
+    initUART(COMx);
+    memset(uartSynReceive, 0x00, sizeof(uartSynReceive));
+    u8* ptr = uartSynReceive;
+    u8 entryCnt = 0;
+    u8 reclen = 0;
+    bool recFlag = false;
 
     while (1) {
 
-        WriteFile(hADC, emFILE_ADC1, 0, 0);
-        ReadFile(hADC, emFILE_ADC1, (u8*)&adc_temp, 16);
+        if (!(GPIO_ReadInputDataBit(GPIOC, GPIO_Pin_15))){
+            if (UART_GetITStatus(COMx, UART_IT_RXIEN) == SET) {
+                UART_ClearITPendingBit(COMx, UART_IT_RXIEN);
+                *ptr = COMx->RDR;
+                ptr += 1;
+                entryCnt ++;
+            }
+        }
+        else {
+            if (UART_GetITStatus(COMx, UART_IT_RXIEN) == SET) {
+                UART_ClearITPendingBit(COMx, UART_IT_RXIEN);
+                *ptr = COMx->RDR;
+                ptr += 1;
+            }
+            if (entryCnt) {
+                recFlag = true;
+                entryCnt = 0;
+            }
+        }
 
-        dcHandle.dc1PulseWidth = (u16)((double)adc_temp / 4096 * dcHandle.dcPulseMax);
+        //        if (recFlag) {
+        //            ptr = uartSynReceive;
+        //            recFlag = false;
+        //            memset(uartSynReceive, 0x00, sizeof(uartSynReceive));
+        //            recFlag = false;
+        //        }
+
+
+
+        if (recFlag) {
+            ptr = uartSynReceive;
+            switch(*ptr) {
+                case 0x01: {
+                    //(*(ptr + 1)) ? (dcHandle.dc1Sta = emDC_Run) : (dcHandle.dc1Sta = emDC_Stop);
+                    if(*(ptr + 1) == 0x01)
+                        dcHandle.dc1Sta = emDC_Run;
+                    if(*(ptr + 1) == 0x02)
+                        dcHandle.dc1Sta = emDC_Stop;
+                }
+                break;
+                case 0x02: {
+                    u16 cnt = ptr[1] << 8;
+                    cnt +=  ptr[2];
+                    dcHandle.dc1PulseWidth = cnt;
+                }
+                break;
+                case 0x03:
+                break;
+                default:
+                break;
+            }
+            memset(uartSynReceive, 0x00, sizeof(uartSynReceive));
+            recFlag = false;
+        }
+
+        //        if (recFlag) {
+        //            ptr = uartSynReceive;
+        //            if(*ptr == 0xcd) {
+        //                switch(*(ptr + 1) & 0x0F) {
+        //                    case 0x00: {
+        //                        (*(ptr + 2)) ? (dcHandle.dc1Sta = emDC_Run) : (dcHandle.dc1Sta = emDC_Stop);
+        //                    }
+        //                    break;
+        //                    case 0x01: {
+        //                        u8 len = (u8)((*(ptr + 1) & 0xF0) >> 3) - 4;
+        //                        dcHandle.dc1PulseWidth = *(ptr + len);
+        //                    }
+        //                    break;
+        //                    case 0x02:
+        //                    break;
+        //                    default:
+        //                    break;
+        //                }
+        //                memset(uartSynReceive, 0x00, sizeof(uartSynReceive));
+        //                recFlag = false;
+        //            }
+        //        }
+
         dcMotorRun(&dcHandle);
 
         if (SysKeyboard(&vkKey)) {
