@@ -250,15 +250,19 @@ int main(void)
         if (SysKeyboard(&vkKey)) {
             switch  (vkKey) {
                 case  VK_K0:
+                dcHandle.dc1Sta = emDC_Run;
                 KeyProcess_Key0();
                 break;
                 case  VK_K1:
+                dcHandle.dc1Sta = emDC_Stop;
                 KeyProcess_Key1();
                 break;
                 case  VK_K2:
+                dcHandle.dc1PulseWidth += 5;
                 KeyProcess_Key2();
                 break;
                 case  VK_K3:
+                dcHandle.dc1PulseWidth -= 5;
                 KeyProcess_Key3();
                 break;
                 default:
