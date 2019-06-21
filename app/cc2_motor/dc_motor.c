@@ -146,16 +146,17 @@ int main(void)
 {
     MCUID = SetSystemClock(emSYSTICK_On, (u32*)&AppTaskTick);
 
+    // ===== PWM output module =====
     emDC_handle dcHandle = {
-        .dcPulseMax     = 1000,
+        .dcPulseMax     = 100,
 
         .dc1Sta         = emDC_Stop,
         .dc1Dir         = 0,
-        .dc1PulseWidth  = 1000,
+        .dc1PulseWidth  = 50,
 
         .dc2Sta         = emDC_Stop,
         .dc2Dir         = 0,
-        .dc2PulseWidth  = 1000,
+        .dc2PulseWidth  = 50,
     };
 
     emMotor_handle motor1 = {
@@ -164,17 +165,42 @@ int main(void)
         .handle     = (int*)&dcHandle
     };
 
+    // ===== ADC sample module =====
+    HANDLE hADC = CreateFile(emIP_ADC);
+	if (hADC == NULL)		while(1);
+    tAPP_ADC_DCB dcb = {
+		.hSub	= emFILE_ADC1,					// EM_FILE_ADC
+		.type	= emTYPE_DMA,    				// polling, interrupt, dma
+		.mode	= emADC_Scan, 				    // Conversion mode: emADC_Imm,emADC_Scan,emADC_Continue
+		.sync	= emTYPE_ASync,      			// emTYPE_Sync, emTYPE_ASync
+		.trig 	= emTRIGGER_Software,           // Software Start & Trigger enum
+		.chs    = LEFT_SHIFT_BIT(1),            // channels: ADC_CH_n
+		.temp 	= false,            			// Temperature measurement:0(DISABLE),1(ENABLE)
+		.vRef	= false,            			// Reference voltage:0(DISABLE),1(ENABLE)
+		.cb		= NULL,   			            // adc callback
+	};
+    if (!OpenFile(hADC, (void*)&dcb))		while(1);
+
+
     initMotor(motor1);
     initSyncPin_Slave();
     initUART(COMx);
 
     memset(uartSynReceive, 0x00, sizeof(uartSynReceive));
     u8* ptr = uartSynReceive;
-    u8 entryCnt = 0;
+    u8  entryCnt = 0;
+    u16 securityPwmMax = (u16)(dcHandle.dcPulseMax * 0.8);
+    u32 adc_temp = 0;
 
     bool recFlag = false;
 
     while (1) {
+
+        if (samSpeedFlag) {
+            WriteFile(hADC, emFILE_ADC1, 0, 0);
+            ReadFile(hADC, emFILE_ADC1, (u8*)&adc_temp, 16);
+            securityPwmMax = (u16)((double)adc_temp / 4096 * 0.5 * dcHandle.dcPulseMax + 0.5 * dcHandle.dcPulseMax);;
+        }
 
         if (!readSync()){
             if (UART_GetITStatus(COMx, UART_IT_RXIEN) == SET) {
@@ -207,9 +233,7 @@ int main(void)
                 }
                 break;
                 case 0x02: {
-                    u16 cnt = ptr[1] << 8;
-                    cnt +=  ptr[2];
-                    dcHandle.dc1PulseWidth = cnt;
+                    dcHandle.dc1PulseWidth = securityPwmMax * ptr[1] / 100;
                 }
                 break;
                 case 0x03:
