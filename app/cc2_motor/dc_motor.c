@@ -80,7 +80,15 @@ bool delay(u16 ms)
 ////////////////////////////////////////////////////////////////////////////////
 #define SYNC_H  GPIO_SetBits  (GPIOC, GPIO_Pin_15)
 #define SYNC_L  GPIO_ResetBits(GPIOC, GPIO_Pin_15)
-void initSyncPin()
+void initSyncPin_Master()
+{
+    COMMON_EnableIpClock(emCLOCK_GPIOC);
+    SYNC_H;
+    GPIO_Mode_OUT_PP_Init(GPIOC, GPIO_Pin_15);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void initSyncPin_Slave()
 {
     COMMON_EnableIpClock(emCLOCK_GPIOC);
 
@@ -89,6 +97,12 @@ void initSyncPin()
 	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_FLOATING;
 	GPIO_Init(GPIOC, &GPIO_InitStructure);
 
+}
+
+////////////////////////////////////////////////////////////////////////////////
+bool readSync()
+{
+    return GPIO_ReadInputDataBit(GPIOC, GPIO_Pin_15);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -119,6 +133,7 @@ void initUART(UART_TypeDef* UARTx)
     }
 
     UART_Init(UARTx, &UART_InitStructure);
+    UART_ClearITPendingBit(UARTx, UART_IT_RXIEN);
     //UART_ITConfig(UARTx, UART_IT_RXIEN, ENABLE);
     UART_Cmd(UARTx, ENABLE);
 }
@@ -126,7 +141,6 @@ void initUART(UART_TypeDef* UARTx)
 
 #define COMx    UART2
 
-emDC_handle dcHandle;
 ////////////////////////////////////////////////////////////////////////////////
 int main(void)
 {
@@ -151,29 +165,30 @@ int main(void)
     };
 
     initMotor(motor1);
-    initSyncPin();
+    initSyncPin_Slave();
     initUART(COMx);
+
     memset(uartSynReceive, 0x00, sizeof(uartSynReceive));
     u8* ptr = uartSynReceive;
     u8 entryCnt = 0;
-    u8 reclen = 0;
+
     bool recFlag = false;
 
     while (1) {
 
-        if (!(GPIO_ReadInputDataBit(GPIOC, GPIO_Pin_15))){
+        if (!readSync()){
             if (UART_GetITStatus(COMx, UART_IT_RXIEN) == SET) {
-                UART_ClearITPendingBit(COMx, UART_IT_RXIEN);
                 *ptr = COMx->RDR;
                 ptr += 1;
                 entryCnt ++;
+                UART_ClearITPendingBit(COMx, UART_IT_RXIEN);
             }
         }
         else {
             if (UART_GetITStatus(COMx, UART_IT_RXIEN) == SET) {
-                UART_ClearITPendingBit(COMx, UART_IT_RXIEN);
                 *ptr = COMx->RDR;
                 ptr += 1;
+                UART_ClearITPendingBit(COMx, UART_IT_RXIEN);
             }
             if (entryCnt) {
                 recFlag = true;
@@ -181,20 +196,10 @@ int main(void)
             }
         }
 
-        //        if (recFlag) {
-        //            ptr = uartSynReceive;
-        //            recFlag = false;
-        //            memset(uartSynReceive, 0x00, sizeof(uartSynReceive));
-        //            recFlag = false;
-        //        }
-
-
-
         if (recFlag) {
             ptr = uartSynReceive;
             switch(*ptr) {
                 case 0x01: {
-                    //(*(ptr + 1)) ? (dcHandle.dc1Sta = emDC_Run) : (dcHandle.dc1Sta = emDC_Stop);
                     if(*(ptr + 1) == 0x01)
                         dcHandle.dc1Sta = emDC_Run;
                     if(*(ptr + 1) == 0x02)
@@ -215,29 +220,6 @@ int main(void)
             memset(uartSynReceive, 0x00, sizeof(uartSynReceive));
             recFlag = false;
         }
-
-        //        if (recFlag) {
-        //            ptr = uartSynReceive;
-        //            if(*ptr == 0xcd) {
-        //                switch(*(ptr + 1) & 0x0F) {
-        //                    case 0x00: {
-        //                        (*(ptr + 2)) ? (dcHandle.dc1Sta = emDC_Run) : (dcHandle.dc1Sta = emDC_Stop);
-        //                    }
-        //                    break;
-        //                    case 0x01: {
-        //                        u8 len = (u8)((*(ptr + 1) & 0xF0) >> 3) - 4;
-        //                        dcHandle.dc1PulseWidth = *(ptr + len);
-        //                    }
-        //                    break;
-        //                    case 0x02:
-        //                    break;
-        //                    default:
-        //                    break;
-        //                }
-        //                memset(uartSynReceive, 0x00, sizeof(uartSynReceive));
-        //                recFlag = false;
-        //            }
-        //        }
 
         dcMotorRun(&dcHandle);
 

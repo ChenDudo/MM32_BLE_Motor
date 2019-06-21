@@ -25,16 +25,35 @@
 #include "bsp.h"
 #include "common.h"
 
+////////////////////////////////////////////////////////////////////////////////
 #define SYNC_H  GPIO_SetBits(GPIOB, GPIO_Pin_8)
 #define SYNC_L  GPIO_ResetBits(GPIOB, GPIO_Pin_8)
-
-void initSyncPin()
+void initSyncPin_Master()
 {
     COMMON_EnableIpClock(emCLOCK_GPIOB);
     SYNC_H;
     GPIO_Mode_OUT_PP_Init(GPIOB, GPIO_Pin_8);
 }
 
+////////////////////////////////////////////////////////////////////////////////
+void initSyncPin_Slave()
+{
+    COMMON_EnableIpClock(emCLOCK_GPIOB);
+
+    GPIO_InitTypeDef 	GPIO_InitStructure;
+	GPIO_InitStructure.GPIO_Pin  = GPIO_Pin_8;
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_FLOATING;
+	GPIO_Init(GPIOB, &GPIO_InitStructure);
+
+}
+
+////////////////////////////////////////////////////////////////////////////////
+bool readSync()
+{
+    return GPIO_ReadInputDataBit(GPIOB, GPIO_Pin_8);
+}
+
+////////////////////////////////////////////////////////////////////////////////
 void EXTI0_1_IRQHandler()
 {
     if(EXTI_GetITStatus(EXTI_Line1)) {
@@ -134,36 +153,29 @@ int main(void)
     if (wl_mode == emWL_2_4G)   wl_2_4g_mode();
 
     initUART(COMx);
+    initSyncPin_Master();
+
     u16 len = 0;
-    initSyncPin();
     memset(ble_rx_buf, 0x00, sizeof(ble_rx_buf));
 
     while (1) {
 
         if (bleWriteFlag) {
-            SYNC_L;
+            if (readSync()) {
+                SYNC_L;
 
-            len = strlen(ble_rx_buf);
-            u8* ptr = ble_rx_buf;
-            while (len--) {
-                UART_SendData(COMx, (u8)*ptr++);
-                while (UART_GetFlagStatus(COMx, UART_IT_TXIEN) == RESET);
+                len = strlen(ble_rx_buf);
+                u8* ptr = ble_rx_buf;
+                while (len--) {
+                    UART_SendData(COMx, (u8)*ptr++);
+                    while (UART_GetFlagStatus(COMx, UART_IT_TXIEN) == RESET);
+                }
+
+                memset(ble_rx_buf, 0x00, sizeof(ble_rx_buf));
+                SYNC_H;
+                bleWriteFlag = false;
             }
-
-            memset(ble_rx_buf, 0x00, sizeof(ble_rx_buf));
-            SYNC_H;
-            bleWriteFlag = false;
         }
-
-
-
-
-
-
-
-        //        if(!WT2031_READY()) {
-        //            wt2031_rw();
-        //        }
 
 //        if (wl_mode == emWL_BLE)    wl_ble_task();
 //        if (wl_mode == emWL_2_4G)   wl_2_4g_task();
