@@ -739,7 +739,7 @@
         </option>
         <option>
           <name>IlinkIcfFile</name>
-          <state>$TOOLKIT_DIR$\config\linker\MindMotion\MM32F031x8.icf</state>
+          <state>$TOOLKIT_DIR$\config\linker\MindMotion\MM32L07xxx.icf</state>
         </option>
         <option>
           <name>IlinkIcfFileSlave</name>
@@ -1957,6 +1957,9 @@
   </configuration>
   <group>
     <name>app</name>
+    <file>
+      <name>$PROJ_DIR$\..\..\app\cc2_motor\adc_common.c</name>
+    </file>
     <file>
       <name>$PROJ_DIR$\..\..\app\cc2_motor\dc_motor.c</name>
       <excluded>

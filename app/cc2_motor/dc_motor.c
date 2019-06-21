@@ -34,9 +34,10 @@
 #include "hal_gpio.h"
 #include "bsp.h"
 #include "common.h"
-
+#include "adc_common.h"
 bool samSpeedFlag;
-u32 samCnt = 0;
+bool samTempFlag;
+u32 samSpeedCnt = 0;
 u8 uartSynReceive[100];
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -50,10 +51,11 @@ void AppTaskTick()
         tickCnt  = 0;
         tickFlag = true;
     }
-    if (samCnt++ >= 500) {
-        samCnt = 0;
+    if (samSpeedCnt++ >= 500) {
+        samSpeedCnt = 0;
         samSpeedFlag = true;
     }
+    samTempFlag = true;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -140,7 +142,44 @@ void initUART(UART_TypeDef* UARTx)
 
 
 #define COMx    UART2
+////////////////////////////////////////////////////////////////////////////////
+//#include "hal_adc.h"
+//void initTempADC(void)
+//{
+//    ADC_InitTypeDef  ADC_InitStructure;
+//
+//    COMMON_EnableIpClock(emCLOCK_ADC1);
+//
+//    /* Initialize the ADC_PRESCARE values */
+//    ADC_InitStructure.ADC_PRESCARE = ADC_PCLK2_PRESCARE_16;
+//    /* Initialize the ADC_Mode member */
+//    ADC_InitStructure.ADC_Mode = 0;
+//    /* Initialize the ADC_ContinuousConvMode member */
+//    ADC_InitStructure.ADC_ContinuousConvMode = DISABLE;
+//    /* Initialize the ADC_DataAlign member */
+//    ADC_InitStructure.ADC_DataAlign = ADC_DataAlign_Right;
+//    ADC_InitStructure.ADC_Resolution = ADC_Resolution_12b;
+//    ADC_Init(ADC1, &ADC_InitStructure);
+//
+//
+//    ADC1->CHSR &= 0xffffffe00;
+//
+//    ADC_RegularChannelConfig(ADC1, 0x0A, 0, ADC_Samctl_13_5); //ch10
+//
+//    ADC1->CFGR |= ADC_CFGR_TEN;
+//    ADC1->CHSR |= ADC_CHSR_CHT_Pos ;
+//
+//    ADC_Cmd(ADC1, ENABLE);
+//
+//}
 
+void Callback(void* ptr, u16 len)
+{
+    /* Set Conversion flag: Conversion complete */
+	ADC_Filter((u32*)ptr, 16);
+}
+u32 temp[4];
+float temperate;
 ////////////////////////////////////////////////////////////////////////////////
 int main(void)
 {
@@ -165,26 +204,38 @@ int main(void)
         .handle     = (int*)&dcHandle
     };
 
-    // ===== ADC sample module =====
-    HANDLE hADC = CreateFile(emIP_ADC);
-	if (hADC == NULL)		while(1);
-    tAPP_ADC_DCB dcb = {
-		.hSub	= emFILE_ADC1,					// EM_FILE_ADC
-		.type	= emTYPE_DMA,    				// polling, interrupt, dma
-		.mode	= emADC_Scan, 				    // Conversion mode: emADC_Imm,emADC_Scan,emADC_Continue
-		.sync	= emTYPE_ASync,      			// emTYPE_Sync, emTYPE_ASync
-		.trig 	= emTRIGGER_Software,           // Software Start & Trigger enum
-		.chs    = LEFT_SHIFT_BIT(1),            // channels: ADC_CH_n
-		.temp 	= false,            			// Temperature measurement:0(DISABLE),1(ENABLE)
-		.vRef	= false,            			// Reference voltage:0(DISABLE),1(ENABLE)
-		.cb		= NULL,   			            // adc callback
-	};
-    if (!OpenFile(hADC, (void*)&dcb))		while(1);
-
-
     initMotor(motor1);
     initSyncPin_Slave();
     initUART(COMx);
+
+    // ===== ADC sample module =====
+    HANDLE hADC = CreateFile(emIP_ADC);
+	if (hADC == NULL)		while(1);
+//    tAPP_ADC_DCB dcb = {
+//		.hSub	= emFILE_ADC1,					// EM_FILE_ADC
+//		.type	= emTYPE_DMA,    				// polling, interrupt, dma
+//		.mode	= emADC_Scan, 				    // Conversion mode: emADC_Imm,emADC_Scan,emADC_Continue
+//		.sync	= emTYPE_ASync,      			// emTYPE_Sync, emTYPE_ASync
+//		.trig 	= emTRIGGER_Software,           // Software Start & Trigger enum
+//		.chs    = LEFT_SHIFT_BIT(1),            // channels: ADC_CH_n
+//		.temp 	= false,            			// Temperature measurement:0(DISABLE),1(ENABLE)
+//		.vRef	= false,            			// Reference voltage:0(DISABLE),1(ENABLE)
+//		.cb		= NULL,   			            // adc callback
+//	};
+//    if (!OpenFile(hADC, (void*)&dcb))		while(1);
+
+    ///////////////////////
+    tAPP_ADC_DCB dcb2 = {
+		.hSub    = emFILE_ADC1,				                                    // EM_FILE_ADC
+		.type    = emTYPE_Polling,
+		.mode    = emADC_Imm,                                            		// Conversion mode: emADC_Single,emADC_SingleScan,emADC_Continue
+		.trig 	 = emTRIGGER_Software,           								// Software Start & Trigger enum
+		.temp	 = true,
+		.cb		 = (u32)&Callback  			                                    // adc callback
+	};
+	if (!OpenFile(hADC, (void*)&dcb2))		while(1);
+
+
 
     memset(uartSynReceive, 0x00, sizeof(uartSynReceive));
     u8* ptr = uartSynReceive;
@@ -196,11 +247,22 @@ int main(void)
 
     while (1) {
 
-        if (samSpeedFlag) {
-            WriteFile(hADC, emFILE_ADC1, 0, 0);
-            ReadFile(hADC, emFILE_ADC1, (u8*)&adc_temp, 16);
-            securityPwmMax = (u16)((double)adc_temp / 4096 * 0.5 * dcHandle.dcPulseMax + 0.5 * dcHandle.dcPulseMax);;
-        }
+//        if (samSpeedFlag) {
+//            WriteFile(hADC, emFILE_ADC1, 0, 0);
+//            ReadFile(hADC, emFILE_ADC1, (u8*)&adc_temp, 16);
+//            securityPwmMax = (u16)((double)adc_temp / 4096 * 0.5 * dcHandle.dcPulseMax + 0.5 * dcHandle.dcPulseMax);;
+//        }
+
+        if (samTempFlag) {
+			samTempFlag = false;
+			u16 n = ReadFile(hADC, emFILE_ADC1, (u8*)&temp, 16);	// Start ADC & Getting ADC1 Conversion Data
+			if (n > 0) ADC_Filter((u32*)&temp, n);					// IIR filter
+		}
+
+		if (transFlag) {
+			transFlag = false;
+			temperate = 27.0 + (item.AdcResult[0] - 1800) / 5.96;
+		}
 
         if (!readSync()){
             if (UART_GetITStatus(COMx, UART_IT_RXIEN) == SET) {
