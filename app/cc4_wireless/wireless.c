@@ -39,12 +39,12 @@ void initSyncPin_Master()
 void initSyncPin_Slave()
 {
     COMMON_EnableIpClock(emCLOCK_GPIOB);
-
+    
     GPIO_InitTypeDef 	GPIO_InitStructure;
 	GPIO_InitStructure.GPIO_Pin  = GPIO_Pin_8;
 	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_FLOATING;
 	GPIO_Init(GPIOB, &GPIO_InitStructure);
-
+    
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -60,7 +60,7 @@ void EXTI0_1_IRQHandler()
         EXTI_ClearITPendingBit(EXTI_Line1);
         if (wl_mode == emWL_BLE)
             wl_ble_irq_handler();
-
+        
         if (wl_mode == emWL_2_4G)
             wl_2_4g_irq_handler();
     }
@@ -77,16 +77,16 @@ void AppTaskTick()
         tickCnt  = 0;
         tickFlag = true;
 	}
-
+    
     if (wl_mode == emWL_BLE)
         wl_ble_tick_task();
     else if (wl_mode == emWL_2_4G)
         wl_2_4g_tick_task();
-
+    
     if(SysKeyboard(&vkKey) && (vkKey == VK_K1)) {
         wl_tx_flag = true;
     }
-
+    
     if (wl_mode == emWL_2_4G && !(vdLED & 0x01)) {
         vdLED |= 0x01;
         vdLED &=~ 0x02;
@@ -107,29 +107,29 @@ void AppTaskTick()
 void initUART(UART_TypeDef* UARTx)
 {
     UART_InitTypeDef UART_InitStructure;
-
+    
     UART_InitStructure.BaudRate = 115200;
     UART_InitStructure.WordLength = UART_WordLength_8b;
     UART_InitStructure.StopBits = UART_StopBits_1;
     UART_InitStructure.Parity = UART_Parity_No;
     UART_InitStructure.HWFlowControl = UART_HWFlowControl_RTS_CTS;
     UART_InitStructure.Mode = UART_Mode_Rx | UART_Mode_Tx;
-
+    
     if (UARTx == UART1) {
         COMMON_EnableIpClock(emCLOCK_UART1);
         COMMON_EnableIpClock(emCLOCK_GPIOB);
-
+        
         GPIO_Mode_AF_PP_20MHz_Init(GPIOB, GPIO_Pin_6, EXTI_MAPR_UART1, 	GPIO_AF_0);
         GPIO_Mode_IPU_Init		  (GPIOB, GPIO_Pin_7, EXTI_MAPR_UART1, 	GPIO_AF_0);
     }
     if (UARTx == UART2) {
         COMMON_EnableIpClock(emCLOCK_UART2);
         COMMON_EnableIpClock(emCLOCK_GPIOA);
-
+        
         GPIO_Mode_AF_PP_20MHz_Init(GPIOA, GPIO_Pin_2, NO_REMAP, 		GPIO_AF_1);
         GPIO_Mode_IPU_Init		  (GPIOA, GPIO_Pin_3, NO_REMAP, 		GPIO_AF_1);
     }
-
+    
     UART_Init(UARTx, &UART_InitStructure);
     //UART_ITConfig(UARTx, UART_IT_RXIEN, ENABLE);
     UART_Cmd(UARTx, ENABLE);
@@ -146,39 +146,41 @@ int main(void)
 {
 	MCUID = SetSystemClock(emSYSTICK_On, (u32*)&AppTaskTick);
     wl_mode = emWL_BLE;
-
+    
     //wt2031_init();
-
+    
     if (wl_mode == emWL_BLE)    wl_ble_mode();
     if (wl_mode == emWL_2_4G)   wl_2_4g_mode();
-
+    
     initUART(COMx);
     initSyncPin_Master();
-
+    
     u16 len = 0;
     memset(ble_rx_buf, 0x00, sizeof(ble_rx_buf));
-
+    
     while (1) {
-
+        
         if (bleWriteFlag) {
             if (readSync()) {
                 SYNC_L;
-
+                
                 len = strlen(ble_rx_buf);
+                UART_SendData(COMx, (u16)len);
+                while (UART_GetFlagStatus(COMx, UART_IT_TXIEN) == RESET);
                 u8* ptr = ble_rx_buf;
                 while (len--) {
                     UART_SendData(COMx, (u8)*ptr++);
                     while (UART_GetFlagStatus(COMx, UART_IT_TXIEN) == RESET);
                 }
-
                 memset(ble_rx_buf, 0x00, sizeof(ble_rx_buf));
+                
                 SYNC_H;
                 bleWriteFlag = false;
             }
         }
-
-//        if (wl_mode == emWL_BLE)    wl_ble_task();
-//        if (wl_mode == emWL_2_4G)   wl_2_4g_task();
+        
+        //        if (wl_mode == emWL_BLE)    wl_ble_task();
+        //        if (wl_mode == emWL_2_4G)   wl_2_4g_task();
     }
 }
 

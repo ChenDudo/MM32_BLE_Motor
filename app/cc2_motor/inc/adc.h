@@ -21,6 +21,8 @@
 #define GLOBAL extern
 #endif
 
+GLOBAL u16      securMax;
+GLOBAL float    tepMotor;
 
 #undef GLOBAL
 /// @}

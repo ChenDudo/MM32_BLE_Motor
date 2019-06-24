@@ -23,6 +23,7 @@
 #define GLOBAL extern
 #endif
 
+GLOBAL bool syncFlag;
 
 #undef GLOBAL
 /// @}

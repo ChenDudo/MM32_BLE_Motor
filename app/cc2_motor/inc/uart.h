@@ -11,6 +11,7 @@
 /// @brief MOTOR example modules
 /// @{
 
+#define COMx    UART2
 
 ////////////////////////////////////////////////////////////////////////////////
 /// @defgroup MOTOR_Exported_Variables
@@ -21,8 +22,14 @@
 #define GLOBAL extern
 #endif
 
+GLOBAL bool recFlag;
+GLOBAL bool isFirstRx;
+
 GLOBAL u8 uartTxBuf[20];
 GLOBAL u8 uartRxBuf[20];
+
+GLOBAL u8* ptrUart;
+GLOBAL u8  bufLen;
 
 #undef GLOBAL
 /// @}
@@ -31,7 +38,8 @@ GLOBAL u8 uartRxBuf[20];
 /// @defgroup MOTOR_Exported_Functions
 /// @{
 
-void uartTick();
+void decodeTick();
+void encodeTick();
 void initUART(UART_TypeDef* UARTx);
 
 

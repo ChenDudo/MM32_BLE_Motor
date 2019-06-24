@@ -51,7 +51,7 @@ void init6612Pin()
 {
     COMMON_EnableIpClock(emCLOCK_GPIOA);
     COMMON_EnableIpClock(emCLOCK_GPIOB);
-
+    
     GPIO_ResetBits(AIN1_Port, AIN1_Pin);      // MAN   =>   AIN1
     GPIO_ResetBits(AIN2_Port, AIN2_Pin);      // MAP   =>   AIN2
     GPIO_ResetBits(BIN1_Port, BIN1_Pin);      // MBN   =>   BIN2
@@ -59,7 +59,7 @@ void init6612Pin()
     GPIO_ResetBits(PWMA_Port, PWMA_Pin);      // PWMA
     GPIO_ResetBits(PWMB_Port, PWMB_Pin);      // PWMB
     GPIO_ResetBits(STBY_Port, STBY_Pin);      // Standby Mode: 0 active
-
+    
     GPIO_Mode_OUT_PP_Init(AIN1_Port, AIN1_Pin);   // MAN   =>   AIN1
     GPIO_Mode_OUT_PP_Init(AIN2_Port, AIN2_Pin);   // MAP   =>   AIN2
     GPIO_Mode_OUT_PP_Init(BIN1_Port, BIN1_Pin);   // MBN   =>   BIN2
@@ -72,7 +72,7 @@ void initPWMA(u16 psc, u16 period, u16 pulse)
 {
     COMMON_EnableIpClock(emCLOCK_TIM17);
     GPIO_Mode_AF_PP_20MHz_Init(PWMA_Port, PWMA_Pin, NO_REMAP, GPIO_AF_2);
-
+    
     TIM_TimeBaseInitTypeDef pBase = {
         .TIM_Prescaler         = psc,                   // 0 ~ 0xFFFF
         .TIM_Period            = period,                // 0 ~ 0xFFFF(some TIMx support 0xFFFFFFF)
@@ -81,7 +81,7 @@ void initPWMA(u16 psc, u16 period, u16 pulse)
         .TIM_RepetitionCounter = 0
     };
     TIM_TimeBaseInit(TIM17, &pBase);
-
+    
     TIM_OCInitTypeDef pOC = {
         .TIM_Pulse        = pulse,               // 0 ~ 0xFFFF(some TIMx support 0xFFFFFFF)
         .TIM_OCMode       = TIM_OCMode_PWM1,
@@ -93,13 +93,13 @@ void initPWMA(u16 psc, u16 period, u16 pulse)
         .TIM_OCNIdleState = TIM_OCNIdleState_Reset
     };
     TIM_OC1Init(TIM17, &pOC);
-
+    
     TIM_ARRPreloadConfig(TIM17, ENABLE);
     TIM_OC1PreloadConfig(TIM17, TIM_OCPreload_Enable);
-
+    
     //COMMON_NVIC_Configure(TIM17_IRQn,  1,  1);
     //TIM_ITConfig(TIM17, TIM_IT_CC1, ENABLE);
-
+    
     TIM_CtrlPWMOutputs(TIM17, ENABLE);
     TIM_Cmd(TIM17, ENABLE);
 }
@@ -109,7 +109,7 @@ void initPWMB(u16 psc, u16 period, u16 pulse)
 {
     COMMON_EnableIpClock(emCLOCK_TIM2);
     GPIO_Mode_AF_PP_20MHz_Init(PWMB_Port, PWMB_Pin, NO_REMAP, GPIO_AF_2);
-
+    
     TIM_TimeBaseInitTypeDef pBase = {
         .TIM_Prescaler         = psc,                   // 0 ~ 0xFFFF
         .TIM_Period            = period,                // 0 ~ 0xFFFF(some TIMx support 0xFFFFFFF)
@@ -118,7 +118,7 @@ void initPWMB(u16 psc, u16 period, u16 pulse)
         .TIM_RepetitionCounter = 0
     };
     TIM_TimeBaseInit(TIM2, &pBase);
-
+    
     TIM_OCInitTypeDef pOC = {
         .TIM_Pulse        = pulse,               // 0 ~ 0xFFFF(some TIMx support 0xFFFFFFF)
         .TIM_OCMode       = TIM_OCMode_PWM1,
@@ -130,13 +130,13 @@ void initPWMB(u16 psc, u16 period, u16 pulse)
         .TIM_OCNIdleState = TIM_OCNIdleState_Reset
     };
     TIM_OC2Init(TIM2, &pOC);
-
+    
     TIM_ARRPreloadConfig(TIM2, ENABLE);
     TIM_OC2PreloadConfig(TIM2, TIM_OCPreload_Enable);
-
+    
     //COMMON_NVIC_Configure(TIM2_IRQn,  1,  1);
     //TIM_ITConfig(TIM2, TIM_IT_CC1, ENABLE);
-
+    
     TIM_CtrlPWMOutputs(TIM2, ENABLE);
     TIM_Cmd(TIM2, ENABLE);
 }
@@ -226,18 +226,18 @@ void initStepFreq(u16 timPsc, u32 stepFreq)
 {
     u32 timclk;
     RCC_ClocksTypeDef rcc_clocks;
-
+    
     COMMON_EnableIpClock(emCLOCK_TIM14);
-
+    
     RCC_GetClocksFreq(&rcc_clocks);
     if (rcc_clocks.PCLK1_Frequency == rcc_clocks.HCLK_Frequency)
         timclk = rcc_clocks.PCLK1_Frequency;
     else
         timclk = rcc_clocks.PCLK1_Frequency * 2 / rcc_clocks.HCLK_Frequency;
-
+    
     tim14CntFreq = timclk / (timPsc + 1);
     u16 arr = (u16)(tim14CntFreq / stepFreq - 1);
-
+    
     TIM_TimeBaseInitTypeDef pBase = {
         .TIM_Prescaler         = timPsc,                // 0 ~ 0xFFFF, counter_Freq = APBx_Freq / (timPsc + 1)
         .TIM_Period            = arr,                   // 0 ~ 0xFFFF(some TIMx support 0xFFFFFFF)
@@ -246,13 +246,13 @@ void initStepFreq(u16 timPsc, u32 stepFreq)
         .TIM_RepetitionCounter = 0
     };
     TIM_TimeBaseInit(TIM14, &pBase);
-
+    
     TIM_ARRPreloadConfig(TIM14, ENABLE);
-
+    
     COMMON_NVIC_Configure(TIM14_IRQn,  1,  1);
     TIM_ClearITPendingBit(TIM14, TIM_IT_Update);
     TIM_ITConfig(TIM14, TIM_IT_Update, ENABLE);
-
+    
     TIM_Cmd(TIM14, ENABLE);
 }
 
@@ -315,11 +315,11 @@ void writeOutBBrake()
 float S_curve(u32 len, float fstart, float fstop, u8 flexible, u16 index)
 {
     if(index > len) index = len;
-
+    
     float num = len / 2;
     float melo = flexible * (index - num) / num;
     float deno = 1.0 / (1 + exp(-melo));
-
+    
     return (fstart - (fstart - fstop) * deno);
 }
 
@@ -390,7 +390,7 @@ void dcMotorRun(emDC_handle* dc)
         motorStandby(true);
     else {
         motorStandby(false);
-
+        
         switch (dc->dc1Sta) {
             case emDC_Run:
             writeOutADir(dc->dc1Dir);
@@ -443,7 +443,7 @@ void initECA()
 {
     COMMON_EnableIpClock(emCLOCK_TIM3);
     GPIO_Mode_IPU_Init(ECA1_Port, ECA1_Pin, NO_REMAP, GPIO_AF_1);
-
+    
     TIM_TimeBaseInitTypeDef pBase = {
         .TIM_Prescaler         = 0,
         .TIM_Period            = 0xFFFF,
@@ -452,15 +452,15 @@ void initECA()
         .TIM_RepetitionCounter = 0
     };
     TIM_TimeBaseInit(TIM3, &pBase);
-
+    
     TIM_TIxExternalClockConfig(TIM3, TIM_TIxExternalCLK1Source_TI1, TIM_ICPolarity_Rising, 0);
     //TIM_EncoderInterfaceConfig(TIM3, TIM_EncoderMode_TI1, TIM_ICPolarity_Rising, TIM_ICPolarity_Rising);
-
+    
     TIM_ARRPreloadConfig(TIM3, ENABLE);
-
+    
     //COMMON_NVIC_Configure(TIM3_IRQn,  1,  1);
     //TIM_ITConfig(TIM3, TIM_IT_Update, ENABLE);
-
+    
     TIM_CtrlPWMOutputs(TIM3, ENABLE);
     TIM_Cmd(TIM3, ENABLE);
 }
@@ -471,7 +471,7 @@ void initECB()
 {
     COMMON_EnableIpClock(emCLOCK_TIM1);
     GPIO_Mode_IPU_Init(ECB1_Port, ECB1_Pin, NO_REMAP, GPIO_AF_2);
-
+    
     TIM_TimeBaseInitTypeDef pBase = {
         .TIM_Prescaler         = 0,
         .TIM_Period            = 0xFFFF,
@@ -480,15 +480,15 @@ void initECB()
         .TIM_RepetitionCounter = 0
     };
     TIM_TimeBaseInit(TIM1, &pBase);
-
+    
     //TIM_EncoderInterfaceConfig(TIM1, TIM_EncoderMode_TI1, TIM_ICPolarity_Rising, TIM_ICPolarity_Rising);
     TIM_TIxExternalClockConfig(TIM1, TIM_TIxExternalCLK1Source_TI1, TIM_ICPolarity_Rising, 0);
-
+    
     TIM_ARRPreloadConfig(TIM1, ENABLE);
-
+    
     //COMMON_NVIC_Configure(TIM1_BRK_UP_TRG_COM_IRQn,  1,  1);
     //TIM_ITConfig(TIM1, TIM_IT_Update, ENABLE);
-
+    
     TIM_CtrlPWMOutputs(TIM1, ENABLE);
     TIM_Cmd(TIM1, ENABLE);
 }

@@ -19,7 +19,11 @@
 void syncTick()
 {
     if (!readSync()){
-
+        syncFlag = true;
+    }
+    if (syncFlag){
+        
+        
     }
 }
 
@@ -35,12 +39,12 @@ void initSyncPin_Master()
 void initSyncPin_Slave()
 {
     COMMON_EnableIpClock(emCLOCK_GPIOC);
-
+    
     GPIO_InitTypeDef 	GPIO_InitStructure;
 	GPIO_InitStructure.GPIO_Pin  = GPIO_Pin_15;
 	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_FLOATING;
 	GPIO_Init(GPIOC, &GPIO_InitStructure);
-
+    
 }
 
 ////////////////////////////////////////////////////////////////////////////////

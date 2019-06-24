@@ -36,34 +36,23 @@
 ////////////////////////////////////////////////////////////////////////////////
 void motorTick()
 {
-    dcMotorRun(&dcHandle);
+    dcMotorRun(dcHandle);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 void initDCmotor(void)
 {
-    emDC_handle dcHandle = {
-        .dcPulseMax     = 100,
-
-        .dc1Sta         = emDC_Stop,
-        .dc1Dir         = 0,
-        .dc1PulseWidth  = 50,
-
-        .dc2Sta         = emDC_Stop,
-        .dc2Dir         = 0,
-        .dc2PulseWidth  = 50,
-    };
-
     emMotor_handle motor1 = {
         .motorType  = emMotor_DC,
         .motorSta   = emMotor_Standby,
         .handle     = (int*)&dcHandle
     };
-
+    
     initMotor(motor1);
-
-    dcMotorRun(&dcHandle);
+    
+    dcMotorRun(dcHandle);
 }
+
 
 /// @}
 

@@ -43,28 +43,44 @@ bool ledFlag;
 ////////////////////////////////////////////////////////////////////////////////
 void AppTaskTick()
 {
-    if (ledCnt++ >= 500) {
+    if (ledCnt++ >= 499) {
         ledCnt  = 0;
         ledFlag = true;
     }
     adcTick();
-    uartTick();
     syncTick();
     motorTick();
-
+    decodeTick();
+    encodeTick();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 void initPara()
 {
-    ledCnt = 0;
-    ledFlag = false;
+    ledFlag     = false;
+    syncFlag    = false;
+    recFlag     = false;
+    isFirstRx   = true;
+    
+    ledCnt      = 0;
+    bufLen      = 0;
+    
+    dcHandle->dcPulseMax     = 100;
+    dcHandle->dc1Sta         = emDC_Stop;
+    dcHandle->dc1Dir         = 0;
+    dcHandle->dc1PulseWidth  = 0;
+    dcHandle->dc2Sta         = emDC_Stop;
+    dcHandle->dc2Dir         = 0;
+    dcHandle->dc2PulseWidth  = 0;
+    
+    securMax = (u16)(dcHandle->dcPulseMax * 0.8);
+    
     memset(uartTxBuf, 0x00, sizeof(uartTxBuf));
     memset(uartRxBuf, 0x00, sizeof(uartRxBuf));
-
+    
 }
 
-#define COMx    UART2
+
 ////////////////////////////////////////////////////////////////////////////////
 void initPeripheral()
 {
@@ -72,42 +88,45 @@ void initPeripheral()
     initADC();
     initUART(COMx);
     initSyncPin_Slave();
-
+    
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 int main(void)
 {
     MCUID = SetSystemClock(emSYSTICK_On, (u32*)&AppTaskTick);
-
+    
     initPara();
     initPeripheral();
-
+    
     while (1) {
-
+        //----------- user code -----------
+        
+        
+        
+        //----------- key && led ----------
         if (SysKeyboard(&vkKey)) {
             switch  (vkKey) {
                 case  VK_K0:
-                dcHandle.dc1Sta = emDC_Run;
+                dcHandle->dc1Sta = emDC_Run;
                 KeyProcess_Key0();
                 break;
                 case  VK_K1:
-                dcHandle.dc1Sta = emDC_Stop;
+                dcHandle->dc1Sta = emDC_Stop;
                 KeyProcess_Key1();
                 break;
                 case  VK_K2:
-                dcHandle.dc1PulseWidth += 5;
+                dcHandle->dc1PulseWidth += 5;
                 KeyProcess_Key2();
                 break;
                 case  VK_K3:
-                dcHandle.dc1PulseWidth -= 5;
+                dcHandle->dc1PulseWidth -= 5;
                 KeyProcess_Key3();
                 break;
                 default:
                 break;
             }
         }
-
         if (ledFlag) {
             (vdLED & 0x02) ? (vdLED &= ~0x02) : (vdLED |= 0x02); // toggle LD3
             ledFlag = false;
