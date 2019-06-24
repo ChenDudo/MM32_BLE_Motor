@@ -139,7 +139,7 @@ void initUART(UART_TypeDef* UARTx)
 }
 
 
-#define COMx    UART1
+#define COMx    UART2
 
 ////////////////////////////////////////////////////////////////////////////////
 int main(void)
