@@ -1,6 +1,6 @@
 // Define to prevent recursive inclusion  --------------------------------------
-#ifndef __MOTOR_H
-#define __MOTOR_H
+#ifndef __SYNC_H
+#define __SYNC_H
 
 ////////////////////////////////////////////////////////////////////////////////
 /// @addtogroup MM32_Example_Layer
@@ -11,15 +11,18 @@
 /// @brief MOTOR example modules
 /// @{
 
+#define SYNC_H  GPIO_SetBits  (GPIOC, GPIO_Pin_15)
+#define SYNC_L  GPIO_ResetBits(GPIOC, GPIO_Pin_15)
 
 ////////////////////////////////////////////////////////////////////////////////
 /// @defgroup MOTOR_Exported_Variables
 /// @{
-#ifdef _MOTOR_C_
+#ifdef _SYNC_C_
 #define GLOBAL
 #else
 #define GLOBAL extern
 #endif
+
 
 #undef GLOBAL
 /// @}
@@ -28,10 +31,15 @@
 /// @defgroup MOTOR_Exported_Functions
 /// @{
 
-void motorTick();
-void initDCmotor(void);
+////////////////////////////////////////////////////////////////////////////////
+void syncTick();
+void initSyncPin_Master();
+void initSyncPin_Slave();
+bool readSync();
+
 
 /// @}
+
 
 /// @}
 

@@ -121,6 +121,7 @@ GLOBAL u32 tim14CntFreq;
 #endif
 
 GLOBAL bool stepRunFlag;
+GLOBAL emDC_handle dcHandle;
 
 #undef GLOBAL
 

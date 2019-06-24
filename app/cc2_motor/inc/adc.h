@@ -1,6 +1,6 @@
 // Define to prevent recursive inclusion  --------------------------------------
-#ifndef __MOTOR_H
-#define __MOTOR_H
+#ifndef __ADC_H
+#define __ADC_H
 
 ////////////////////////////////////////////////////////////////////////////////
 /// @addtogroup MM32_Example_Layer
@@ -15,11 +15,12 @@
 ////////////////////////////////////////////////////////////////////////////////
 /// @defgroup MOTOR_Exported_Variables
 /// @{
-#ifdef _MOTOR_C_
+#ifdef _ADC_C_
 #define GLOBAL
 #else
 #define GLOBAL extern
 #endif
+
 
 #undef GLOBAL
 /// @}
@@ -28,10 +29,12 @@
 /// @defgroup MOTOR_Exported_Functions
 /// @{
 
-void motorTick();
-void initDCmotor(void);
+void adcTick();
+void initADC();
+
 
 /// @}
+
 
 /// @}
 

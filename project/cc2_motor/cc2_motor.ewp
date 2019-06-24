@@ -739,7 +739,7 @@
         </option>
         <option>
           <name>IlinkIcfFile</name>
-          <state>$TOOLKIT_DIR$\config\linker\MindMotion\MM32F031x8.icf</state>
+          <state>$TOOLKIT_DIR$\config\linker\MindMotion\MM32L07xxx.icf</state>
         </option>
         <option>
           <name>IlinkIcfFileSlave</name>
@@ -1958,10 +1958,16 @@
   <group>
     <name>app</name>
     <file>
+      <name>$PROJ_DIR$\..\..\app\cc2_motor\adc.c</name>
+    </file>
+    <file>
       <name>$PROJ_DIR$\..\..\app\cc2_motor\dc_motor.c</name>
       <excluded>
         <configuration>Step_motor</configuration>
       </excluded>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\app\cc2_motor\main.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\app\cc2_motor\step_motor.c</name>
@@ -1970,7 +1976,13 @@
       </excluded>
     </file>
     <file>
+      <name>$PROJ_DIR$\..\..\app\cc2_motor\sync.c</name>
+    </file>
+    <file>
       <name>$PROJ_DIR$\..\..\app\cc2_motor\tb6612.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\app\cc2_motor\uart.c</name>
     </file>
   </group>
   <group>
