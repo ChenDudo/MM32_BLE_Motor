@@ -47,31 +47,33 @@
 fpCreateFile createFileInterface[emIP_COUNT] = {
     KEYBOARD_CreateFile,            // 0
     DISPLAY_CreateFile,             // 1
-    ADC_CreateFile,                 // 2
-    AES_CreateFile,                 // 3
-    BKP_CreateFile,                 // 4
-//  COMP_CreateFile,                // 
-    CRC_CreateFile,                 // 5
-//  CRS_CreateFile,                 // 
-    DAC_CreateFile,                 // 6
-//  DIV_CreateFile,                 // 
-    DMA_CreateFile,                 // 7
-    EXTI_CreateFile,                // 8
-    GPIO_CreateFile,                // 9
-    I2C_CreateFile,                 // 10
-    IWDG_CreateFile,                // 11
-//  OPAMP_CreateFile,               // 
-    POWER_CreateFile,               // 12
-    RCC_CreateFile,                 // 13
-    RTC_CreateFile,                 // 14
-    SPI_CreateFile,                 // 15
-//  SQRT_CreateFile,                // 
-    TIM_CreateFile,                 // 16
-    UART_CreateFile,                // 17
-    WWDG_CreateFile,                // 18
-    EEPROM_CreateFile,              // 19
-    PROTECT_CreateFile              // 20
+    ADC_CreateFile                  // 2
+//  AES_CreateFile,                 //
+//  BKP_CreateFile,                 //
+//  CAN_CreateFile,                 //
+//  COMP_CreateFile,                //
+//  CRC_CreateFile,                 //
+//  CRS_CreateFile,                 //
+//  DAC_CreateFile,                 //
+//  DIV_CreateFile,                 //
+//  DMA_CreateFile,                 //
+//  EXTI_CreateFile,                //
+//  GPIO_CreateFile,                //
+//  I2C_CreateFile,                 //
+//  IWDG_CreateFile,                //
+//  OPAMP_CreateFile,               //
+//  POWER_CreateFile,               //
+//  RCC_CreateFile,                 //
+//  RTC_CreateFile,                 //
+//  SPI_CreateFile,                 //
+//  SQRT_CreateFile,                //
+//  TIM_CreateFile,                 //
+//  UART_CreateFile,                //
+//  WWDG_CreateFile,                //
+//  EEPROM_CreateFile,              //
+//  PROTECT_CreateFile,             //
 };
+
 
 HANDLE createFileList[emIP_COUNT];
 

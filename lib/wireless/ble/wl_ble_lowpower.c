@@ -31,57 +31,43 @@
 // -----------------------------------------------------------------------------
 // ---- SYSTEM CLOCK FOR LOWPOWER ----------------------------------------------
 // -----------------------------------------------------------------------------
-void SetSystemClock_HSI(uint8_t PLL)
-{  
-	unsigned char temp=0;   
-	
-	RCC->CR|=RCC_CR_HSION;  
+void SetSystemClock_HSI()
+{
+//	unsigned char temp=0;
+//
+	RCC->CR|=RCC_CR_HSION;
 	while(!(RCC->CR&RCC_CR_HSIRDY));
 	RCC->CFGR=RCC_CFGR_PPRE1_DIV2; //APB1=DIV2;APB2=DIV1;AHB=DIV1;
-	
-	RCC->CFGR&=~RCC_CFGR_PLLSRC;	  //PLLSRC ON 
-	
-	RCC->CR &=~(RCC_CR_PLLON);		//clear PLL//	RCC->CR &=~(7<<20);		//clear PLL
-	
-	RCC->CR &=~(0x1f<<26);	
-	RCC->CR|=(PLL - 1) << 26;   //setting PLL value 2~16
-	
-	FLASH->ACR=FLASH_ACR_LATENCY_1|FLASH_ACR_PRFTBE;	  //FLASH 2 delay clk cycles
-	
-	RCC->CR|=RCC_CR_PLLON;  //PLLON
-	while(!(RCC->CR&RCC_CR_PLLRDY));//waiting for PLL locked
-	RCC->CFGR&=~RCC_CFGR_SW;
-	RCC->CFGR|=RCC_CFGR_SW_PLL;//PLL to be the sys clock
-	while(temp!=0x02)     //waiting PLL become the sys clock
-	{    
-		temp=RCC->CFGR>>2;
-		temp&=0x03;
-	} 
+
+    FLASH->ACR=FLASH_ACR_LATENCY_1|FLASH_ACR_PRFTBE;	  //FLASH 2 delay clk cycles
+
+	RCC->CFGR &=~ RCC_CFGR_SW;
+	RCC->CFGR |=  RCC_CFGR_SW_HSI;//PLL to be the sys clock
+}
+
+void SetSystemClock_HSI_6d()
+{
+//	unsigned char temp=0;
+//
+	RCC->CFGR &=~ RCC_CFGR_SW;
+	RCC->CFGR |=  RCC_CFGR_SW_HSI_DIV6;//PLL to be the sys clock
 }
 
 void SystemClock_Init(void)
 {
-	SetSystemClock_HSI(4);//HSI:12*4=48M
-	
-	RCC_SYSCLKConfig(RCC_PLL);//selecting PLL clock as sys clock
-	while (RCC_GetSYSCLKSource() != 0x08)
-	{}
+    SetSystemClock_HSI();
 }
 
 void SysClk48to8(void)
 {
-	RCC_SYSCLKConfig(RCC_HSI);//selecting PLL clock as sys clock
-	
-	while (RCC_GetSYSCLKSource() != 0x0);
-	
-	RCC->CR &=~(RCC_CR_PLLON);		//clear PLL
-	SysTick_Config(8000);
+//    SetSystemClock_HSI_6d();
+//	SysTick_Config(8000);
 }
 
 void SysClk8to48(void)
 {
-	SystemClock_Init();
-	SysTick_Config(48000);
+//    SetSystemClock_HSI();
+//	SysTick_Config(48000);
 }
 
 // -----------------------------------------------------------------------------
@@ -96,12 +82,12 @@ void McuGotoSleepAndWakeup(void) // auto goto sleep AND wakeup, porting api
 //		} else { //stop
 //			SysClk48to8();
 //			SCB->SCR |= 0x4;
-//			
+//
 //			__WFI();
-//			
+//
 //			RCC->CR|=RCC_CR_HSION;
 //			SysClk8to48();
-//			
+//
 //			GPIO_ResetBits(GPIOB, GPIO_Pin_7);
 //		}
 //	}
@@ -111,14 +97,14 @@ void DisableEnvINT(void)
 {
 	//to disable interrupt
 	__ASM volatile("cpsid i");
-	
+
 	interrupt_diable_cnt ++;
 }
 
 void EnableEnvINT(void)
 {
 	//to enable/recover interrupt
-	interrupt_diable_cnt --;    
+	interrupt_diable_cnt --;
 	if(interrupt_diable_cnt <= 0) //protection purpose
 	{
 		interrupt_diable_cnt = 0; //reset
