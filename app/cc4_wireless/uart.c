@@ -12,70 +12,42 @@
 #include "hal_gpio.h"
 
 #include "sync.h"
-#include "tb6612.h"
-#include "adc.h"
+#include "wl_ble_services.h"
 
 ////////////////////////////////////////////////////////////////////////////////
 /// @brief  This function handles App SysTick Handler.
 /// @param  None.
 /// @retval None.
 ////////////////////////////////////////////////////////////////////////////////
-void decodeTick()
+void writeDataTick()
 {
-    if (recFlag) {
+    if (bleWriteFlag) {
+        //if (readSync()) {
+        //SYNC_L;
         
-        u8 *ptr = uartRxBuf;
-        switch(*ptr) {
-            case 0x01: {
-                if(*(ptr + 1) == 0x01)
-                    dcHandle.dc1Sta = emDC_Run;
-                if(*(ptr + 1) == 0x02)
-                    dcHandle.dc1Sta = emDC_Stop;
-            }
-            break;
-            case 0x02: {
-                dcHandle.dc1PulseWidth = securMax * ptr[1] / 100;
-            }
-            break;
-            case 0x03:
-            break;
-            default:
-            break;
+        u16 len = strlen((char*)ble_rx_buf);
+        UART_SendData(COMx, (u16)len);
+        while (UART_GetFlagStatus(COMx, UART_IT_TXIEN) == RESET);
+        u8* ptr = ble_rx_buf;
+        while (len--) {
+            UART_SendData(COMx, (u8)*ptr++);
+            while (UART_GetFlagStatus(COMx, UART_IT_TXIEN) == RESET);
         }
+        memset(ble_rx_buf, 0x00, sizeof(ble_rx_buf));
         
-        memset(uartRxBuf, 0x00, sizeof(uartRxBuf));
-        recFlag = false;
+        //SYNC_H;
+        bleWriteFlag = false;
+        //}
     }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void encodeTick()
+void readDataTick()
 {
-    if (adcSendTick ++ > 10000) {
-        adcSendTick = 0;
-        if (adcTempFlag) {
-            uartTxBuf[0] = 0x03;            //CMD 0x03: ADCTemp
-            uartTxBuf[1] = (u8)adcTemp;
-            uartTxBuf[2] = (u8)(((float)adcTemp - (u8)adcTemp) * 100);
-            txSendFlag = true;
-            adcTempFlag = false;
-        }
-        
-        if (txSendFlag) {
-            u16 len = strlen((char*)uartTxBuf);
-            UART_SendData(COMx, (u16)len);
-            while (UART_GetFlagStatus(COMx, UART_IT_TXIEN) == RESET);
-            
-            u8* ptr = uartTxBuf;
-            while (len--) {
-                UART_SendData(COMx, (u8)*ptr++);
-                while (UART_GetFlagStatus(COMx, UART_IT_TXIEN) == RESET);
-            }
-            
-            memset(uartTxBuf, 0x00, sizeof(uartTxBuf));
-            txSendFlag  = false;
-        }
-    }
+//    if (recFlag) {
+//        
+//        recFlag = false;
+//    }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -113,9 +85,8 @@ void initUART(UART_TypeDef* UARTx)
     
     UART_Init(UARTx, &UART_InitStructure);
     UART_ClearITPendingBit(UARTx, UART_IT_RXIEN);
-    UART_ITConfig(UARTx, UART_IT_RXIEN, ENABLE);
+    //UART_ITConfig(UARTx, UART_IT_RXIEN, ENABLE);
     UART_Cmd(UARTx, ENABLE);
-    
 }
 
 

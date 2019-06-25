@@ -1,6 +1,6 @@
 // Define to prevent recursive inclusion  --------------------------------------
-#ifndef __UART_H
-#define __UART_H
+#ifndef __SYNC_H
+#define __SYNC_H
 
 ////////////////////////////////////////////////////////////////////////////////
 /// @addtogroup MM32_Example_Layer
@@ -11,30 +11,19 @@
 /// @brief MOTOR example modules
 /// @{
 
-#define COMx    UART2
+#define SYNC_H  GPIO_SetBits(GPIOB, GPIO_Pin_8)
+#define SYNC_L  GPIO_ResetBits(GPIOB, GPIO_Pin_8)
 
 ////////////////////////////////////////////////////////////////////////////////
 /// @defgroup MOTOR_Exported_Variables
 /// @{
-#ifdef _UART_C_
+#ifdef _SYNC_C_
 #define GLOBAL
 #else
 #define GLOBAL extern
 #endif
 
-GLOBAL bool recFlag;
-GLOBAL bool txSendFlag;
-GLOBAL bool isFirstRx;
-
-GLOBAL u8 uartTxBuf[20];
-GLOBAL u8 uartRxBuf[20];
-
-GLOBAL u32 adcSendTick;
-
-GLOBAL u8* ptrUart;
-GLOBAL u8  bufLen;
-
-GLOBAL u16 uartTimeOut;
+GLOBAL bool syncFlag;
 
 #undef GLOBAL
 /// @}
@@ -43,9 +32,11 @@ GLOBAL u16 uartTimeOut;
 /// @defgroup MOTOR_Exported_Functions
 /// @{
 
-void decodeTick();
-void encodeTick();
-void initUART(UART_TypeDef* UARTx);
+////////////////////////////////////////////////////////////////////////////////
+void syncTick();
+void initSyncPin_Master();
+void initSyncPin_Slave();
+bool readSync();
 
 
 /// @}

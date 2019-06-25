@@ -11,8 +11,6 @@
 #include "wireless.h"
 #include "resource.h"
 
-#include "HAL_gpio.h"
-
 #include "wl_ble_services.h"
 #include "ble.h"
 #include "2_4g.h"
@@ -20,38 +18,9 @@
 
 #include "wl_2_4g_cfg.h"
 #include "HAL_exti.h"
-#include "hal_uart.h"
-#include "hal_gpio.h"
-#include "bsp.h"
-#include "common.h"
 
-////////////////////////////////////////////////////////////////////////////////
-#define SYNC_H  GPIO_SetBits(GPIOB, GPIO_Pin_8)
-#define SYNC_L  GPIO_ResetBits(GPIOB, GPIO_Pin_8)
-void initSyncPin_Master()
-{
-    COMMON_EnableIpClock(emCLOCK_GPIOB);
-    SYNC_H;
-    GPIO_Mode_OUT_PP_Init(GPIOB, GPIO_Pin_8);
-}
-
-////////////////////////////////////////////////////////////////////////////////
-void initSyncPin_Slave()
-{
-    COMMON_EnableIpClock(emCLOCK_GPIOB);
-    
-    GPIO_InitTypeDef 	GPIO_InitStructure;
-	GPIO_InitStructure.GPIO_Pin  = GPIO_Pin_8;
-	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_FLOATING;
-	GPIO_Init(GPIOB, &GPIO_InitStructure);
-    
-}
-
-////////////////////////////////////////////////////////////////////////////////
-bool readSync()
-{
-    return GPIO_ReadInputDataBit(GPIOB, GPIO_Pin_8);
-}
+#include "uart.h"
+#include "sync.h"
 
 ////////////////////////////////////////////////////////////////////////////////
 void EXTI0_1_IRQHandler()
@@ -101,41 +70,50 @@ void AppTaskTick()
         vdLED &=~ 0x03;
         SysDisplay(&vdLED);
     }
+    
+    writeDataTick();
+    readDataTick();
+    
+    if(!(--uartTimeOut)) {
+        isFirstRx = true;        
+    }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void initUART(UART_TypeDef* UARTx)
+void initPara()
 {
-    UART_InitTypeDef UART_InitStructure;
+    bufLen      = 0;
+    syncFlag    = false;
+    recFlag     = false;
+    txSendFlag  = false;
+    isFirstRx   = true;
     
-    UART_InitStructure.BaudRate = 115200;
-    UART_InitStructure.WordLength = UART_WordLength_8b;
-    UART_InitStructure.StopBits = UART_StopBits_1;
-    UART_InitStructure.Parity = UART_Parity_No;
-    UART_InitStructure.HWFlowControl = UART_HWFlowControl_RTS_CTS;
-    UART_InitStructure.Mode = UART_Mode_Rx | UART_Mode_Tx;
+    wl_mode = emWL_BLE;
     
-    if (UARTx == UART1) {
-        COMMON_EnableIpClock(emCLOCK_UART1);
-        COMMON_EnableIpClock(emCLOCK_GPIOB);
-        
-        GPIO_Mode_AF_PP_20MHz_Init(GPIOB, GPIO_Pin_6, EXTI_MAPR_UART1, 	GPIO_AF_0);
-        GPIO_Mode_IPU_Init		  (GPIOB, GPIO_Pin_7, EXTI_MAPR_UART1, 	GPIO_AF_0);
-    }
-    if (UARTx == UART2) {
-        COMMON_EnableIpClock(emCLOCK_UART2);
-        COMMON_EnableIpClock(emCLOCK_GPIOA);
-        
-        GPIO_Mode_AF_PP_20MHz_Init(GPIOA, GPIO_Pin_2, NO_REMAP, 		GPIO_AF_1);
-        GPIO_Mode_IPU_Init		  (GPIOA, GPIO_Pin_3, NO_REMAP, 		GPIO_AF_1);
-    }
+    memset(uartTxBuf, 0x00, sizeof(uartTxBuf));
+    memset(uartRxBuf, 0x00, sizeof(uartRxBuf));
     
-    UART_Init(UARTx, &UART_InitStructure);
-    //UART_ITConfig(UARTx, UART_IT_RXIEN, ENABLE);
-    UART_Cmd(UARTx, ENABLE);
+    memset(ble_rx_buf, 0x00, sizeof(ble_rx_buf));
+    memset(ble_tx_buf, 0x00, sizeof(ble_tx_buf));
+    
+    ptrUart = uartRxBuf;
 }
 
-#define COMx    UART1
+
+////////////////////////////////////////////////////////////////////////////////
+void initPeripheral()
+{
+    if (wl_mode == emWL_BLE)    wl_ble_mode();
+    if (wl_mode == emWL_2_4G)   wl_2_4g_mode();
+    
+    initUART(COMx);
+    //initSyncPin_Master();
+    
+    //wt2031_init();
+}
+
+
+#include "hal_uart.h"
 
 ////////////////////////////////////////////////////////////////////////////////
 /// @brief  main function.
@@ -145,39 +123,32 @@ void initUART(UART_TypeDef* UARTx)
 int main(void)
 {
 	MCUID = SetSystemClock(emSYSTICK_On, (u32*)&AppTaskTick);
-    wl_mode = emWL_BLE;
     
-    //wt2031_init();
-    
-    if (wl_mode == emWL_BLE)    wl_ble_mode();
-    if (wl_mode == emWL_2_4G)   wl_2_4g_mode();
-    
-    initUART(COMx);
-    initSyncPin_Master();
-    
-    u16 len = 0;
-    memset(ble_rx_buf, 0x00, sizeof(ble_rx_buf));
+    initPara();
+    initPeripheral();
     
     while (1) {
         
-        if (bleWriteFlag) {
-            if (readSync()) {
-                SYNC_L;
-                
-                len = strlen(ble_rx_buf);
-                UART_SendData(COMx, (u16)len);
-                while (UART_GetFlagStatus(COMx, UART_IT_TXIEN) == RESET);
-                u8* ptr = ble_rx_buf;
-                while (len--) {
-                    UART_SendData(COMx, (u8)*ptr++);
-                    while (UART_GetFlagStatus(COMx, UART_IT_TXIEN) == RESET);
-                }
-                memset(ble_rx_buf, 0x00, sizeof(ble_rx_buf));
-                
-                SYNC_H;
-                bleWriteFlag = false;
+        if(UART_GetITStatus(UART1, UART_IT_RXIEN) != RESET) {
+            if (isFirstRx) {
+                bufLen = (u16)UART1->RDR;
+                ptrUart = uartRxBuf;
+                isFirstRx = false;
+                uartTimeOut = 2;
             }
+            else {
+                if (bufLen--) {
+                    *ptrUart = (u16)UART1->RDR;
+                    ptrUart ++;
+                    if (bufLen == 0) {
+                        isFirstRx = true;
+                        recFlag = true;
+                    }
+                }
+            }
+            UART_ClearITPendingBit(UART1, UART_ICR_RXICLR);
         }
+        
         
         //        if (wl_mode == emWL_BLE)    wl_ble_task();
         //        if (wl_mode == emWL_2_4G)   wl_2_4g_task();

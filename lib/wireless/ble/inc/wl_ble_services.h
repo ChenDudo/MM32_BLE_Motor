@@ -191,7 +191,7 @@ typedef struct ble_uuid_128 {
 #define GLOBAL extern
 #endif
 
-#define BUF_SIZE 			100
+#define BUF_SIZE 			20
 
 GLOBAL u8  ble_tx_buf[BUF_SIZE];
 GLOBAL u8  ble_rx_buf[BUF_SIZE];

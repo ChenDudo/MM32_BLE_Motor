@@ -78,6 +78,7 @@ void initPara()
     
     adcVolTick  = 0;
     adcTempTick = 0;
+    adcSendTick = 0;
     uartTimeOut = 2;
     
     dcHandle.dcPulseMax     = 100;

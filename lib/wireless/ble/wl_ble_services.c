@@ -187,6 +187,8 @@ void server_blob_rd_rsp(u8 attOpcode, u16 attHandle, u8 dataHdrP, u16 offset)
 // u8 sconn_notifydata(u8* data, u8 len);
 
 // Notify by callback
+#include "mm32.h"
+#include "uart.h"
 void gatt_user_send_notify_data_callback(void)
 {
 //    ble_tx_led = true;
@@ -196,6 +198,12 @@ void gatt_user_send_notify_data_callback(void)
 //
 //    data[0]++;
 //    data[1]++;
+    
+    if (recFlag) {
+        sconn_notifydata(uartRxBuf, strlen(uartRxBuf));
+        memset(uartRxBuf, 0x00, sizeof(uartRxBuf));
+        recFlag = false;
+    }
 }
 
 u8* getDeviceInfoData(u8* len)
