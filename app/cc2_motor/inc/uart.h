@@ -31,6 +31,8 @@ GLOBAL u8 uartRxBuf[20];
 GLOBAL u8* ptrUart;
 GLOBAL u8  bufLen;
 
+GLOBAL u16 uartTimeOut;
+
 #undef GLOBAL
 /// @}
 

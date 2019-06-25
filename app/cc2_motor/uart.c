@@ -28,13 +28,13 @@ void decodeTick()
         switch(*ptr) {
             case 0x01: {
                 if(*(ptr + 1) == 0x01)
-                    dcHandle->dc1Sta = emDC_Run;
+                    dcHandle.dc1Sta = emDC_Run;
                 if(*(ptr + 1) == 0x02)
-                    dcHandle->dc1Sta = emDC_Stop;
+                    dcHandle.dc1Sta = emDC_Stop;
             }
             break;
             case 0x02: {
-                dcHandle->dc1PulseWidth = securMax * ptr[1] / 100;
+                dcHandle.dc1PulseWidth = securMax * ptr[1] / 100;
             }
             break;
             case 0x03:
@@ -67,12 +67,16 @@ void initUART(UART_TypeDef* UARTx)
     UART_InitStructure.HWFlowControl = UART_HWFlowControl_RTS_CTS;
     UART_InitStructure.Mode = UART_Mode_Rx | UART_Mode_Tx;
     
+    COMMON_EnableIpClock(emCLOCK_EXTI);
+    
     if (UARTx == UART1) {
         COMMON_EnableIpClock(emCLOCK_UART1);
         COMMON_EnableIpClock(emCLOCK_GPIOB);
         
         GPIO_Mode_AF_PP_20MHz_Init(GPIOB, GPIO_Pin_6, EXTI_MAPR_UART1, 	GPIO_AF_0);
         GPIO_Mode_IPU_Init		  (GPIOB, GPIO_Pin_7, EXTI_MAPR_UART1, 	GPIO_AF_0);
+        
+        COMMON_NVIC_Configure(UART1_IRQn, 0, 0);
     }
     if (UARTx == UART2) {
         COMMON_EnableIpClock(emCLOCK_UART2);
@@ -80,12 +84,15 @@ void initUART(UART_TypeDef* UARTx)
         
         GPIO_Mode_AF_PP_20MHz_Init(GPIOA, GPIO_Pin_2, NO_REMAP, 		GPIO_AF_1);
         GPIO_Mode_IPU_Init		  (GPIOA, GPIO_Pin_3, NO_REMAP, 		GPIO_AF_1);
+        
+        COMMON_NVIC_Configure(UART2_IRQn, 0, 0);
     }
     
     UART_Init(UARTx, &UART_InitStructure);
     UART_ClearITPendingBit(UARTx, UART_IT_RXIEN);
     UART_ITConfig(UARTx, UART_IT_RXIEN, ENABLE);
     UART_Cmd(UARTx, ENABLE);
+    
 }
 
 
@@ -93,23 +100,25 @@ void initUART(UART_TypeDef* UARTx)
 void UART1_IRQHandler()
 {
 	if(UART_GetITStatus(UART1, UART_IT_RXIEN) != RESET) {
-		UART_ClearITPendingBit(UART1, UART_IT_RXIEN);
+		
         if (isFirstRx) {
             bufLen = (u16)UART1->RDR;
             ptrUart = uartRxBuf;
             isFirstRx = false;
+            uartTimeOut = 2;
         }
         else {
-            if (bufLen --) {
+            if (bufLen--) {
                 *ptrUart = (u16)UART1->RDR;
                 ptrUart ++;
-            }
-            else {
-                bufLen = 0;
-                isFirstRx = true;
-                recFlag = true;
+                if (bufLen == 0) {
+                    isFirstRx = true;
+                    recFlag = true;
+                }
+                
             }
         }
+        UART_ClearITPendingBit(UART1, UART_ICR_RXICLR);
 	}
 }
 
@@ -117,48 +126,23 @@ void UART1_IRQHandler()
 void UART2_IRQHandler()
 {
 	if(UART_GetITStatus(UART2, UART_IT_RXIEN) != RESET) {
-		UART_ClearITPendingBit(UART2, UART_IT_RXIEN);
+		
         if (isFirstRx) {
             bufLen = (u16)UART2->RDR;
             ptrUart = uartRxBuf;
             isFirstRx = false;
         }
         else {
-            if (bufLen --) {
+            if (bufLen--) {
                 *ptrUart = (u16)UART2->RDR;
                 ptrUart ++;
-            }
-            else {
-                bufLen = 0;
-                isFirstRx = true;
-                recFlag = true;
+                if (bufLen == 0) {
+                    isFirstRx = true;
+                    recFlag = true;
+                }
+                    
             }
         }
+        UART_ClearITPendingBit(UART2, UART_ICR_RXICLR);
 	}
 }
-
-
-
-
-//        if (recFlag) {
-//            ptr = uartSynReceive;
-//            switch(*ptr) {
-//                case 0x01: {
-//                    if(*(ptr + 1) == 0x01)
-//                        dcHandle.dc1Sta = emDC_Run;
-//                    if(*(ptr + 1) == 0x02)
-//                        dcHandle.dc1Sta = emDC_Stop;
-//                }
-//                break;
-//                case 0x02: {
-//                    dcHandle.dc1PulseWidth = securityPwmMax * ptr[1] / 100;
-//                }
-//                break;
-//                case 0x03:
-//                break;
-//                default:
-//                break;
-//            }
-//            memset(uartSynReceive, 0x00, sizeof(uartSynReceive));
-//            recFlag = false;
-//        }

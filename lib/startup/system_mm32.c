@@ -150,7 +150,7 @@ EM_MCUID SystemInit(EM_SystemClock ClockSoucre, EM_SYSTICK tickEn , u32* pCallba
 	RCC_InitStructure.RCC_PrescaleAPB1 = 1;                     // Range: 0:15; div1:div16
 	RCC_InitStructure.RCC_PrescaleAPB2 = 1;                     // Range: 0:15; div1:div16
 #if defined(__MT304) || defined(__MZ306)
-	//RCC_InitStructure.RCC_PrescaleUSB  = 1;                     // Range: 0:1;  div1:div2
+	RCC_InitStructure.RCC_PrescaleUSB  = 1;                     // Range: 0:1;  div1:div2
 #endif
 	RCC_InitStructure.SysTickEN = tickEn;
 	RCC_InitStructure.SysTickPeriod = 1000;

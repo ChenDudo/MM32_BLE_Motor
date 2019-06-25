@@ -33,8 +33,8 @@
 #include "uart.h"
 #include "sync.h"
 
-u32  ledCnt;
-bool ledFlag;
+u32 ledCnt   ;
+bool ledFlag ;
 
 ////////////////////////////////////////////////////////////////////////////////
 /// @brief  This function handles App SysTick Handler.
@@ -47,37 +47,43 @@ void AppTaskTick()
         ledCnt  = 0;
         ledFlag = true;
     }
+    decodeTick();
     adcTick();
     syncTick();
     motorTick();
-    decodeTick();
-    encodeTick();
+    
+    if(!(--uartTimeOut)) {
+        isFirstRx = true;        
+    }
+    
+    //encodeTick();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 void initPara()
 {
+    ledCnt      = 0;
+    bufLen      = 0;
     ledFlag     = false;
     syncFlag    = false;
     recFlag     = false;
     isFirstRx   = true;
+    uartTimeOut = 2;
     
-    ledCnt      = 0;
-    bufLen      = 0;
+    dcHandle.dcPulseMax     = 100;
+    dcHandle.dc1Sta         = emDC_Stop;
+    dcHandle.dc1Dir         = 0;
+    dcHandle.dc1PulseWidth  = 0;
+    dcHandle.dc2Sta         = emDC_Stop;
+    dcHandle.dc2Dir         = 0;
+    dcHandle.dc2PulseWidth  = 0;
     
-    dcHandle->dcPulseMax     = 100;
-    dcHandle->dc1Sta         = emDC_Stop;
-    dcHandle->dc1Dir         = 0;
-    dcHandle->dc1PulseWidth  = 0;
-    dcHandle->dc2Sta         = emDC_Stop;
-    dcHandle->dc2Dir         = 0;
-    dcHandle->dc2PulseWidth  = 0;
-    
-    securMax = (u16)(dcHandle->dcPulseMax * 0.8);
+    securMax = (u16)(dcHandle.dcPulseMax * 0.8);
     
     memset(uartTxBuf, 0x00, sizeof(uartTxBuf));
     memset(uartRxBuf, 0x00, sizeof(uartRxBuf));
     
+    ptrUart = uartRxBuf;
 }
 
 
@@ -108,19 +114,19 @@ int main(void)
         if (SysKeyboard(&vkKey)) {
             switch  (vkKey) {
                 case  VK_K0:
-                dcHandle->dc1Sta = emDC_Run;
+                dcHandle.dc1Sta = emDC_Run;
                 KeyProcess_Key0();
                 break;
                 case  VK_K1:
-                dcHandle->dc1Sta = emDC_Stop;
+                dcHandle.dc1Sta = emDC_Stop;
                 KeyProcess_Key1();
                 break;
                 case  VK_K2:
-                dcHandle->dc1PulseWidth += 5;
+                dcHandle.dc1PulseWidth += 5;
                 KeyProcess_Key2();
                 break;
                 case  VK_K3:
-                dcHandle->dc1PulseWidth -= 5;
+                dcHandle.dc1PulseWidth -= 5;
                 KeyProcess_Key3();
                 break;
                 default:

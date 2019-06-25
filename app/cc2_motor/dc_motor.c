@@ -36,7 +36,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 void motorTick()
 {
-    dcMotorRun(dcHandle);
+    dcMotorRun(&dcHandle);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -50,7 +50,7 @@ void initDCmotor(void)
     
     initMotor(motor1);
     
-    dcMotorRun(dcHandle);
+    dcMotorRun(&dcHandle);
 }
 
 
