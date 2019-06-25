@@ -23,6 +23,7 @@
 #endif
 
 GLOBAL bool recFlag;
+GLOBAL bool txSendFlag;
 GLOBAL bool isFirstRx;
 
 GLOBAL u8 uartTxBuf[20];

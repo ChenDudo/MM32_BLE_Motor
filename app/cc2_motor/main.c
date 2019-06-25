@@ -33,8 +33,8 @@
 #include "uart.h"
 #include "sync.h"
 
-u32 ledCnt   ;
-bool ledFlag ;
+u32  ledTick;
+bool ledFlag;
 
 ////////////////////////////////////////////////////////////////////////////////
 /// @brief  This function handles App SysTick Handler.
@@ -43,31 +43,41 @@ bool ledFlag ;
 ////////////////////////////////////////////////////////////////////////////////
 void AppTaskTick()
 {
-    if (ledCnt++ >= 499) {
-        ledCnt  = 0;
+    if (ledTick++ >= 499) {
+        ledTick  = 0;
         ledFlag = true;
     }
-    decodeTick();
+    
     adcTick();
     syncTick();
     motorTick();
+    
+    decodeTick();
+    
+    changeSecMax();
     
     if(!(--uartTimeOut)) {
         isFirstRx = true;        
     }
     
-    //encodeTick();
+    encodeTick();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 void initPara()
 {
-    ledCnt      = 0;
+    ledTick     = 0;
     bufLen      = 0;
     ledFlag     = false;
     syncFlag    = false;
     recFlag     = false;
+    txSendFlag  = false;
     isFirstRx   = true;
+    adcVolFlag  = false;
+    adcTempFlag = false;
+    
+    adcVolTick  = 0;
+    adcTempTick = 0;
     uartTimeOut = 2;
     
     dcHandle.dcPulseMax     = 100;

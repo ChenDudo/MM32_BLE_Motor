@@ -21,8 +21,19 @@
 #define GLOBAL extern
 #endif
 
-GLOBAL u16      securMax;
-GLOBAL float    tepMotor;
+GLOBAL u32   ADC1Value[2];
+
+GLOBAL bool  adcVolFlag;
+GLOBAL u16   adcVolTick;
+GLOBAL float adcTemp;
+GLOBAL float adcTmp;//
+
+GLOBAL bool  adcTempFlag;
+GLOBAL u16   adcTempTick;
+GLOBAL u32   adcVolt;
+GLOBAL u32   adcVol;//
+
+GLOBAL u16  securMax;
 
 #undef GLOBAL
 /// @}
@@ -33,7 +44,7 @@ GLOBAL float    tepMotor;
 
 void adcTick();
 void initADC();
-
+void changeSecMax();
 
 /// @}
 

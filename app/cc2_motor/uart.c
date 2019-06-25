@@ -51,7 +51,28 @@ void decodeTick()
 ////////////////////////////////////////////////////////////////////////////////
 void encodeTick()
 {
+    if (adcTempFlag) {
+        uartTxBuf[0] = 0x03;            //CMD 0x03: ADCTemp
+        uartTxBuf[1] = (u8)adcTemp;
+        
+        txSendFlag = true;
+        adcTempFlag = false;
+    }
     
+    if (txSendFlag) {
+        u16 len = strlen(uartTxBuf);
+        UART_SendData(COMx, (u16)len);
+        while (UART_GetFlagStatus(COMx, UART_IT_TXIEN) == RESET);
+        
+        u8* ptr = uartTxBuf;
+        while (len--) {
+            UART_SendData(COMx, (u8)*ptr++);
+            while (UART_GetFlagStatus(COMx, UART_IT_TXIEN) == RESET);
+        }
+        
+        memset(uartTxBuf, 0x00, sizeof(uartTxBuf));
+        txSendFlag  = false;
+    }
     
 }
 
