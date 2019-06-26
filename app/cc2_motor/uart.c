@@ -14,6 +14,7 @@
 #include "sync.h"
 #include "tb6612.h"
 #include "adc.h"
+#include "motor.h"
 
 ////////////////////////////////////////////////////////////////////////////////
 /// @brief  This function handles App SysTick Handler.
@@ -34,10 +35,23 @@ void decodeTick()
             }
             break;
             case 0x02: {
-                dcHandle.dc1PulseWidth = securMax * ptr[1] / 100;
+                //pwmSetFlag = true;
+                pwmSetValue = (u16)(ptr[1] * 0.7 + 30);  //range (30 : 100)
             }
             break;
             case 0x03:
+            break;
+            case 0x04: {
+                if(*(ptr + 1) == 0x01) {
+                    breathFlag = true;
+                    breathValue = 1;
+                }
+                if(*(ptr + 1) == 0x02)
+                    breathFlag = false;
+            }
+            break;
+            case 0x05:
+                breathValue = ptr[1];
             break;
             default:
             break;
@@ -122,8 +136,8 @@ void initUART(UART_TypeDef* UARTx)
 ////////////////////////////////////////////////////////////////////////////////
 void UART1_IRQHandler()
 {
-	if(UART_GetITStatus(UART1, UART_IT_RXIEN) != RESET) {
-		
+    if(UART_GetITStatus(UART1, UART_IT_RXIEN) != RESET) {
+        
         if (isFirstRx) {
             bufLen = (u16)UART1->RDR;
             ptrUart = uartRxBuf;
@@ -142,14 +156,14 @@ void UART1_IRQHandler()
             }
         }
         UART_ClearITPendingBit(UART1, UART_ICR_RXICLR);
-	}
+    }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 void UART2_IRQHandler()
 {
-	if(UART_GetITStatus(UART2, UART_IT_RXIEN) != RESET) {
-		
+    if(UART_GetITStatus(UART2, UART_IT_RXIEN) != RESET) {
+        
         if (isFirstRx) {
             bufLen = (u16)UART2->RDR;
             ptrUart = uartRxBuf;
@@ -167,5 +181,5 @@ void UART2_IRQHandler()
             }
         }
         UART_ClearITPendingBit(UART2, UART_ICR_RXICLR);
-	}
+    }
 }

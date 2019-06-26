@@ -2054,13 +2054,10 @@
             <name>$PROJ_DIR$\..\..\app\cc2_motor\adc.c</name>
         </file>
         <file>
-            <name>$PROJ_DIR$\..\..\app\cc2_motor\dc_motor.c</name>
-            <excluded>
-                <configuration>Step_motor</configuration>
-            </excluded>
+            <name>$PROJ_DIR$\..\..\app\cc2_motor\main.c</name>
         </file>
         <file>
-            <name>$PROJ_DIR$\..\..\app\cc2_motor\main.c</name>
+            <name>$PROJ_DIR$\..\..\app\cc2_motor\motor.c</name>
         </file>
         <file>
             <name>$PROJ_DIR$\..\..\app\cc2_motor\step_motor.c</name>

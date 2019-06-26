@@ -51,6 +51,15 @@ void adcTick()
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+void changeSecMax()
+{
+    if (adcVolFlag) {
+        securMax = (u16)(adcVolt * 20 / 4096  + 70);    //range (70 : 90)
+        adcVolFlag = false;
+    }
+}
+
+////////////////////////////////////////////////////////////////////////////////
 void initGPIO_ADC()
 {
 	GPIO_InitTypeDef GPIO_InitStructure; 
@@ -103,12 +112,4 @@ void initADC()
 	ADC1->CFGR |= 0x04;
 	
 	ADC_SoftwareStartConvCmd(ADC1, ENABLE);
-}
-
-void changeSecMax()
-{
-    if (adcVolFlag) {
-        securMax = (u16)(adcVolt * 20 / 4096  + 70);
-        adcVolFlag = false;
-    }
 }

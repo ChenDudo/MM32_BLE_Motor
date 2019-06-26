@@ -11,7 +11,6 @@
 /// @brief MOTOR example modules
 /// @{
 
-
 ////////////////////////////////////////////////////////////////////////////////
 /// @defgroup MOTOR_Exported_Variables
 /// @{
@@ -20,6 +19,20 @@
 #else
 #define GLOBAL extern
 #endif
+
+//
+GLOBAL u16 gDelaynum;
+GLOBAL u8  pwmListCnt;
+GLOBAL u16 gDelayTime;
+///////////////////////
+GLOBAL bool breathFlag;
+GLOBAL u16  breathValue;
+
+GLOBAL u16  pwmSetFlag;
+GLOBAL u16  pwmSetValue;
+
+GLOBAL u16  finalPWMValueMax;
+GLOBAL u16  finalBreathLen;
 
 #undef GLOBAL
 /// @}
@@ -30,6 +43,11 @@
 
 void motorTick();
 void initDCmotor(void);
+void writeBreathLen();
+
+void initTimer16();
+void OnTimer16();
+void OffTimer16();
 
 /// @}
 

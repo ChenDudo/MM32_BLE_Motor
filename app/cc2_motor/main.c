@@ -50,11 +50,13 @@ void AppTaskTick()
     
     adcTick();
     syncTick();
-    motorTick();
+    
     
     decodeTick();
     
     changeSecMax();
+    
+    motorTick();
     
     if(!(--uartTimeOut)) {
         isFirstRx = true;        
@@ -81,6 +83,17 @@ void initPara()
     adcSendTick = 0;
     uartTimeOut = 2;
     
+    //
+    gDelayTime = 1;
+    pwmListCnt = 0;
+    gDelaynum  = 0;
+    breathFlag  = false;
+    breathValue = 0;
+    pwmSetFlag  = false;
+    pwmSetValue = 0;
+    finalPWMValueMax = 0;
+    finalBreathLen   = 0;
+        
     dcHandle.dcPulseMax     = 100;
     dcHandle.dc1Sta         = emDC_Stop;
     dcHandle.dc1Dir         = 0;
@@ -105,7 +118,7 @@ void initPeripheral()
     initADC();
     initUART(COMx);
     initSyncPin_Slave();
-    
+    initTimer16();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
