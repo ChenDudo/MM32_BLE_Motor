@@ -107,9 +107,6 @@ void initPeripheral()
     if (wl_mode == emWL_2_4G)   wl_2_4g_mode();
     
     initUART(COMx);
-    //initSyncPin_Master();
-    
-    //wt2031_init();
 }
 
 
@@ -128,30 +125,6 @@ int main(void)
     initPeripheral();
     
     while (1) {
-        
-        if(UART_GetITStatus(UART1, UART_IT_RXIEN) != RESET) {
-            if (isFirstRx) {
-                bufLen = (u16)UART1->RDR;
-                ptrUart = uartRxBuf;
-                isFirstRx = false;
-                uartTimeOut = 2;
-            }
-            else {
-                if (bufLen--) {
-                    *ptrUart = (u16)UART1->RDR;
-                    ptrUart ++;
-                    if (bufLen == 0) {
-                        isFirstRx = true;
-                        recFlag = true;
-                    }
-                }
-            }
-            UART_ClearITPendingBit(UART1, UART_ICR_RXICLR);
-        }
-        
-        
-        //        if (wl_mode == emWL_BLE)    wl_ble_task();
-        //        if (wl_mode == emWL_2_4G)   wl_2_4g_task();
     }
 }
 

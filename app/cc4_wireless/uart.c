@@ -85,7 +85,7 @@ void initUART(UART_TypeDef* UARTx)
     
     UART_Init(UARTx, &UART_InitStructure);
     UART_ClearITPendingBit(UARTx, UART_IT_RXIEN);
-    //UART_ITConfig(UARTx, UART_IT_RXIEN, ENABLE);
+    UART_ITConfig(UARTx, UART_IT_RXIEN, ENABLE);
     UART_Cmd(UARTx, ENABLE);
 }
 

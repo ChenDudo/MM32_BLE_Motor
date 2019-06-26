@@ -81,14 +81,14 @@ void wl_ble_tick_task()
         ble_tx_led = false;
         vdLED |= 0x04;
         SysDisplay(&vdLED);
-        tx_led_count = SysTick_Count + 300;
+        tx_led_count = SysTick_Count + 100;
     }
 
     if (ble_rx_led) {
         ble_rx_led = false;
         vdLED |= 0x08;
         SysDisplay(&vdLED);
-        rx_led_count = SysTick_Count + 300;
+        rx_led_count = SysTick_Count + 100;
     }
 
     if (tx_led_count < SysTick_Count) {
