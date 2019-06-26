@@ -1952,6 +1952,12 @@
       <name>$PROJ_DIR$\..\..\app\cc4_wireless\ble.c</name>
     </file>
     <file>
+      <name>$PROJ_DIR$\..\..\app\cc4_wireless\sync.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\app\cc4_wireless\uart.c</name>
+    </file>
+    <file>
       <name>$PROJ_DIR$\..\..\app\cc4_wireless\wireless.c</name>
     </file>
     <file>
