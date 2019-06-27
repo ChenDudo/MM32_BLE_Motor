@@ -125,6 +125,7 @@ void UART2_IRQHandler()
             bufLen = (u16)UART2->RDR;
             ptrUart = uartRxBuf;
             isFirstRx = false;
+            uartTimeOut = 2;
         }
         else {
             if (bufLen--) {

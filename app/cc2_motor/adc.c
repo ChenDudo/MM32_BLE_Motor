@@ -54,7 +54,8 @@ void adcTick()
 void changeSecMax()
 {
     if (adcVolFlag) {
-        securMax = (u16)(adcVolt * 20 / 4096  + 70);    //range (70 : 90)
+        //securMax = (u16)(adcVolt * 20 / 4096  + 70);    //range (70 : 90)
+        securMax = 90;
         adcVolFlag = false;
     }
 }

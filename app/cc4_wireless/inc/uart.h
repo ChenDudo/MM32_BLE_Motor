@@ -11,7 +11,7 @@
 /// @brief MOTOR example modules
 /// @{
 
-#define COMx    UART1
+#define COMx    UART2
 
 ////////////////////////////////////////////////////////////////////////////////
 /// @defgroup MOTOR_Exported_Variables

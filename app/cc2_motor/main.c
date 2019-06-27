@@ -92,7 +92,7 @@ void initPara()
     pwmSetFlag  = false;
     pwmSetValue = 0;
     finalPWMValueMax = 0;
-    finalBreathLen   = 0;
+    finalBreathLen   = 999;
         
     dcHandle.dcPulseMax     = 100;
     dcHandle.dc1Sta         = emDC_Stop;
