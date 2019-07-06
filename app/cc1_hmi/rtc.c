@@ -34,15 +34,15 @@ void RTC_IRQHandler(void)
     if (RTC_GetITStatus(RTC_IT_SEC) != RESET) {							
         RTC_GetTime(&gtp);  
     }
-    if(RTC_GetITStatus(RTC_IT_ALR) != RESET) { //闹钟中断
-        RTC_ClearITPendingBit(RTC_IT_ALR);		//清闹钟中断	  	   
+    if(RTC_GetITStatus(RTC_IT_ALR) != RESET) { 
+        RTC_ClearITPendingBit(RTC_IT_ALR);
     } 				  								 
-    RTC_ClearITPendingBit(RTC_IT_SEC);		//清闹钟中断
+    RTC_ClearITPendingBit(RTC_IT_SEC);
     RTC_WaitForLastTask();	  	    						 	   	 
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-u8 initRTC()
+bool initRTC(void)
 {
 //        PWR_BackupAccessCmd(ENABLE);
 //        BKP_DeInit();
@@ -59,41 +59,42 @@ u8 initRTC()
 //        //NVIC_RTC();
 //        return 0;
     
-    u8 temp = 0;
     RCC_APB1PeriphClockCmd(RCC_APB1Periph_PWR | RCC_APB1Periph_BKP, ENABLE);  
     PWR_BackupAccessCmd(ENABLE);
+    //BKP_DeInit();
     
     if (BKP_ReadBackupRegister(BKP_DR1) != 0x5050) { 
-        BKP_DeInit();
+        exBKP_Init();
         RCC_LSEConfig(RCC_LSE_ON);
         
         while (RCC_GetFlagStatus(RCC_FLAG_LSERDY) == RESET) {
-            temp++;
-            //delay_ms(10);
-        }
-        if (temp >= 250) 
             return 1;
+        }
         
-        RCC_RTCCLKConfig(RCC_RTCCLKSource_LSE);		//设置RTC时钟(RTCCLK),选择LSE作为RTC时钟    
-        RCC_RTCCLKCmd(ENABLE);	                        //使能RTC时钟  
-        RTC_WaitForLastTask();	                        //等待最近一次对RTC寄存器的写操作完成
-        RTC_WaitForSynchro();		                //等待RTC寄存器同步  
-        RTC_ITConfig(RTC_IT_SEC, ENABLE);		//使能RTC秒中断
-        RTC_WaitForLastTask();	                        //等待最近一次对RTC寄存器的写操作完成
-        RTC_EnterConfigMode();                          /// 允许配置	
-        RTC_SetPrescaler(32767);                        //设置RTC预分频的值
-        RTC_WaitForLastTask();	                        //等待最近一次对RTC寄存器的写操作完成
-        //RTC_Set(2016,1,1,0,0,0);                    //设置时间	
-        RTC_ExitConfigMode();                           //退出配置模式  
-        BKP_WriteBackupRegister(BKP_DR1, 0X5050);	//向指定的后备寄存器中写入用户程序数据
+        RCC_RTCCLKConfig(RCC_RTCCLKSource_LSE);	
+        RCC_RTCCLKCmd(ENABLE);
+        RTC_WaitForLastTask();
+        RTC_WaitForSynchro();
+        //RTC_ITConfig(RTC_IT_SEC, ENABLE);
+        RTC_WaitForLastTask();
+        RTC_EnterConfigMode();
+        RTC_SetPrescaler(32767);
+        RTC_WaitForLastTask();
+        //RTC_Set(2016,1,1,0,0,0);
+        RTC_ExitConfigMode();
+        
+        BKP_WriteBackupRegister(BKP_DR1, 0x5050);
+        //NVIC_RTC();
     }
-    else  {                                             //系统继续计时
-        RTC_WaitForSynchro();	                        //等待最近一次对RTC寄存器的写操作完成
-        RTC_ITConfig(RTC_IT_SEC, ENABLE);	        //使能RTC秒中断
-        RTC_WaitForLastTask();	                        //等待最近一次对RTC寄存器的写操作完成
+    else  {
+        RTC_WaitForSynchro();
+        //RTC_ITConfig(RTC_IT_SEC, ENABLE);
+        RTC_WaitForLastTask();
     }
-    //NVIC_RTC();		    				     
-    RTC_GetTime(&gtp);	
+    
+    BKP_RTCOutputConfig(BKP_RTCOutputSource_CalibClock);
+    RTC_GetTime(&gtp);
+	
     return 0; //ok
 }
 

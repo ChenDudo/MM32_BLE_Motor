@@ -22,8 +22,11 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 #include <string.h>
-#include "types.h"
 #include "system_mm32.h"
+#include "mm32.h"
+
+#include "drv.h"
+#include "resource.h"
 
 #include "rtc.h"
 #include "datetime.h"
@@ -36,7 +39,7 @@ void AppTaskTick()
         tickCnt  = 0;
         tickFlag = true;
     }
-    rtcTick();
+    //rtcTick();
     
 }
 
@@ -52,7 +55,7 @@ void initPara()
 void initPeripheral()
 {
     lcd_init();
-    initRTC();
+    while(initRTC()){};
     
 }
 
@@ -62,13 +65,40 @@ int main(void)
     MCUID = SetSystemClock(emSYSTICK_On, (u32*)&AppTaskTick);
     
     initPara();
-    
     initPeripheral();
     
     while(1){
         lcdTick();
         
-        
-        
+        if (SysKeyboard(&vkKey)) {
+            switch  (vkKey) {
+                case  VK_K0:
+                (vdLED & 0x01) ? (vdLED &= ~0x01) : (vdLED |= 0x01); // toggle LD1
+                KeyProcess_Key0();
+                break;
+                case  VK_K1:
+                (vdLED & 0x01) ? (vdLED &= ~0x01) : (vdLED |= 0x01); // toggle LD1
+                KeyProcess_Key1();
+                break;
+                case  VK_K2:
+                (vdLED & 0x01) ? (vdLED &= ~0x01) : (vdLED |= 0x01); // toggle LD1
+                KeyProcess_Key2();
+                break;
+                case  VK_K3:
+                (vdLED & 0x01) ? (vdLED &= ~0x01) : (vdLED |= 0x01); // toggle LD1
+                KeyProcess_Key3();
+                break;
+                default:
+                break;
+            }
+        }
+        if (tickFlag) {
+            
+            (vdLED & 0x02) ? (vdLED &= ~0x02) : (vdLED |= 0x02); // toggle LD2
+            
+            tickFlag = false;
+        }
+        SysDisplay((u8*)&vdLED);
     }
+    
 }
