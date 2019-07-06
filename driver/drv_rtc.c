@@ -56,6 +56,7 @@
 /// @param  None.
 /// @retval None.
 ////////////////////////////////////////////////////////////////////////////////
+#if defined(__EX_RTC)
 void RTC_IRQHandler(void)
 {
 	if (accessRTC) {
@@ -95,7 +96,7 @@ void RTCAlarm_IRQHandler(void)
         RTC_ClearITPendingBit(RTC_IT_ALR);
 	}
 }
-
+#endif
 ////////////////////////////////////////////////////////////////////////////////
 /// @brief  Initialize RTC.
 /// @param  None.

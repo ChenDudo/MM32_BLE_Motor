@@ -116,7 +116,7 @@ GLOBAL static tDRV_SPI_INSTANT 		instance[INSTANCE_NUM];
 /// @defgroup SPI_Exported_Functions
 /// @{
 
-
+void Set_SPI_Clock(SPI_TypeDef* SPIx);
 bool DRV_SPI_PollingSendPacket(u8 idx);
 void DRV_SPI_Polling_RcvPacket(u8 idx);
 void DRV_SPI_DMA_SendPacket(SPI_TypeDef* SPIx, u8 idx);

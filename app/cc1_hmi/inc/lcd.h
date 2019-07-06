@@ -1,14 +1,12 @@
-#ifndef __SPI_LCD_H
-#define __SPI_LCD_H
-
-
-
+////////////////////////////////////////////////////////////////////////////////
+#ifndef __LCD_H
+#define __LCD_H
+////////////////////////////////////////////////////////////////////////////////
 #include "hal_spi.h"
 
-
+////////////////////////////////////////////////////////////////////////////////
 #define LCD_TOTAL_BUF_SIZE  (240*240*2)  //115200
 #define LCD_Buf_Size 1152
-
 
 #define LCD_Width   240
 #define LCD_Height  240
@@ -43,12 +41,12 @@
 //#define   LCD_DC(n)       (n ? GPIO_SetBits(GPIOC, GPIO_Pin_12) : GPIO_ResetBits(GPIOC, GPIO_Pin_12))
 #define LCD_BS(n)       (n ? GPIO_SetBits(GPIOB, GPIO_Pin_9) : GPIO_ResetBits(GPIOB, GPIO_Pin_9))
 
-#ifdef _SPI_LCD_C_
+////////////////////////////////////////////////////////////////////////////////
+#ifdef _LCD_C_
 #define GLOBAL
 
-u16 POINT_COLOR = BLACK;
-u16 BACK_COLOR  = WHITE;
-
+u16 POINT_COLOR = WHITE;
+u16 BACK_COLOR  = BLACK;
 
 #else
 #define GLOBAL extern
@@ -56,29 +54,24 @@ u16 BACK_COLOR  = WHITE;
 GLOBAL u16  POINT_COLOR;
 GLOBAL u16  BACK_COLOR;
 
-
 #endif
-
-
 
 GLOBAL u8 lcd_buf[LCD_Buf_Size];
 
-
 #undef GLOBAL
 
+////////////////////////////////////////////////////////////////////////////////
+u8 lcd_init();
+void lcdTick();
+void lcd_clear(u16 color);
+void lcd_drawLine(u16 x1, u16 y1, u16 x2, u16 y2);
+void lcd_drawRectangle(u16 x1, u16 y1, u16 x2, u16 y2);
+void lcd_drawCircle(u16 x0, u16 y0, u8 r);
+void lcd_showNum(u16 x, u16 y, u32 num, u8 len, u8 size);
+void lcd_showChar(u16 x, u16 y, char chr, u8 size);
+void lcd_showxNum(u16 x, u16 y, u32 num, u8 len, u8 size, u8 mode);
+void lcd_showString(u16 x, u16 y, u16 width, u16 height, u8 size, char *p);
 
-extern u8 lcd_init();
-extern void lcd_clear(u16 color);
-extern void lcd_drawLine(u16 x1, u16 y1, u16 x2, u16 y2);
-extern void lcd_drawRectangle(u16 x1, u16 y1, u16 x2, u16 y2);
-extern void lcd_drawCircle(u16 x0, u16 y0, u8 r);
-extern void lcd_showNum(u16 x, u16 y, u32 num, u8 len, u8 size);
-extern void lcd_showChar(u16 x, u16 y, char chr, u8 size);
-extern void lcd_showxNum(u16 x, u16 y, u32 num, u8 len, u8 size, u8 mode);
-extern void lcd_showString(u16 x, u16 y, u16 width, u16 height, u8 size, char *p);
-
-
-
-
-
+////////////////////////////////////////////////////////////////////////////////
 #endif
+////////////////////////////////////////////////////////////////////////////////
