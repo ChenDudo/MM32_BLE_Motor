@@ -60,11 +60,10 @@ bool initRTC(void)
 //        return 0;
     
     RCC_APB1PeriphClockCmd(RCC_APB1Periph_PWR | RCC_APB1Periph_BKP, ENABLE);  
-    PWR_BackupAccessCmd(ENABLE);
-    //BKP_DeInit();
+    PWR->CR |= PWR_CR_DBP;
     
     if (BKP_ReadBackupRegister(BKP_DR1) != 0x5050) { 
-        exBKP_Init();
+        //exBKP_Init();
         RCC_LSEConfig(RCC_LSE_ON);
         
         while (RCC_GetFlagStatus(RCC_FLAG_LSERDY) == RESET) {
@@ -87,6 +86,8 @@ bool initRTC(void)
         //NVIC_RTC();
     }
     else  {
+        RCC_RTCCLKConfig(RCC_RTCCLKSource_LSE);	
+        RCC_RTCCLKCmd(ENABLE);
         RTC_WaitForSynchro();
         //RTC_ITConfig(RTC_IT_SEC, ENABLE);
         RTC_WaitForLastTask();
@@ -104,8 +105,7 @@ void checkRTC()
 {
     RCC_APB1PeriphClockCmd(RCC_APB1Periph_PWR | RCC_APB1Periph_BKP, ENABLE);
     
-    //	PWR_BackupAccessCmd(DISABLE);
-    PWR_BackupAccessCmd(ENABLE);
+    PWR->CR |= PWR_CR_DBP;
     
     if (BKP_ReadBackupRegister(BKP_DR1) != 0x5AA5)  {
         BKP_WriteBackupRegister(BKP_DR1, 0x5AA5);
