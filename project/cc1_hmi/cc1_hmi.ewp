@@ -1945,16 +1945,19 @@
   <group>
     <name>app</name>
     <file>
-      <name>$PROJ_DIR$\..\..\app\cc1_hmi\main_lcd.c</name>
+      <name>$PROJ_DIR$\..\..\app\cc1_hmi\datetime.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\app\cc1_hmi\spi_flash.c</name>
+      <name>$PROJ_DIR$\..\..\app\cc1_hmi\lcd.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\app\cc1_hmi\spi_lcd.c</name>
+      <name>$PROJ_DIR$\..\..\app\cc1_hmi\main.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\app\cc1_hmi\touch.c</name>
+      <name>$PROJ_DIR$\..\..\app\cc1_hmi\rtc.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\app\cc1_hmi\uart.c</name>
     </file>
   </group>
   <group>
