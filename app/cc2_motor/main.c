@@ -47,22 +47,23 @@ void AppTaskTick()
         ledTick  = 0;
         ledFlag = true;
     }
-    
+
     adcTick();
     syncTick();
-    
-    
+
+
     decodeTick();
-    
+
     changeSecMax();
-    
+
     motorTick();
-    
+
     if(!(--uartTimeOut)) {
-        isFirstRx = true;        
+        isFirstRx = true;
     }
-    
+
     encodeTick();
+    exencodeTick();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -77,12 +78,13 @@ void initPara()
     isFirstRx   = true;
     adcVolFlag  = false;
     adcTempFlag = false;
-    
+    extxSendFlag  = false;
+
     adcVolTick  = 0;
     adcTempTick = 0;
     adcSendTick = 0;
     uartTimeOut = 2;
-    
+
     //
     gDelayTime = 1;
     pwmListCnt = 0;
@@ -93,7 +95,7 @@ void initPara()
     pwmSetValue = 0;
     finalPWMValueMax = 0;
     finalBreathLen   = 999;
-        
+
     dcHandle.dcPulseMax     = 100;
     dcHandle.dc1Sta         = emDC_Stop;
     dcHandle.dc1Dir         = 0;
@@ -101,12 +103,12 @@ void initPara()
     dcHandle.dc2Sta         = emDC_Stop;
     dcHandle.dc2Dir         = 0;
     dcHandle.dc2PulseWidth  = 0;
-    
+
     securMax = (u16)(dcHandle.dcPulseMax * 0.8);
-    
+
     memset(uartTxBuf, 0x00, sizeof(uartTxBuf));
     memset(uartRxBuf, 0x00, sizeof(uartRxBuf));
-    
+
     ptrUart = uartRxBuf;
 }
 
@@ -117,6 +119,7 @@ void initPeripheral()
     initDCmotor();
     initADC();
     initUART(COMx);
+    initUART(exCOMx);
     initSyncPin_Slave();
     initTimer16();
 }
@@ -125,15 +128,15 @@ void initPeripheral()
 int main(void)
 {
     MCUID = SetSystemClock(emSYSTICK_On, (u32*)&AppTaskTick);
-    
+
     initPara();
     initPeripheral();
-    
+
     while (1) {
         //----------- user code -----------
-        
-        
-        
+
+
+
         //----------- key && led ----------
         if (SysKeyboard(&vkKey)) {
             switch  (vkKey) {

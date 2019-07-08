@@ -11,7 +11,8 @@
 /// @brief MOTOR example modules
 /// @{
 
-#define COMx    UART1
+#define COMx    UART2
+#define exCOMx  UART1
 
 ////////////////////////////////////////////////////////////////////////////////
 /// @defgroup MOTOR_Exported_Variables
@@ -22,6 +23,12 @@
 #define GLOBAL extern
 #endif
 
+//back to HMI board
+GLOBAL bool extxSendFlag;
+GLOBAL u8 exuartTxBuf[20];
+GLOBAL u8 exuartRxBuf[20];
+
+//
 GLOBAL bool recFlag;
 GLOBAL bool txSendFlag;
 GLOBAL bool isFirstRx;
@@ -47,6 +54,7 @@ void decodeTick();
 void encodeTick();
 void initUART(UART_TypeDef* UARTx);
 
+void exencodeTick();
 
 /// @}
 
