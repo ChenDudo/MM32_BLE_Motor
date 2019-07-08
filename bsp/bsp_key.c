@@ -73,6 +73,7 @@ void BSP_KEY_Configure(void)
     GPIO_Mode_IPU_Init(GPIOA, GPIO_Pin_7,  NO_REMAP, GPIO_AF_0);    //K1
     GPIO_Mode_IPU_Init(GPIOB, GPIO_Pin_0,  NO_REMAP, GPIO_AF_0);    //K2
     GPIO_Mode_IPU_Init(GPIOB, GPIO_Pin_1,  NO_REMAP, GPIO_AF_0);    //K3
+    
 #endif
 #if defined(__MM32_EVB)
 

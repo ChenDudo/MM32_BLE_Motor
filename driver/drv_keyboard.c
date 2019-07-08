@@ -121,7 +121,7 @@ bool DRV_KEY_GetKeyValue()
         KEY.press[3]  = false;
     }
 
-#ifndef __MM32_HMI
+//#ifndef __MM32_HMI
 	for (u8 i = 0; i < 4; i++) {
 		if (KEY.event[i]) {
 			KEY.event[i] = false;
@@ -129,7 +129,7 @@ bool DRV_KEY_GetKeyValue()
 
 		}
 	}
-#endif
+//#endif
 	return -1;
 }
 

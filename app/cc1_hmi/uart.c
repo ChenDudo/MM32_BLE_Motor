@@ -33,6 +33,16 @@ void decodeTick()
             break;
             case 0x05:
             break;
+            case 0x06:  // change time
+            receiveTimFlag = true;
+            memcpy(timData, uartRxBuf, sizeof(uartRxBuf));
+            break;
+            case 0x07:  // auto mode
+            if(*(ptr + 1) == 0x02)
+                autoModeFlag = true;
+            else
+                autoModeFlag = false;
+            break;
             default:
             break;
         }

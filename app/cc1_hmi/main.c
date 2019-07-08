@@ -31,22 +31,25 @@
 #include "rtc.h"
 #include "datetime.h"
 #include "lcd.h"
+#include "uart.h"
 
 ////////////////////////////////////////////////////////////////////////////////
 void AppTaskTick()
 {
-    if (tickCnt++ >= 500) {
+    if (tickCnt++ >= 100) {
         tickCnt  = 0;
         tickFlag = true;
     }
-    //rtcTick();
-    
+    decodeTick();
+    setTimTick();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 void initPara()
 {
-    
+    recFlag    = false;
+    txSendFlag = false;
+    isFirstRx  = true;
     
 }
 
@@ -55,6 +58,8 @@ void initPara()
 void initPeripheral()
 {
     lcd_init();
+    initUART(COMx);
+    
     while(initRTC()){};
     
 }
@@ -66,9 +71,10 @@ int main(void)
     
     initPara();
     initPeripheral();
+    vdLED = 0x01;
     
     while(1){
-        lcdTick();
+        lcdTick();        
         
         if (SysKeyboard(&vkKey)) {
             switch  (vkKey) {
@@ -77,25 +83,23 @@ int main(void)
                 KeyProcess_Key0();
                 break;
                 case  VK_K1:
-                (vdLED & 0x01) ? (vdLED &= ~0x01) : (vdLED |= 0x01); // toggle LD1
+                (vdLED & 0x02) ? (vdLED &= ~0x02) : (vdLED |= 0x02); // toggle LD1
                 KeyProcess_Key1();
                 break;
                 case  VK_K2:
-                (vdLED & 0x01) ? (vdLED &= ~0x01) : (vdLED |= 0x01); // toggle LD1
+                (vdLED & 0x04) ? (vdLED &= ~0x04) : (vdLED |= 0x04); // toggle LD1
+                RTC_SetTime(&gtp);
                 KeyProcess_Key2();
-                break;
-                case  VK_K3:
-                (vdLED & 0x01) ? (vdLED &= ~0x01) : (vdLED |= 0x01); // toggle LD1
-                KeyProcess_Key3();
                 break;
                 default:
                 break;
             }
         }
-        if (tickFlag) {
-            
-            (vdLED & 0x02) ? (vdLED &= ~0x02) : (vdLED |= 0x02); // toggle LD2
-            
+        
+        if (tickFlag) {                
+            vdLED = vdLED << 1;
+            if(vdLED > 8)
+                vdLED = 1;
             tickFlag = false;
         }
         SysDisplay((u8*)&vdLED);

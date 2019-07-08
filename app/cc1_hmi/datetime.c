@@ -4,19 +4,68 @@
 
 #include <string.h>
 #include "types.h"
+#include "mm32.h"
 
 #include "datetime.h"
 #include "rtc.h"
+#include "uart.h"
 
 #include "hal_rtc.h"
 
 ////////////////////////////////////////////////////////////////////////////////
-void rtcTick()
+u16 hex16Toint(u16 dat)
 {
-    RTC_GetTime(&gtp);
+    u8 bit0 = dat % 16;
+    u8 bit1 = (dat % 256) / 16;
+    u8 bit2 = (dat % 4096) / 256;
+    u8 bit3 = dat / 4096;
+    
+    return (bit3 * 10 + bit2 + bit1 * 1000 + bit0 * 100);
     
 }
 
+////////////////////////////////////////////////////////////////////////////////
+u8 hex8Toint(u8 dat)
+{
+    u8 bit0 = dat % 16;
+    u8 bit1 = dat / 16;
+    
+    return (bit1 * 10 + bit0); 
+    
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void setTimTick()
+{
+    if (receiveTimFlag) {
+        u8 *ptr = timData;
+        
+        u16 yearTemp  = *(u16*)(ptr + 1);
+        u8  mouthTemp = (u8)*(ptr + 3);
+        u8  dayTemp   = (u8)*(ptr + 4);
+        u8  hourTemp  = (u8)*(ptr + 5);
+        u8  minTemp   = (u8)*(ptr + 6);
+        u8  secTemp   = (u8)*(ptr + 7);
+        u8  weekTemp  = (u8)*(ptr + 8);
+        
+        tp1.year    = (u32)hex16Toint(yearTemp);
+        tp1.month   = (u32)hex8Toint(mouthTemp);
+        tp1.day     = (u32)hex8Toint(dayTemp  );
+        tp1.hours   = (u32)hex8Toint(hourTemp );
+        tp1.minute  = (u32)hex8Toint(minTemp  );
+        tp1.second  = (u32)hex8Toint(secTemp  );
+        tp1.week    = (u32)hex8Toint(weekTemp) - 1;
+        RTC_SetTime(&tp1);
+        
+        receiveTimFlag = false;
+    }
+}
+
+
+
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 u32 DateTimeToSeconds(dateTimeDef *tp)
 {
@@ -34,7 +83,7 @@ u32 DateTimeToSeconds(dateTimeDef *tp)
 ////////////////////////////////////////////////////////////////////////////////
 u8 GetWeek(u32* sec)
 {
-	return  ((*sec / SecsPerDay) + 5) % 7;										//2000/1/1 week Saturday
+	return  ((*sec / SecsPerDay) + 6) % 7;										//2000/1/1 week Saturday
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -46,7 +95,7 @@ u16 GetYear(u32* sec)
 		if (OffSec < Year_Secs_Accu[i + 1])
 			break;
 	}
-	u16 year = 2016 + (*sec / SecsPerFourYear * 4) + i;
+	u16 year = 2000 + (*sec / SecsPerFourYear * 4) + i;
 	*sec =  OffSec - Year_Secs_Accu[i];
 	return year;
 }
@@ -168,5 +217,3 @@ void modifyTime(u8 sel)
 	default:	RTC_SetTime(&gtp);		break;
 	}
 }
-
-////////////////////////////////////////////////////////////////////////////////

@@ -61,12 +61,7 @@ void BSP_LED_Configure(void)
 #endif
 #if defined(__MM32_HMI)
     COMMON_EnableIpClock(emCLOCK_GPIOA);
-//    COMMON_EnableIpClock(emCLOCK_GPIOB);
-
     COMMON_EnableIpClock(emCLOCK_GPIOC);
-
-//    GPIO_SetBits(GPIOB, GPIO_Pin_3 | GPIO_Pin_4 | GPIO_Pin_5);            // Close LD5, LD4, LD3
-//    GPIO_Mode_OUT_OD_20MHz_Init(GPIOB, GPIO_Pin_3,  EXTI_MAPR_SWJ_JTAGDISABLE, GPIO_AF_0);
 
     GPIO_Mode_OUT_OD_20MHz_Init(GPIOA, GPIO_Pin_5,  NO_REMAP, GPIO_AF_0); //LD0
     GPIO_Mode_OUT_OD_20MHz_Init(GPIOA, GPIO_Pin_6,  NO_REMAP, GPIO_AF_0); //LD1
@@ -75,7 +70,6 @@ void BSP_LED_Configure(void)
 
     GPIO_ResetBits(GPIOA, GPIO_Pin_5 | GPIO_Pin_6);
     GPIO_ResetBits(GPIOC, GPIO_Pin_4 | GPIO_Pin_5);
-//    GPIO_SetBits  (GPIOB, GPIO_Pin_3);
 #endif
 
 #if defined(__MM32_EVB)

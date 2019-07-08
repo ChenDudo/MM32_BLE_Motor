@@ -82,14 +82,14 @@ u16 Month_Days[12] = {31,29,31,30,31,30,31,31,30,31,30,31};
 
 GLOBAL u32 timeSel;
 GLOBAL dateTimeDef gtp;
-	
+GLOBAL dateTimeDef tp1;
 GLOBAL u8 menuCnt;
 
 
 
 #undef GLOBAL
 ////////////////////////////////////////////////////////////////////////////////
-void rtcTick();
+void setTimTick();
 
 void RTC_GetTime(dateTimeDef *tp);	
 void RTC_SetTime(dateTimeDef *tp);

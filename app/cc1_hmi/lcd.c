@@ -528,8 +528,6 @@ char* weekString[7] = {"Sun.", "Mon.", "Tue.", "Wed.", "Thu.", "Fri.", "Sat."};
 ////////////////////////////////////////////////////////////////////////////////
 void lcdTick()
 {
-    RTC_GetTime(&gtp);
-    
     char s1[32];
     u16 temp;
     

@@ -11,7 +11,7 @@
 /// @brief MOTOR example modules
 /// @{
 
-#define COMx    UART1
+#define COMx    UART2
 
 ////////////////////////////////////////////////////////////////////////////////
 /// @defgroup MOTOR_Exported_Variables
@@ -26,10 +26,13 @@ GLOBAL bool recFlag;
 GLOBAL bool txSendFlag;
 GLOBAL bool isFirstRx;
 
+GLOBAL bool receiveTimFlag;
+GLOBAL bool autoModeFlag;
+
 GLOBAL u8 uartTxBuf[20];
 GLOBAL u8 uartRxBuf[20];
 
-GLOBAL u32 adcSendTick;
+GLOBAL u8 timData[20];
 
 GLOBAL u8* ptrUart;
 GLOBAL u8  bufLen;
