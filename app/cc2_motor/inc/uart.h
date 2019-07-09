@@ -27,6 +27,12 @@
 GLOBAL bool extxSendFlag;
 GLOBAL u8 exuartTxBuf[20];
 GLOBAL u8 exuartRxBuf[20];
+GLOBAL u8* exptrUart;
+GLOBAL u8  exbufLen;
+GLOBAL bool exrecFlag;
+GLOBAL bool extxSendFlag;
+GLOBAL bool exisFirstRx;
+GLOBAL u16 exuartTimeOut;
 
 //
 GLOBAL bool recFlag;
@@ -55,6 +61,8 @@ void encodeTick();
 void initUART(UART_TypeDef* UARTx);
 
 void exencodeTick();
+void exdecodeTick();
+////////////////////////////////////////////////////////////////////////////////
 
 /// @}
 

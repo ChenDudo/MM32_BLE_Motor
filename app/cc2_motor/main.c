@@ -53,6 +53,7 @@ void AppTaskTick()
 
 
     decodeTick();
+    exdecodeTick();
 
     changeSecMax();
 

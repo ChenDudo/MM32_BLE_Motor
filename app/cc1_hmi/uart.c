@@ -55,31 +55,36 @@ void decodeTick()
 ////////////////////////////////////////////////////////////////////////////////
 void encodeTick()
 {
+    
     if (autoModeFlag){
-        if (ledCmd == 1) {
-            uartTxBuf[0] = 0x01;            //CMD 0x01: LED
-            uartTxBuf[1] = 0x01;
-            txSendFlag = true;
-            ledCmd = 0;
-        }
-        else if (ledCmd == 2) {
-            uartTxBuf[0] = 0x01;            //CMD 0x01: LED
-            uartTxBuf[1] = 0x02;
-            txSendFlag = true;
-            ledCmd = 0;            
-        }
-        
-        if (txSendFlag) {
-            u16 len = strlen((char*)uartTxBuf);
-            UART_SendData(COMx, (u16)len);
-            while (UART_GetFlagStatus(COMx, UART_IT_TXIEN) == RESET);
-            u8* ptr = uartTxBuf;
-            while (len--) {
-                UART_SendData(COMx, (u8)*ptr++);
-                while (UART_GetFlagStatus(COMx, UART_IT_TXIEN) == RESET);
+        if (uartSendTick++ > 3000){   // 3s send
+            uartSendTick = 0;
+            
+            if (ledCmd == 1) {
+                uartTxBuf[0] = 0x01;            //CMD 0x01: LED
+                uartTxBuf[1] = 0x01;
+                txSendFlag = true;
+                ledCmd = 0;
             }
-            memset(uartTxBuf, 0x00, sizeof(uartTxBuf));
-            txSendFlag  = false;
+            else if (ledCmd == 2) {
+                uartTxBuf[0] = 0x01;            //CMD 0x01: LED
+                uartTxBuf[1] = 0x02;
+                txSendFlag = true;
+                ledCmd = 0;            
+            }
+            
+            if (txSendFlag) {
+                u16 len = strlen((char*)uartTxBuf);
+                UART_SendData(COMx, (u16)len);
+                while (UART_GetFlagStatus(COMx, UART_IT_TXIEN) == RESET);
+                u8* ptr = uartTxBuf;
+                while (len--) {
+                    UART_SendData(COMx, (u8)*ptr++);
+                    while (UART_GetFlagStatus(COMx, UART_IT_TXIEN) == RESET);
+                }
+                memset(uartTxBuf, 0x00, sizeof(uartTxBuf));
+                txSendFlag  = false;
+            }
         }
     }    
 }

@@ -16,11 +16,11 @@
 void AlarmTick()
 {
     
-    if((gtp.hours  == 9) || (gtp.hours  == 18)){ 
+    if((gtp.hours  >= 9) && (gtp.hours  <= 18)){ 
         // 9:00 - 18:00 上下班提醒 (5s) 及 开灯
         if(gtp.minute == 0) {
             beepMode = bibi;
-            if(gtp.second > 5)
+            if(gtp.second > 4)
                 beepMode = biNone;
         }
         ledCmd = 1;     //open logo led

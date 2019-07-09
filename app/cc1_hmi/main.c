@@ -60,6 +60,7 @@ void initPara()
     autoModeFlag= false;
     ledCmd      = 0;
     timTick     = 0;
+    uartSendTick = 0;
     beepMode    = biNone;
 }
 
@@ -92,6 +93,8 @@ int main(void)
                 case  VK_K0:
                 beepMode = bi;
                 (vdLED & 0x01) ? (vdLED &= ~0x01) : (vdLED |= 0x01); // toggle LD1
+                
+                autoModeFlag ? (autoModeFlag = false) : (autoModeFlag = true);
                 KeyProcess_Key0();
                 break;
                 case  VK_K1:

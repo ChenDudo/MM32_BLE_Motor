@@ -68,6 +68,29 @@ void decodeTick()
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+void exdecodeTick()
+{
+    if (exrecFlag) {
+
+        u8 *ptr = exuartRxBuf;
+        switch(*ptr) {
+            case 0x01: {
+                if(*(ptr + 1) == 0x01)
+                    dcHandle.dc1Sta = emDC_Run;
+                if(*(ptr + 1) == 0x02)
+                    dcHandle.dc1Sta = emDC_Stop;
+            }
+            break;
+            default:
+            break;
+        }
+
+        memset(exuartRxBuf, 0x00, sizeof(exuartRxBuf));
+        exrecFlag = false;
+    }
+}
+
+////////////////////////////////////////////////////////////////////////////////
 void encodeTick()
 {
     if (adcSendTick ++ > 10000) {
@@ -161,19 +184,19 @@ void UART1_IRQHandler()
 {
     if(UART_GetITStatus(UART1, UART_IT_RXIEN) != RESET) {
 
-        if (isFirstRx) {
-            bufLen = (u16)UART1->RDR;
-            ptrUart = uartRxBuf;
-            isFirstRx = false;
-            uartTimeOut = 2;
+        if (exisFirstRx) {
+            exbufLen = (u16)UART1->RDR;
+            exptrUart = uartRxBuf;
+            exisFirstRx = false;
+            exuartTimeOut = 2;
         }
         else {
             if (bufLen--) {
-                *ptrUart = (u16)UART1->RDR;
-                ptrUart ++;
-                if (bufLen == 0) {
-                    isFirstRx = true;
-                    recFlag = true;
+                *exptrUart = (u16)UART1->RDR;
+                exptrUart ++;
+                if (exbufLen == 0) {
+                    exisFirstRx = true;
+                    exrecFlag = true;
                 }
 
             }

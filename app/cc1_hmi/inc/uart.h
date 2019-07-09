@@ -40,6 +40,7 @@ GLOBAL u8* ptrUart;
 GLOBAL u8  bufLen;
 
 GLOBAL u16 uartTimeOut;
+GLOBAL u16 uartSendTick;
 
 #undef GLOBAL
 /// @}
