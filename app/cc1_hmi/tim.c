@@ -88,7 +88,7 @@ void initLcdTimer()
     };
 
     TIM_OCInitTypeDef pOC = {
-        .TIM_Pulse        = 60,
+        .TIM_Pulse        = 80,
         .TIM_OCMode       = TIM_OCMode_PWM1,
         .TIM_OutputState  = TIM_OutputState_Enable,
         .TIM_OutputNState = TIM_OutputNState_Disable,
