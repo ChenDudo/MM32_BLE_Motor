@@ -57,7 +57,7 @@ void encodeTick()
 {
     
     if (autoModeFlag){
-        if (uartSendTick++ > 3000){   // 3s send
+        if (uartSendTick++ > 5000){   // 3s send
             uartSendTick = 0;
             
             if (ledCmd == 1) {
