@@ -9,8 +9,46 @@
 #include "datetime.h"
 #include "rtc.h"
 #include "uart.h"
-
+#include "tim.h"
 #include "hal_rtc.h"
+
+////////////////////////////////////////////////////////////////////////////////
+void AlarmTick()
+{
+    
+    if((gtp.hours  == 9) || (gtp.hours  == 18)){ 
+        // 9:00 - 18:00 上下班提醒 (5s) 及 开灯
+        if(gtp.minute == 0) {
+            beepMode = bibi;
+            if(gtp.second > 5)
+                beepMode = biNone;
+        }
+        ledCmd = 1;     //open logo led
+    }
+    else {
+        ledCmd = 2;     //close logo led
+        
+        if(gtp.hours == 11) {     
+            if(gtp.minute == 40) {      // 11：40 提醒同事下楼拿饭 (3s)
+                beepMode = bibi;
+                if(gtp.second > 3)
+                    beepMode = biNone;
+            }
+        }
+        else {
+            if(gtp.minute == 0) {       // 正点提醒 (2s)
+                beepMode = bi;
+                if(gtp.second > 2)
+                    beepMode = biNone;
+            }
+            if(gtp.minute == 30) {      // 半点提醒 (1s)
+                beepMode = bi;
+                if(gtp.second > 1)
+                    beepMode = biNone;
+            }
+        }
+    }
+}
 
 ////////////////////////////////////////////////////////////////////////////////
 u16 hex16Toint(u16 dat)

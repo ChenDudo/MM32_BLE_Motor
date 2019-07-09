@@ -22,6 +22,8 @@
 #define GLOBAL extern
 #endif
 
+GLOBAL u8 ledCmd;
+
 GLOBAL bool recFlag;
 GLOBAL bool txSendFlag;
 GLOBAL bool isFirstRx;

@@ -90,7 +90,7 @@ GLOBAL u8 menuCnt;
 #undef GLOBAL
 ////////////////////////////////////////////////////////////////////////////////
 void setTimTick();
-
+void AlarmTick();
 void RTC_GetTime(dateTimeDef *tp);	
 void RTC_SetTime(dateTimeDef *tp);
 

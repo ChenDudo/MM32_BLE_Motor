@@ -28,29 +28,39 @@
 #include "drv.h"
 #include "resource.h"
 
+
 #include "rtc.h"
 #include "datetime.h"
 #include "lcd.h"
 #include "uart.h"
+#include "tim.h"
 
 ////////////////////////////////////////////////////////////////////////////////
 void AppTaskTick()
 {
-    if (tickCnt++ >= 100) {
+    if (tickCnt++ >= 250) {
         tickCnt  = 0;
         tickFlag = true;
     }
     decodeTick();
     setTimTick();
+    beepTick();
+    AlarmTick();
+    encodeTick();
+    
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 void initPara()
 {
-    recFlag    = false;
-    txSendFlag = false;
-    isFirstRx  = true;
-    
+    recFlag     = false;
+    txSendFlag  = false;
+    isFirstRx   = true;
+    beepFlag    = false;
+    autoModeFlag= false;
+    ledCmd      = 0;
+    timTick     = 0;
+    beepMode    = biNone;
 }
 
 
@@ -59,7 +69,8 @@ void initPeripheral()
 {
     lcd_init();
     initUART(COMx);
-    
+    initBeepTimer();
+    initLcdTimer();
     while(initRTC()){};
     
 }
@@ -79,14 +90,17 @@ int main(void)
         if (SysKeyboard(&vkKey)) {
             switch  (vkKey) {
                 case  VK_K0:
+                beepMode = bi;
                 (vdLED & 0x01) ? (vdLED &= ~0x01) : (vdLED |= 0x01); // toggle LD1
                 KeyProcess_Key0();
                 break;
                 case  VK_K1:
+                beepMode = bibi;
                 (vdLED & 0x02) ? (vdLED &= ~0x02) : (vdLED |= 0x02); // toggle LD1
                 KeyProcess_Key1();
                 break;
                 case  VK_K2:
+                beepMode = bi_bi;
                 (vdLED & 0x04) ? (vdLED &= ~0x04) : (vdLED |= 0x04); // toggle LD1
                 RTC_SetTime(&gtp);
                 KeyProcess_Key2();

@@ -63,6 +63,7 @@ GLOBAL u8 lcd_buf[LCD_Buf_Size];
 ////////////////////////////////////////////////////////////////////////////////
 u8 lcd_init();
 void lcdTick();
+char* itoa(int num,char* str,int radix);
 void lcd_clear(u16 color);
 void lcd_drawLine(u16 x1, u16 y1, u16 x2, u16 y2);
 void lcd_drawRectangle(u16 x1, u16 y1, u16 x2, u16 y2);

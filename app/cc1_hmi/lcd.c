@@ -20,9 +20,120 @@
 #include "bsp_tim.h"
 
 #include "lcd.h"
+//#include "tim.h"
 #include "font.h"
 #include "datetime.h"
 
+
+
+////////////////////////////////////////////////////////////////////////////////
+void lcd_desplay()
+{
+    lcd_drawLine  ( 5, 10, 235, 10);
+    lcd_showString(10,  15,230, 24, 24, "MindMotion Nanjing");
+    lcd_drawLine  ( 5, 45, 235, 45);
+    
+    lcd_showString(20, 80,220, 16, 16, "DATE: Y-M-D Hour-Min-Sec");
+
+    lcd_drawRectangle(15, 115, 225, 150);
+        
+       
+        
+    lcd_drawLine  (10, 220, 230, 220);
+    //lcd_showString(160, 228, 220, 12, 12, "by CD103");
+    lcd_showString(18, 228, 220, 12, 12, "MindMotion(NJ) Company Logo Setting");
+    
+}
+
+char* weekString[7] = {"Sun.", "Mon.", "Tue.", "Wed.", "Thu.", "Fri.", "Sat."};
+
+////////////////////////////////////////////////////////////////////////////////
+void lcdTick()
+{
+    char s1[32];
+    u16 temp;
+    
+    temp = gtp.year;
+    itoa(temp, s1, 10);
+    lcd_showString(30, 170, 210, 24, 24, s1); 
+    
+    strcpy(s1, "-");
+    lcd_showString(90, 170, 210, 24, 24, s1); 
+    
+    temp = gtp.month;
+    if(temp < 10) {
+        itoa(0, s1, 10);
+        lcd_showString(118, 170, 210, 24, 24, s1);
+        itoa(temp, s1, 10);
+        lcd_showString(131, 170, 210, 24, 24, s1);
+    }
+    else {
+        itoa(temp, s1, 10);
+        lcd_showString(118, 170, 210, 24, 24, s1);
+    }
+    
+    strcpy(s1, "-");
+    lcd_showString(150, 170, 210, 24, 24, s1);
+    
+    temp = gtp.day;
+    if(temp < 10) {
+        itoa(0, s1, 10);
+        lcd_showString(180, 170, 210, 24, 24, s1);
+        itoa(temp, s1, 10);
+        lcd_showString(193, 170, 210, 24, 24, s1);
+    }
+    else {
+        itoa(temp, s1, 10);
+        lcd_showString(180, 170, 210, 24, 24, s1);
+    }
+
+//////////////////
+    temp = gtp.hours;
+    if(temp < 10) {
+        itoa(0, s1, 10);
+        lcd_showString(30, 120, 210, 24, 24, s1);
+        itoa(temp, s1, 10);
+        lcd_showString(43, 120, 210, 24, 24, s1);
+    }
+    else {
+        itoa(temp, s1, 10);
+        lcd_showString(30, 120, 210, 24, 24, s1);
+    }
+    
+    strcpy(s1, ":");
+    lcd_showString(58, 120, 210, 24, 24, s1); 
+    
+    temp = gtp.minute;
+    if(temp < 10) {
+        itoa(0, s1, 10);
+        lcd_showString(75, 120, 210, 24, 24, s1);
+        itoa(temp, s1, 10);
+        lcd_showString(88, 120, 210, 24, 24, s1);
+    }
+    else {
+        itoa(temp, s1, 10);
+        lcd_showString(75, 120, 210, 24, 24, s1);
+    }
+    
+    strcpy(s1, ":");
+    lcd_showString(102, 120, 210, 24, 24, s1);
+    
+    temp = gtp.second; 
+    if(temp < 10) {
+        itoa(0, s1, 10);
+        lcd_showString(120, 120, 210, 24, 24, s1);
+        itoa(temp, s1, 10);
+        lcd_showString(133, 120, 210, 24, 24, s1);
+    }
+    else {
+        itoa(temp, s1, 10);
+        lcd_showString(120, 120, 210, 24, 24, s1);
+    }
+    
+    lcd_showString(170, 120, 240, 24, 24, weekString[gtp.week]);
+}
+
+////////////////////////////////////////////////////////////////////////////////
 char* itoa(int num,char* str,int radix)
 {
 	char index[] = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";//Ë÷Òý±í
@@ -469,152 +580,9 @@ void lcd_showString(u16 x, u16 y, u16 width, u16 height, u8 size, char *p)
     }
 }
 
-
-////////////////////////////////////////////////////////////////////////////////
-void initLcdTimer()
-{
-    BSP_TIM_CH4_GPIO_Configure(TIM4, 0, 0, 1);
-    
-    COMMON_EnableIpClock(emCLOCK_TIM4);
-    
-    TIM_TimeBaseInitTypeDef pBase = {
-        .TIM_Prescaler         = 0,
-        .TIM_Period            = 999,
-        .TIM_ClockDivision     = TIM_CKD_DIV1,
-        .TIM_CounterMode       = TIM_CounterMode_Up,
-        .TIM_RepetitionCounter = 0
-    };
-
-    TIM_OCInitTypeDef pOC = {
-        .TIM_Pulse        = 60,
-        .TIM_OCMode       = TIM_OCMode_PWM1,
-        .TIM_OutputState  = TIM_OutputState_Enable,
-        .TIM_OutputNState = TIM_OutputNState_Disable,
-        .TIM_OCPolarity   = TIM_OCPolarity_High,
-        .TIM_OCNPolarity  = TIM_OCNPolarity_High,
-        .TIM_OCIdleState  = TIM_OCIdleState_Reset,
-        .TIM_OCNIdleState = TIM_OCNIdleState_Reset
-    };
-    TIM_TimeBaseInit(TIM4, &pBase);
-
-    TIM_OC4Init(TIM4, &pOC);
-    TIM_OC4PreloadConfig(TIM4, TIM_OCPreload_Enable);
-
-    TIM_CtrlPWMOutputs(TIM4, ENABLE);
-    TIM_Cmd(TIM4, ENABLE);    
-}
-
-////////////////////////////////////////////////////////////////////////////////
-void lcd_desplay()
-{
-    lcd_drawLine  ( 5, 10, 235, 10);
-    lcd_showString(10,  15,230, 24, 24, "MindMotion Nanjing");
-    lcd_drawLine  ( 5, 45, 235, 45);
-    
-    lcd_showString(20, 80,220, 16, 16, "DATE: Y-M-D Hour-Min-Sec");
-
-    lcd_drawRectangle(15, 115, 225, 150);
-        
-        
-        
-    lcd_drawLine  (10, 220, 230, 220);
-    //lcd_showString(160, 228, 220, 12, 12, "by CD103");
-    lcd_showString(18, 228, 220, 12, 12, "MindMotion(NJ) Company Logo Setting");
-    
-}
-
-char* weekString[7] = {"Sun.", "Mon.", "Tue.", "Wed.", "Thu.", "Fri.", "Sat."};
-
-////////////////////////////////////////////////////////////////////////////////
-void lcdTick()
-{
-    char s1[32];
-    u16 temp;
-    
-    temp = gtp.year;
-    itoa(temp, s1, 10);
-    lcd_showString(30, 170, 210, 24, 24, s1); 
-    
-    strcpy(s1, "-");
-    lcd_showString(90, 170, 210, 24, 24, s1); 
-    
-    temp = gtp.month;
-    if(temp < 10) {
-        itoa(0, s1, 10);
-        lcd_showString(118, 170, 210, 24, 24, s1);
-        itoa(temp, s1, 10);
-        lcd_showString(131, 170, 210, 24, 24, s1);
-    }
-    else {
-        itoa(temp, s1, 10);
-        lcd_showString(118, 170, 210, 24, 24, s1);
-    }
-    
-    strcpy(s1, "-");
-    lcd_showString(150, 170, 210, 24, 24, s1);
-    
-    temp = gtp.day;
-    if(temp < 10) {
-        itoa(0, s1, 10);
-        lcd_showString(180, 170, 210, 24, 24, s1);
-        itoa(temp, s1, 10);
-        lcd_showString(193, 170, 210, 24, 24, s1);
-    }
-    else {
-        itoa(temp, s1, 10);
-        lcd_showString(180, 170, 210, 24, 24, s1);
-    }
-
-//////////////////
-    temp = gtp.hours;
-    if(temp < 10) {
-        itoa(0, s1, 10);
-        lcd_showString(30, 120, 210, 24, 24, s1);
-        itoa(temp, s1, 10);
-        lcd_showString(43, 120, 210, 24, 24, s1);
-    }
-    else {
-        itoa(temp, s1, 10);
-        lcd_showString(30, 120, 210, 24, 24, s1);
-    }
-    
-    strcpy(s1, ":");
-    lcd_showString(58, 120, 210, 24, 24, s1); 
-    
-    temp = gtp.minute;
-    if(temp < 10) {
-        itoa(0, s1, 10);
-        lcd_showString(75, 120, 210, 24, 24, s1);
-        itoa(temp, s1, 10);
-        lcd_showString(88, 120, 210, 24, 24, s1);
-    }
-    else {
-        itoa(temp, s1, 10);
-        lcd_showString(75, 120, 210, 24, 24, s1);
-    }
-    
-    strcpy(s1, ":");
-    lcd_showString(102, 120, 210, 24, 24, s1);
-    
-    temp = gtp.second; 
-    if(temp < 10) {
-        itoa(0, s1, 10);
-        lcd_showString(120, 120, 210, 24, 24, s1);
-        itoa(temp, s1, 10);
-        lcd_showString(133, 120, 210, 24, 24, s1);
-    }
-    else {
-        itoa(temp, s1, 10);
-        lcd_showString(120, 120, 210, 24, 24, s1);
-    }
-    
-    lcd_showString(170, 120, 240, 24, 24, weekString[gtp.week]);
-}
-
 ////////////////////////////////////////////////////////////////////////////////
 u8 lcd_init()
 {
-    initLcdTimer();
     lcd_gpioInit();
     lcd_spiInit();
     LCD_BS(1);
