@@ -75,8 +75,10 @@ void exdecodeTick()
         u8 *ptr = exuartRxBuf;
         switch(*ptr) {
             case 0x01: {
-                if(*(ptr + 1) == 0x01)
+                if(*(ptr + 1) == 0x01) {
+                    pwmSetValue = 70;
                     dcHandle.dc1Sta = emDC_Run;
+                }
                 if(*(ptr + 1) == 0x02)
                     dcHandle.dc1Sta = emDC_Stop;
             }
@@ -159,7 +161,7 @@ void initUART(UART_TypeDef* UARTx)
         GPIO_Mode_AF_PP_20MHz_Init(GPIOB, GPIO_Pin_6, EXTI_MAPR_UART1, 	GPIO_AF_0);
         GPIO_Mode_IPU_Init		  (GPIOB, GPIO_Pin_7, EXTI_MAPR_UART1, 	GPIO_AF_0);
 
-        COMMON_NVIC_Configure(UART1_IRQn, 0, 0);
+        COMMON_NVIC_Configure(UART1_IRQn, 1, 1);
     }
     if (UARTx == UART2) {
         COMMON_EnableIpClock(emCLOCK_UART2);
@@ -186,12 +188,12 @@ void UART1_IRQHandler()
 
         if (exisFirstRx) {
             exbufLen = (u16)UART1->RDR;
-            exptrUart = uartRxBuf;
+            exptrUart = exuartRxBuf;
             exisFirstRx = false;
-            exuartTimeOut = 2;
+            exuartTimeOut = 5;
         }
         else {
-            if (bufLen--) {
+            if (exbufLen--) {
                 *exptrUart = (u16)UART1->RDR;
                 exptrUart ++;
                 if (exbufLen == 0) {

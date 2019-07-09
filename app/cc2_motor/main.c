@@ -63,6 +63,10 @@ void AppTaskTick()
         isFirstRx = true;
     }
 
+    if(!(--exuartTimeOut)) {
+        exisFirstRx = true;
+    }
+
     encodeTick();
     exencodeTick();
 }
@@ -79,7 +83,13 @@ void initPara()
     isFirstRx   = true;
     adcVolFlag  = false;
     adcTempFlag = false;
-    extxSendFlag  = false;
+
+    ///////////////
+    exrecFlag       = false;
+    extxSendFlag    = false;
+    exisFirstRx     = true;
+    exuartTimeOut   = 2;
+    exbufLen        = 0;
 
     adcVolTick  = 0;
     adcTempTick = 0;
@@ -109,6 +119,8 @@ void initPara()
 
     memset(uartTxBuf, 0x00, sizeof(uartTxBuf));
     memset(uartRxBuf, 0x00, sizeof(uartRxBuf));
+    memset(exuartTxBuf, 0x00, sizeof(exuartTxBuf));
+    memset(exuartRxBuf, 0x00, sizeof(exuartRxBuf));
 
     ptrUart = uartRxBuf;
 }
