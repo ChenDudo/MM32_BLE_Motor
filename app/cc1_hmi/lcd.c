@@ -32,17 +32,10 @@ void lcd_desplay()
     lcd_drawLine  ( 5, 10, 235, 10);
     lcd_showString(10,  15,230, 24, 24, "MindMotion Nanjing");
     lcd_drawLine  ( 5, 45, 235, 45);
-    
     lcd_showString(20, 80,220, 16, 16, "DATE: Y-M-D Hour-Min-Sec");
-
     lcd_drawRectangle(15, 115, 225, 150);
-        
-       
-        
     lcd_drawLine  (10, 220, 230, 220);
-    //lcd_showString(160, 228, 220, 12, 12, "by CD103");
     lcd_showString(18, 228, 220, 12, 12, "MindMotion(NJ) Company Logo Setting");
-    
 }
 
 char* weekString[7] = {"Sun.", "Mon.", "Tue.", "Wed.", "Thu.", "Fri.", "Sat."};
