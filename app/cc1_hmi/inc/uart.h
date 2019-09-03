@@ -30,6 +30,7 @@ GLOBAL bool isFirstRx;
 
 GLOBAL bool receiveTimFlag;
 GLOBAL bool autoModeFlag;
+GLOBAL u8 rev017Sta;
 
 GLOBAL u8 uartTxBuf[20];
 GLOBAL u8 uartRxBuf[20];

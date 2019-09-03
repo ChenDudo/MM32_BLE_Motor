@@ -31,11 +31,12 @@
 #define GRAYBLUE         0X5458
 
 #define LIGHTGREEN       0X841F
-//#define LIGHTGRAY        0XEF5B
+#define LIGHTGRAY        0XEF5B
 #define LGRAY            0XC618
 
 #define LGRAYBLUE        0XA651
 #define LBBLUE           0X2B12
+#define CHENDO           0xE79C
 
 #define LCD_CS(n)       (n ? GPIO_SetBits(GPIOC, GPIO_Pin_11) : GPIO_ResetBits(GPIOC, GPIO_Pin_11))
 //#define   LCD_DC(n)       (n ? GPIO_SetBits(GPIOC, GPIO_Pin_12) : GPIO_ResetBits(GPIOC, GPIO_Pin_12))
@@ -45,7 +46,7 @@
 #ifdef _LCD_C_
 #define GLOBAL
 
-u16 POINT_COLOR = WHITE;
+u16 POINT_COLOR = LIGHTGRAY;
 u16 BACK_COLOR  = BLACK;
 
 #else

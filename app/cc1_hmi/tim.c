@@ -17,47 +17,49 @@
 ////////////////////////////////////////////////////////////////////////////////
 void beepTick()
 {
-    if (beepFlag) {
-        switch(beepMode){
-            case bi:
-            timTick = 300;
-            beepMode = biNone;
-            break;
-            case bibi:
-            timTick = 500;
-            beepMode = biNone;
-            break;
-            case bi_bi:
-            timTick = 700;
-            beepMode = biNone;
-            break;
-            default:
+    if(beepEn){
+        if (beepFlag) {
+            switch(beepMode){
+                case bi:
+                timTick = 300;
+                beepMode = biNone;
+                break;
+                case bibi:
+                timTick = 500;
+                beepMode = biNone;
+                break;
+                case bi_bi:
+                timTick = 700;
+                beepMode = biNone;
+                break;
+                default:
+                beepOFF();
+                break;
+            }
+        }
+        
+        if(timTick > 0) {
+            beepFlag = false;
+            
+            if (timTick > 500)
+                beepON();
+            else if (timTick > 500)
+                beepOFF();
+            else if (timTick > 300)
+                beepON();
+            else if (timTick > 200)
+                beepOFF();
+            else
+                beepON();
+            
+            timTick --;
+        }
+        else {
             beepOFF();
-            break;
+            beepFlag = true;
         }
     }
     
-    if(timTick > 0) {
-        beepFlag = false;
-
-        if (timTick > 500)
-            beepON();
-        else if (timTick > 500)
-            beepOFF();
-        else if (timTick > 300)
-            beepON();
-        else if (timTick > 200)
-            beepOFF();
-        else
-            beepON();
-        
-        timTick --;
-    }
-    else {
-        beepOFF();
-        beepFlag = true;
-    }
-        
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -86,9 +88,9 @@ void initLcdTimer()
         .TIM_CounterMode       = TIM_CounterMode_Up,
         .TIM_RepetitionCounter = 0
     };
-
+    
     TIM_OCInitTypeDef pOC = {
-        .TIM_Pulse        = 80,
+        .TIM_Pulse        = 400,
         .TIM_OCMode       = TIM_OCMode_PWM1,
         .TIM_OutputState  = TIM_OutputState_Enable,
         .TIM_OutputNState = TIM_OutputNState_Disable,
@@ -98,10 +100,10 @@ void initLcdTimer()
         .TIM_OCNIdleState = TIM_OCNIdleState_Reset
     };
     TIM_TimeBaseInit(TIM4, &pBase);
-
+    
     TIM_OC4Init(TIM4, &pOC);
     TIM_OC4PreloadConfig(TIM4, TIM_OCPreload_Enable);
-
+    
     TIM_CtrlPWMOutputs(TIM4, ENABLE);
     TIM_Cmd(TIM4, ENABLE);    
 }
@@ -121,7 +123,7 @@ void initBeepTimer()
         .TIM_CounterMode       = TIM_CounterMode_Up,
         .TIM_RepetitionCounter = 0
     };
-
+    
     TIM_OCInitTypeDef pOC = {
         .TIM_Pulse        = 49,
         .TIM_OCMode       = TIM_OCMode_PWM1,
@@ -133,11 +135,11 @@ void initBeepTimer()
         .TIM_OCNIdleState = TIM_OCNIdleState_Reset
     };
     TIM_TimeBaseInit(TIM2, &pBase);
-
+    
     TIM_OC2Init(TIM2, &pOC);
     TIM_OC2PreloadConfig(TIM2, TIM_OCPreload_Enable);
-
+    
     TIM_CtrlPWMOutputs(TIM2, ENABLE);
-    TIM_Cmd(TIM2, ENABLE); 
+    //TIM_Cmd(TIM2, ENABLE); 
     TIM_Cmd(TIM2, DISABLE); 
 }

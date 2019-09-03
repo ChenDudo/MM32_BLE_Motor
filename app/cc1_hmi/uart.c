@@ -43,6 +43,12 @@ void decodeTick()
             else
                 autoModeFlag = false;
             break;
+            case 0x08:  // MB017 sta
+            if(*(ptr + 1) == 0x01)
+                rev017Sta = 1;
+            else
+                rev017Sta = 2;
+            break;
             default:
             break;
         }
@@ -56,8 +62,8 @@ void decodeTick()
 void encodeTick()
 {
     
-    if (autoModeFlag){
-        if (uartSendTick++ > 5000){   // 3s send
+    if (ledCmd != 0){
+        if (uartSendTick++ > 1000){   // After 1s send
             uartSendTick = 0;
             
             if (ledCmd == 1) {

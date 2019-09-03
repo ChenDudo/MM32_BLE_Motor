@@ -15,27 +15,35 @@
 ////////////////////////////////////////////////////////////////////////////////
 void AlarmTick()
 {
-    
-    if((gtp.hours  >= 9) && (gtp.hours  <= 18)){ 
-        if(gtp.minute == 0) {
-            beepMode = bibi;
-            if(gtp.second > 3)
-                beepMode = biNone;
-        }
-        if(gtp.minute == 30) { 
-                beepMode = bi;
-                if(gtp.second > 1)
-                    beepMode = biNone;
-            }
-        ledCmd = 1;     //open logo led
+    // 9:00~12:00 14:00 ~ 18:00
+    if(((gtp.hours  >= 9) && (gtp.hours  <= 12)) || ((gtp.hours  >= 14) && (gtp.hours  <= 18))) { 
+        //if(gtp.minute == 0) {
+        //    beepMode = bibi;
+        //    if(gtp.second > 1)
+        //        beepMode = biNone;
+        //}
+        //if(gtp.minute == 30) { 
+        //    beepMode = bi;
+        //    if(gtp.second > 1)
+        //        beepMode = biNone;
+        //}
+        if(autoModeFlag)
+            ledCmd = 1;     //open logo led
     }
     else {
-        ledCmd = 2;     //close logo led
-        if(gtp.minute == 0) { 
-            beepMode = bi;
-            if(gtp.second > 2)
-                beepMode = biNone;
-        }
+        if(autoModeFlag)
+            ledCmd = 2;     //close logo led
+        //if(gtp.minute == 0) { 
+        //    beepMode = bi;
+        //    if(gtp.second > 2)
+        //        beepMode = biNone;
+        //}
+    }
+    
+    if(gtp.minute == 0 && (gtp.hours != 13)) {
+      beepMode = bi;
+      if(gtp.second > 1)
+        beepMode = biNone;
     }
 }
 
@@ -97,9 +105,9 @@ u32 DateTimeToSeconds(dateTimeDef *tp)
 	
 	u32 Days =  ( tp->year % 4) ? 
 		(LeapY * 366 + ComY * 365 + Month_Days_Accu_C[tp->month - 1] + (tp->day - 1)) : 
-		(LeapY * 366 + ComY * 365 + Month_Days_Accu_L[tp->month - 1] + (tp->day - 1)); 
-		
-		
+    (LeapY * 366 + ComY * 365 + Month_Days_Accu_L[tp->month - 1] + (tp->day - 1)); 
+    
+    
 	return Days * SecsPerDay + tp->hours * 3600 + tp->minute * 60 + tp->second;
 }
 
@@ -140,7 +148,7 @@ u16 GetMouthItem(u32 *sec,  u32 *item)
 u16 GetMouth(u16 year, u32* sec)
 {
 	return (year % 4) ? GetMouthItem(sec,  &Month_Secs_Accu_C[0]) : 
-		                GetMouthItem(sec,  &Month_Secs_Accu_L[0]);
+    GetMouthItem(sec,  &Month_Secs_Accu_L[0]);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -161,7 +169,7 @@ u16 GetDay(u16 year, u32 *sec)
 	u16 day = *sec / SecsPerDay;
 	*sec = *sec % SecsPerDay;
 	return (year % 4) ? GetDayItem(day,  &Month_Days_Accu_C[0]) : 
-		                GetDayItem(day,  &Month_Days_Accu_L[0]);
+    GetDayItem(day,  &Month_Days_Accu_L[0]);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -187,56 +195,56 @@ void RTC_SetTime(dateTimeDef *tp)
 
 void adjYear()
 {
-//	if (Key3CntF)	{if (--gtp.year < 2016)	gtp.year = 2025;}
-//	else 			{if (++gtp.year > 2025)	gtp.year = 2016;}
-//	u8 day = Month_Days[gtp.month - 1];
-//	if (gtp.year % 4)	day--; 
-//	if (gtp.day > day) gtp.day = day;
+    //	if (Key3CntF)	{if (--gtp.year < 2016)	gtp.year = 2025;}
+    //	else 			{if (++gtp.year > 2025)	gtp.year = 2016;}
+    //	u8 day = Month_Days[gtp.month - 1];
+    //	if (gtp.year % 4)	day--; 
+    //	if (gtp.day > day) gtp.day = day;
 }
 void adjMonth()
 {
-//	if (Key3CntF)	{if (--gtp.month < 1) 	gtp.month = 12;}
-//	else 			{if (++gtp.month > 12) 	gtp.month = 1;}
-//	u8 day = Month_Days[gtp.month - 1];
-//	if (gtp.year % 4)	day--; 
-//	if (gtp.day > day) gtp.day = day;
+    //	if (Key3CntF)	{if (--gtp.month < 1) 	gtp.month = 12;}
+    //	else 			{if (++gtp.month > 12) 	gtp.month = 1;}
+    //	u8 day = Month_Days[gtp.month - 1];
+    //	if (gtp.year % 4)	day--; 
+    //	if (gtp.day > day) gtp.day = day;
 }
 
 void adjDay()
 {
-//	u8 day = Month_Days[gtp.month - 1];
-//	if (gtp.year % 4)	day--; 
-//	if (Key3CntF)	{if (--gtp.day < 1)	 	gtp.day = day;}
-//	else 			{if (++gtp.day > day) 	gtp.day = 1;}
+    //	u8 day = Month_Days[gtp.month - 1];
+    //	if (gtp.year % 4)	day--; 
+    //	if (Key3CntF)	{if (--gtp.day < 1)	 	gtp.day = day;}
+    //	else 			{if (++gtp.day > day) 	gtp.day = 1;}
 }
 
 void adjHours()
 {
-//	if (Key3CntF)	{if (--gtp.hours == -1) gtp.hours = 23;}
-//	else 			{if (++gtp.hours > 23) 	gtp.hours = 0;}
+    //	if (Key3CntF)	{if (--gtp.hours == -1) gtp.hours = 23;}
+    //	else 			{if (++gtp.hours > 23) 	gtp.hours = 0;}
 }		
 
 void adjMinute()
 {
-//	if (Key3CntF)	{if (--gtp.minute == -1) gtp.minute = 59;}
-//	else 			{if (++gtp.minute > 59) 	gtp.minute = 0;}
+    //	if (Key3CntF)	{if (--gtp.minute == -1) gtp.minute = 59;}
+    //	else 			{if (++gtp.minute > 59) 	gtp.minute = 0;}
 }
 
 void adjSecond()
 {
-//	if (Key3CntF)	{if (--gtp.second == -1) gtp.second = 59;}
-//	else 			{if (++gtp.second > 59) 	gtp.second = 0;}
+    //	if (Key3CntF)	{if (--gtp.second == -1) gtp.second = 59;}
+    //	else 			{if (++gtp.second > 59) 	gtp.second = 0;}
 }
 ////////////////////////////////////////////////////////////////////////////////
 void modifyTime(u8 sel)
 {
 	switch (sel) {
-	case 0:		adjYear();		break;
-	case 1:		adjMonth();		break;
-	case 2:		adjDay();		break;
-	case 3:		adjHours();		break;
-	case 4:		adjMinute();	break;
-	case 5:		adjSecond();	break;
-	default:	RTC_SetTime(&gtp);		break;
+        case 0:		adjYear();		break;
+        case 1:		adjMonth();		break;
+        case 2:		adjDay();		break;
+        case 3:		adjHours();		break;
+        case 4:		adjMinute();	break;
+        case 5:		adjSecond();	break;
+        default:	RTC_SetTime(&gtp);		break;
 	}
 }

@@ -24,6 +24,7 @@
 #endif
 
 //back to HMI board
+GLOBAL u16 exSendStaTick;
 GLOBAL bool extxSendFlag;
 GLOBAL u8 exuartTxBuf[20];
 GLOBAL u8 exuartRxBuf[20];

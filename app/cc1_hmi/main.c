@@ -55,9 +55,11 @@ void initPara()
 {
     recFlag     = false;
     txSendFlag  = false;
+    beepEn      = false;
     isFirstRx   = true;
     beepFlag    = false;
     autoModeFlag= false;
+    rev017Sta   = 0;
     ledCmd      = 0;
     timTick     = 0;
     uartSendTick = 0;
@@ -93,19 +95,18 @@ int main(void)
                 case  VK_K0:
                 beepMode = bi;
                 (vdLED & 0x01) ? (vdLED &= ~0x01) : (vdLED |= 0x01); // toggle LD1
-                
                 autoModeFlag ? (autoModeFlag = false) : (autoModeFlag = true);
                 KeyProcess_Key0();
                 break;
                 case  VK_K1:
-                beepMode = bibi;
+                beepEn ? (beepEn = false) : (beepEn = true);
+                beepMode = bi;
                 (vdLED & 0x02) ? (vdLED &= ~0x02) : (vdLED |= 0x02); // toggle LD1
                 KeyProcess_Key1();
                 break;
                 case  VK_K2:
-                beepMode = bi_bi;
-                (vdLED & 0x04) ? (vdLED &= ~0x04) : (vdLED |= 0x04); // toggle LD1
-                RTC_SetTime(&gtp);
+                beepMode = bi;
+                (ledCmd != 1) ? (ledCmd = 1) : (ledCmd = 2);
                 KeyProcess_Key2();
                 break;
                 default:

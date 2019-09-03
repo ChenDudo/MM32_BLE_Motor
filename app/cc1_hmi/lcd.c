@@ -19,23 +19,38 @@
 #include "drv_spi.h"
 #include "bsp_tim.h"
 
+#include "tim.h"
+#include "uart.h"
 #include "lcd.h"
 //#include "tim.h"
 #include "font.h"
 #include "datetime.h"
 
+#define MODELINE 55
+#define BEEPLINE 75
+#define SENDLINE 95
+#define MOTOLINE 115
+
+#define DATALINE 185
+#define TIMELINE 150
 
 
 ////////////////////////////////////////////////////////////////////////////////
 void lcd_desplay()
 {
-    lcd_drawLine  ( 5, 10, 235, 10);
-    lcd_showString(10,  15,230, 24, 24, "MindMotion Nanjing");
-    lcd_drawLine  ( 5, 45, 235, 45);
-    lcd_showString(20, 80,220, 16, 16, "DATE: Y-M-D Hour-Min-Sec");
-    lcd_drawRectangle(15, 115, 225, 150);
-    lcd_drawLine  (10, 220, 230, 220);
-    lcd_showString(18, 228, 220, 12, 12, "MindMotion(NJ) Company Logo Setting");
+    lcd_drawLine        ( 5, 10,235, 10     );
+    lcd_showString      (10, 15,230, 24, 24, "MindMotion Nanjing");
+    lcd_drawLine        ( 5, 45,235, 45);
+    lcd_showString      (20, MODELINE,220, 16, 16, "Auto Mode:(K1)");
+    lcd_showString      (20, BEEPLINE,220, 16, 16, "Beep Mode:(K2)");
+    lcd_showString      (20, SENDLINE,220, 16, 16, "Send Data:(K3)");
+    lcd_showString      (20, MOTOLINE,220, 16, 16, "Rcv MB017 Sta:");
+    
+    lcd_drawRectangle   (15,TIMELINE - 5 ,225,TIMELINE + 30     );
+    lcd_drawRectangle   (15,DATALINE - 5 ,225,DATALINE + 30     );
+    //lcd_drawLine        (10,220,230,220     );
+    lcd_showString      (10,228,220, 12, 12, "Rev 1.0.5 by ChenDo.");   //(Thanks for NJAE)
+    lcd_showString      (140,224,220,16, 16, "MM32 Inside!");
 }
 
 char* weekString[7] = {"Sun.", "Mon.", "Tue.", "Wed.", "Thu.", "Fri.", "Sat."};
@@ -46,84 +61,108 @@ void lcdTick()
     char s1[32];
     u16 temp;
     
+    if(autoModeFlag)
+        lcd_showString(160, MODELINE,220, 16, 16, "ON! ");
+    else
+        lcd_showString(160, MODELINE,220, 16, 16, "OFF!");
+    
+    if(beepEn)
+        lcd_showString(160, BEEPLINE,220, 16, 16, "ON! ");
+    else
+        lcd_showString(160, BEEPLINE,220, 16, 16, "OFF!");
+    
+    if(ledCmd == 1)
+        lcd_showString(160, SENDLINE,220, 16, 16, "RUN! ");
+    else if(ledCmd == 2)
+        lcd_showString(160, SENDLINE,220, 16, 16, "STOP!");
+    else
+        lcd_showString(160, SENDLINE,220, 16, 16, "NULL ");
+    
+    if(rev017Sta == 1)
+        lcd_showString(160, MOTOLINE,220, 16, 16, "RUN! ");
+    else if(rev017Sta == 2)
+        lcd_showString(160, MOTOLINE,220, 16, 16, "STOP!");
+    else
+        lcd_showString(160, MOTOLINE,220, 16, 16, "NULL ");
+    
     temp = gtp.year;
     itoa(temp, s1, 10);
-    lcd_showString(30, 170, 210, 24, 24, s1); 
+    lcd_showString(30, DATALINE, 210, 24, 24, s1); 
     
     strcpy(s1, "-");
-    lcd_showString(90, 170, 210, 24, 24, s1); 
+    lcd_showString(90, DATALINE, 210, 24, 24, s1); 
     
     temp = gtp.month;
     if(temp < 10) {
         itoa(0, s1, 10);
-        lcd_showString(118, 170, 210, 24, 24, s1);
+        lcd_showString(118, DATALINE, 210, 24, 24, s1);
         itoa(temp, s1, 10);
-        lcd_showString(131, 170, 210, 24, 24, s1);
+        lcd_showString(131, DATALINE, 210, 24, 24, s1);
     }
     else {
         itoa(temp, s1, 10);
-        lcd_showString(118, 170, 210, 24, 24, s1);
+        lcd_showString(118, DATALINE, 210, 24, 24, s1);
     }
     
     strcpy(s1, "-");
-    lcd_showString(150, 170, 210, 24, 24, s1);
+    lcd_showString(150, DATALINE, 210, 24, 24, s1);
     
     temp = gtp.day;
     if(temp < 10) {
         itoa(0, s1, 10);
-        lcd_showString(180, 170, 210, 24, 24, s1);
+        lcd_showString(180, DATALINE, 210, 24, 24, s1);
         itoa(temp, s1, 10);
-        lcd_showString(193, 170, 210, 24, 24, s1);
+        lcd_showString(193, DATALINE, 210, 24, 24, s1);
     }
     else {
         itoa(temp, s1, 10);
-        lcd_showString(180, 170, 210, 24, 24, s1);
+        lcd_showString(180, DATALINE, 210, 24, 24, s1);
     }
 
 //////////////////
     temp = gtp.hours;
     if(temp < 10) {
         itoa(0, s1, 10);
-        lcd_showString(30, 120, 210, 24, 24, s1);
+        lcd_showString(30, TIMELINE, 210, 24, 24, s1);
         itoa(temp, s1, 10);
-        lcd_showString(43, 120, 210, 24, 24, s1);
+        lcd_showString(43, TIMELINE, 210, 24, 24, s1);
     }
     else {
         itoa(temp, s1, 10);
-        lcd_showString(30, 120, 210, 24, 24, s1);
+        lcd_showString(30, TIMELINE, 210, 24, 24, s1);
     }
     
     strcpy(s1, ":");
-    lcd_showString(58, 120, 210, 24, 24, s1); 
+    lcd_showString(58, TIMELINE, 210, 24, 24, s1); 
     
     temp = gtp.minute;
     if(temp < 10) {
         itoa(0, s1, 10);
-        lcd_showString(75, 120, 210, 24, 24, s1);
+        lcd_showString(75, TIMELINE, 210, 24, 24, s1);
         itoa(temp, s1, 10);
-        lcd_showString(88, 120, 210, 24, 24, s1);
+        lcd_showString(88, TIMELINE, 210, 24, 24, s1);
     }
     else {
         itoa(temp, s1, 10);
-        lcd_showString(75, 120, 210, 24, 24, s1);
+        lcd_showString(75, TIMELINE, 210, 24, 24, s1);
     }
     
     strcpy(s1, ":");
-    lcd_showString(102, 120, 210, 24, 24, s1);
+    lcd_showString(102, TIMELINE, 210, 24, 24, s1);
     
     temp = gtp.second; 
     if(temp < 10) {
         itoa(0, s1, 10);
-        lcd_showString(120, 120, 210, 24, 24, s1);
+        lcd_showString(120, TIMELINE, 210, 24, 24, s1);
         itoa(temp, s1, 10);
-        lcd_showString(133, 120, 210, 24, 24, s1);
+        lcd_showString(133, TIMELINE, 210, 24, 24, s1);
     }
     else {
         itoa(temp, s1, 10);
-        lcd_showString(120, 120, 210, 24, 24, s1);
+        lcd_showString(120, TIMELINE, 210, 24, 24, s1);
     }
     
-    lcd_showString(170, 120, 240, 24, 24, weekString[gtp.week]);
+    lcd_showString(170, TIMELINE, 240, 24, 24, weekString[gtp.week]);
 }
 
 ////////////////////////////////////////////////////////////////////////////////

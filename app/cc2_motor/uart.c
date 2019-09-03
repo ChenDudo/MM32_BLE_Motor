@@ -76,7 +76,8 @@ void exdecodeTick()
         switch(*ptr) {
             case 0x01: {
                 if(*(ptr + 1) == 0x01) {
-                    pwmSetValue = 70;
+                    if(!pwmSetValue)
+                      pwmSetValue = 70;
                     dcHandle.dc1Sta = emDC_Run;
                 }
                 if(*(ptr + 1) == 0x02)
@@ -122,6 +123,7 @@ void encodeTick()
     }
 }
 
+////////////////////////////////////////////////////////////////////////////////
 void exencodeTick()
 {
     if (extxSendFlag) {
@@ -137,6 +139,21 @@ void exencodeTick()
 
         memset(exuartTxBuf, 0x00, sizeof(exuartTxBuf));
         extxSendFlag  = false;
+    }
+    
+    if(!extxSendFlag){
+        if(exSendStaTick++ > 2000 ){
+            exSendStaTick = 0;
+            exuartTxBuf[0] = 0x08;
+            exuartTxBuf[1] = dcHandle.dc1Sta;
+            u16 len = strlen((char*)exuartTxBuf);
+            UART_SendData(exCOMx, (u16)len);
+            u8* ptr = exuartTxBuf;
+            while (len--) {
+                UART_SendData(exCOMx, (u8)*ptr++);
+                while (UART_GetFlagStatus(exCOMx, UART_IT_TXIEN) == RESET);
+            }
+        }
     }
 }
 

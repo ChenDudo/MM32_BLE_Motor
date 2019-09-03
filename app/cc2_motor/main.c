@@ -90,6 +90,7 @@ void initPara()
     exisFirstRx     = true;
     exuartTimeOut   = 2;
     exbufLen        = 0;
+    exSendStaTick   = 0;
 
     adcVolTick  = 0;
     adcTempTick = 0;
