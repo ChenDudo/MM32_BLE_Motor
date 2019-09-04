@@ -186,7 +186,7 @@
           <state>__EX_SPI</state>
           <state>__EX_ADC</state>
           <state>__EX_TIM</state>
-          <state>__MM32_HMI</state>
+          <state>__MM32_MB016</state>
           <state>OVERTIME=0</state>
           <state>CLOCK=8000000</state>
           <state>_USER_RESOURCE</state>

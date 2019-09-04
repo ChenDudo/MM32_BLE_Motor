@@ -52,30 +52,30 @@ void BSP_LED_Configure(void)
 {
 #if defined(__MM32_EVB)
 	COMMON_EnableIpClock(emCLOCK_GPIOA);
-	COMMON_EnableIpClock(emCLOCK_GPIOC);    
+	COMMON_EnableIpClock(emCLOCK_GPIOC);
 #if defined(__REGISTER)	 /* ----------- Register Access ------------- */
     GPIOA->BSRR |= 0x0100;
     GPIOC->BSRR |= 0x2000;
-    
+
     GPIOA->CRH = (GPIOA->CRH & 0xFFFFFFF0) | (u32)(PORT_OUTOD | PORT_20MHz) << PORT_BIT8;	// 0x00000006; 	// GPIOA_Pin8  OUTOD
     GPIOC->CRH = (GPIOC->CRH & 0xFF0FFFFF) | (u32)(PORT_OUTOD | PORT_20MHz) << PORT_BIT13;	// 0x00600000; 	// GPIOC_Pin13 OUTOD
-    
+
 #else     	/* ----------- Hardware Abstraction Layer Access ------------- */
     GPIO_SetBits(GPIOA, GPIO_Pin_8);   										// Close LD2
     GPIO_SetBits(GPIOC, GPIO_Pin_13);  										// Close LD1
-    
+
     GPIO_Mode_OUT_OD_20MHz_Init(GPIOA, GPIO_Pin_8,  NO_REMAP, GPIO_AF_0);
     GPIO_Mode_OUT_OD_20MHz_Init(GPIOC, GPIO_Pin_13, NO_REMAP, GPIO_AF_0);
 #endif
 #endif
-    
+
 #if defined(__MM32_MINIBOARD)
 	COMMON_EnableIpClock(emCLOCK_GPIOA);
 	COMMON_EnableIpClock(emCLOCK_GPIOB);
 #if defined(__REGISTER)	 /* ----------- Register Access ------------- */
     GPIOA->BSRR |= 0x8000;
     GPIOB->BSRR |= 0x0038;
-    
+
     GPIOA->CRH = (GPIOA->CRH & 0x0FFFFFFF)
         | (u32)(PORT_OUTOD | PORT_20MHz) << PORT_BIT15;				// 0x60000000; 	// GPIOA_Pin15  OUTOD
     GPIOB->CRL = (GPIOB->CRL & 0xFF000FFF)
@@ -85,32 +85,32 @@ void BSP_LED_Configure(void)
 #else     	/* ----------- Hardware Abstraction Layer Access ------------- */
     GPIO_SetBits(GPIOA, GPIO_Pin_15);                           			// Close LD6
     GPIO_SetBits(GPIOB, GPIO_Pin_3 | GPIO_Pin_4 | GPIO_Pin_5);  			// Close LD5, LD4, LD3
-    
+
     GPIO_Mode_OUT_OD_20MHz_Init(GPIOA, GPIO_Pin_15, NO_REMAP, GPIO_AF_0);
     GPIO_Mode_OUT_OD_20MHz_Init(GPIOB, GPIO_Pin_3,  EXTI_MAPR_SWJ_JTAGDISABLE, GPIO_AF_0);
     GPIO_Mode_OUT_OD_20MHz_Init(GPIOB, GPIO_Pin_4,  NO_REMAP, GPIO_AF_0);
     GPIO_Mode_OUT_OD_20MHz_Init(GPIOB, GPIO_Pin_5,  NO_REMAP, GPIO_AF_0);
 #endif
 #endif
-    
+
 #if defined(__MM32_MB016)
     COMMON_EnableIpClock(emCLOCK_GPIOA);
     COMMON_EnableIpClock(emCLOCK_GPIOC);
-    
+
     GPIO_Mode_OUT_OD_20MHz_Init(GPIOA, GPIO_Pin_5,  NO_REMAP, GPIO_AF_0); //LD0
     GPIO_Mode_OUT_OD_20MHz_Init(GPIOA, GPIO_Pin_6,  NO_REMAP, GPIO_AF_0); //LD1
     GPIO_Mode_OUT_OD_20MHz_Init(GPIOC, GPIO_Pin_4,  NO_REMAP, GPIO_AF_0); //LD2
     GPIO_Mode_OUT_OD_20MHz_Init(GPIOC, GPIO_Pin_5,  NO_REMAP, GPIO_AF_0); //LD3
-    
+
     GPIO_ResetBits(GPIOA, GPIO_Pin_5 | GPIO_Pin_6);
     GPIO_ResetBits(GPIOC, GPIO_Pin_4 | GPIO_Pin_5);
 #endif
-    
+
 #if defined(__MM32_MB017)
 	COMMON_EnableIpClock(emCLOCK_GPIOD);
-    
+
     GPIO_SetBits(GPIOD, GPIO_Pin_2 | GPIO_Pin_3);  			                    // Close LD4, LD3
-    
+
     GPIO_Mode_OUT_OD_20MHz_Init(GPIOD, GPIO_Pin_2,  NO_REMAP, GPIO_AF_0);
     GPIO_Mode_OUT_OD_20MHz_Init(GPIOD, GPIO_Pin_3,  NO_REMAP, GPIO_AF_0);
 #endif
@@ -118,14 +118,14 @@ void BSP_LED_Configure(void)
 #if defined(__MM32_MB018)
     COMMON_EnableIpClock(emCLOCK_GPIOB);
     GPIO_SetBits(GPIOB, GPIO_Pin_3 | GPIO_Pin_7 | GPIO_Pin_8 | GPIO_Pin_9);
-    
+
     GPIO_Mode_OUT_OD_20MHz_Init(GPIOB, GPIO_Pin_3,  EXTI_MAPR_SWJ_JTAGDISABLE, GPIO_AF_0);
     GPIO_Mode_OUT_OD_20MHz_Init(GPIOB, GPIO_Pin_7,  NO_REMAP, GPIO_AF_0);
     GPIO_Mode_OUT_OD_20MHz_Init(GPIOB, GPIO_Pin_8,  NO_REMAP, GPIO_AF_0);
     GPIO_Mode_OUT_OD_20MHz_Init(GPIOB, GPIO_Pin_9,  NO_REMAP, GPIO_AF_0);
     GPIO_Mode_OUT_PP_Init(GPIOB, GPIO_Pin_0);
 #endif
-    
+
 #if defined(__MM32_MB019)
 	COMMON_EnableIpClock(emCLOCK_GPIOA);
 	COMMON_EnableIpClock(emCLOCK_GPIOB);
@@ -134,7 +134,7 @@ void BSP_LED_Configure(void)
     GPIOA->BSRR |= 0x8000;
     GPIOB->BSRR |= 0x0238;
     GPIOC->BSRR |= 0xE000;
-    
+
     GPIOA->CRH = (GPIOA->CRH & 0x0FFFFFFF)
         | (u32)(PORT_OUTOD | PORT_20MHz) << PORT_BIT15;				// 0x60000000; 	// GPIOA_Pin15  OUTOD
     GPIOB->CRL = (GPIOB->CRL & 0xFF000FFF)
@@ -149,7 +149,7 @@ void BSP_LED_Configure(void)
     GPIO_SetBits(GPIOA, GPIO_Pin_15);                           			// Close LD3
     GPIO_SetBits(GPIOB, GPIO_Pin_3 | GPIO_Pin_4 | GPIO_Pin_5 | GPIO_Pin_9); // Close LD4, LD5, LD6, LD7
     GPIO_SetBits(GPIOC, GPIO_Pin_13 | GPIO_Pin_14 | GPIO_Pin_15);  			// Close LD8, LD9, LD10
-    
+
     GPIO_Mode_OUT_OD_20MHz_Init(GPIOA, GPIO_Pin_15, NO_REMAP, GPIO_AF_0);
     GPIO_Mode_OUT_OD_20MHz_Init(GPIOB, GPIO_Pin_3,  EXTI_MAPR_SWJ_JTAGDISABLE, GPIO_AF_0);
     GPIO_Mode_OUT_OD_20MHz_Init(GPIOB, GPIO_Pin_4,  NO_REMAP, GPIO_AF_0);
@@ -170,18 +170,6 @@ void BSP_LED_Configure(void)
 /// @param  None.
 /// @retval None.
 ////////////////////////////////////////////////////////////////////////////////
-void OpenLED()
-{
-    GPIO_ResetBits(GPIOA, GPIO_Pin_5 | GPIO_Pin_6);
-    GPIO_ResetBits(GPIOC, GPIO_Pin_4 | GPIO_Pin_5);
-}
-
-void CloseLED(void)
-{
-    GPIO_SetBits(GPIOA, GPIO_Pin_5 | GPIO_Pin_6);
-    GPIO_SetBits(GPIOC, GPIO_Pin_4 | GPIO_Pin_5);
-}
-
 #if defined(__MM32_EVB)
 #if defined(__REGISTER)	 /* ----------- Register Access ------------- */
 void LD1_on(void)	{	GPIOC->BRR  = 0x2000;	}
@@ -235,6 +223,8 @@ void LD3_on(void)   { GPIO_ResetBits(GPIOC, GPIO_Pin_4);}
 void LD3_off(void)  { GPIO_SetBits(GPIOC, GPIO_Pin_4); }
 void LD4_on(void)   { GPIO_ResetBits(GPIOC, GPIO_Pin_5);}
 void LD4_off(void)  { GPIO_SetBits(GPIOC, GPIO_Pin_5); }
+void OpenLED()      { GPIO_ResetBits(GPIOA, GPIO_Pin_5 | GPIO_Pin_6); GPIO_ResetBits(GPIOC, GPIO_Pin_4 | GPIO_Pin_5);}
+void CloseLED(void) { GPIO_SetBits(GPIOA, GPIO_Pin_5 | GPIO_Pin_6); GPIO_SetBits(GPIOC, GPIO_Pin_4 | GPIO_Pin_5);}
 #endif
 
 #if defined(__MM32_MB017)

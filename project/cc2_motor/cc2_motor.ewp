@@ -184,9 +184,7 @@
           <state>__IAR</state>
           <state>__MZ306</state>
           <state>__EX_ADC</state>
-          <state>_USE_STEPPER</state>
-          <state>__MM32_MOTOR</state>
-          <state>_MM32_MINIBOARD</state>
+          <state>__MM32_MB017</state>
           <state>OVERTIME=0</state>
           <state>CLOCK=8000000</state>
           <state>__USER_RESOURCE</state>
