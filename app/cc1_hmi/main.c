@@ -35,6 +35,10 @@
 #include "uart.h"
 #include "tim.h"
 
+
+#include "queue.h"
+#include "touch.h"
+
 ////////////////////////////////////////////////////////////////////////////////
 void AppTaskTick()
 {
@@ -86,34 +90,26 @@ int main(void)
     initPara();
     initPeripheral();
     vdLED = 0x01;
+    while(TPAD_Init(6));
+    QueueConfig();
     
     while(1){
-        lcdTick();        
+        lcdTick();
         
-        if (SysKeyboard(&vkKey)) {
-            switch  (vkKey) {
-                case  VK_K0:
-                beepMode = bi;
-                (vdLED & 0x01) ? (vdLED &= ~0x01) : (vdLED |= 0x01); // toggle LD1
-                autoModeFlag ? (autoModeFlag = false) : (autoModeFlag = true);
-                KeyProcess_Key0();
-                break;
-                case  VK_K1:
-                beepEn ? (beepEn = false) : (beepEn = true);
-                beepMode = bi;
-                (vdLED & 0x02) ? (vdLED &= ~0x02) : (vdLED |= 0x02); // toggle LD1
-                KeyProcess_Key1();
-                break;
-                case  VK_K2:
-                beepMode = bi;
-                (ledCmd != 1) ? (ledCmd = 1) : (ledCmd = 2);
-                KeyProcess_Key2();
-                break;
-                default:
-                break;
-            }
+        if((SysKeyboard(&vkKey) && (vkKey == VK_K0)) || (TPAD_Scan0(0) == 1)){
+            beepMode = bi;
+            autoModeFlag ? (autoModeFlag = false) : (autoModeFlag = true);
+            KeyProcess_Key0();
         }
-        
+        if((SysKeyboard(&vkKey) && (vkKey == VK_K1)) || (TPAD_Scan1(0) == 1)){
+            beepEn ? (beepEn = false) : (beepEn = true);
+            beepMode = bi;
+        }
+        if((SysKeyboard(&vkKey) && (vkKey == VK_K2)) || (TPAD_Scan2(0) == 1)){
+            beepMode = bi;
+            (ledCmd != 1) ? (ledCmd = 1) : (ledCmd = 2);
+            KeyProcess_Key2();
+        }
         if (tickFlag) {                
             vdLED = vdLED << 1;
             if(vdLED > 8)
@@ -121,6 +117,34 @@ int main(void)
             tickFlag = false;
         }
         SysDisplay((u8*)&vdLED);
+        
+        /*  This is old version without touch : 20190904
+        //        if (SysKeyboard(&vkKey)) {
+        //            switch  (vkKey) {
+        //                case  VK_K0:
+        //                beepMode = bi;
+        //                (vdLED & 0x01) ? (vdLED &= ~0x01) : (vdLED |= 0x01); // toggle LD1
+        //                autoModeFlag ? (autoModeFlag = false) : (autoModeFlag = true);
+        //                KeyProcess_Key0();
+        //                break;
+        //                case  VK_K1:
+        //                beepEn ? (beepEn = false) : (beepEn = true);
+        //                beepMode = bi;
+        //                (vdLED & 0x02) ? (vdLED &= ~0x02) : (vdLED |= 0x02); // toggle LD1
+        //                KeyProcess_Key1();
+        //                break;
+        //                case  VK_K2:
+        //                beepMode = bi;
+        //                (ledCmd != 1) ? (ledCmd = 1) : (ledCmd = 2);
+        //                KeyProcess_Key2();
+        //                break;
+        //                default:
+        //                break;
+        //            }
+        //        }
+        */
+        
+        
     }
     
 }
