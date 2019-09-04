@@ -51,30 +51,6 @@
 ////////////////////////////////////////////////////////////////////////////////
 void BSP_KEY_Configure(void)
 {
-#if defined(__MM32_MOTOR)
-    
-	COMMON_EnableIpClock(emCLOCK_GPIOA);
-	COMMON_EnableIpClock(emCLOCK_GPIOB);
-    
-    //	Key1 => PB1
-    GPIO_Mode_IPU_Init(GPIOB, GPIO_Pin_1, NO_REMAP, GPIO_AF_0);
-    //	Key2 => PA12
-    GPIO_Mode_IPU_Init(GPIOA, GPIO_Pin_12, NO_REMAP, GPIO_AF_0);
-    //	Key3 => PA11
-    GPIO_Mode_IPU_Init(GPIOA, GPIO_Pin_11, NO_REMAP, GPIO_AF_0);
-    //	Key4 => PA10
-    GPIO_Mode_IPU_Init(GPIOA, GPIO_Pin_10, NO_REMAP, GPIO_AF_0);
-    
-#endif
-    
-#if defined(__MM32_HMI)
-    COMMON_EnableIpClock(emCLOCK_GPIOA);
-    COMMON_EnableIpClock(emCLOCK_GPIOB);
-    GPIO_Mode_IPU_Init(GPIOA, GPIO_Pin_7,  NO_REMAP, GPIO_AF_0);    //K1
-    GPIO_Mode_IPU_Init(GPIOB, GPIO_Pin_0,  NO_REMAP, GPIO_AF_0);    //K2
-    GPIO_Mode_IPU_Init(GPIOB, GPIO_Pin_1,  NO_REMAP, GPIO_AF_0);    //K3
-    
-#endif
 #if defined(__MM32_EVB)
     
 	COMMON_EnableIpClock(emCLOCK_GPIOA);
@@ -96,23 +72,7 @@ void BSP_KEY_Configure(void)
     GPIO_Mode_IPU_Init(GPIOA, GPIO_Pin_15, NO_REMAP, GPIO_AF_0);
 #endif
 #endif
-#if defined(__MM32_MB019)
-    COMMON_EnableIpClock(emCLOCK_GPIOA);
     
-#if defined(__REGISTER)	 /* ----------- Register Access ------------- */
-    GPIOA->CRL = (GPIOA->CRL & 0xFFFFFFF0) | (u32)PORT_INWUD << PORT_BIT0;	// 0x00000008; 	// GPIOA_Pin0-IPD
-    GPIOA->BRR |= 1 << 0;
-    
-    GPIOA->CRH = (GPIOB->CRL & 0xFFFF00FF) | (u32)PORT_INWUD << PORT_BIT1;	// 0x00000800; 	// GPIOA_Pin1-IPU
-    GPIOA->BSRR |= 1 << 1;
-    
-#else     	/* ----------- Hardware Abstraction Layer Access ------------- */
-    //	Key1 => PA0
-    GPIO_Mode_IPD_Init(GPIOA, GPIO_Pin_0,  NO_REMAP, GPIO_AF_0);
-    //	Key2 => PA1
-    GPIO_Mode_IPU_Init(GPIOA, GPIO_Pin_1,  NO_REMAP, GPIO_AF_0);
-#endif
-#endif
 #if defined(__MM32_MINIBOARD)  // MM32_MiniBoard
     
 	COMMON_EnableIpClock(emCLOCK_GPIOA);
@@ -139,6 +99,29 @@ void BSP_KEY_Configure(void)
 #endif
 #endif
     
+#if defined(__MM32_MB016)
+    COMMON_EnableIpClock(emCLOCK_GPIOA);
+    COMMON_EnableIpClock(emCLOCK_GPIOB);
+    GPIO_Mode_IPU_Init(GPIOA, GPIO_Pin_7,  NO_REMAP, GPIO_AF_0);    //K1
+    GPIO_Mode_IPU_Init(GPIOB, GPIO_Pin_0,  NO_REMAP, GPIO_AF_0);    //K2
+    GPIO_Mode_IPU_Init(GPIOB, GPIO_Pin_1,  NO_REMAP, GPIO_AF_0);    //K3
+    
+#endif
+    
+#if defined(__MM32_MB017)
+	COMMON_EnableIpClock(emCLOCK_GPIOA);
+	COMMON_EnableIpClock(emCLOCK_GPIOB);
+    //	Key1 => PB1
+    GPIO_Mode_IPU_Init(GPIOB, GPIO_Pin_1, NO_REMAP, GPIO_AF_0);
+    //	Key2 => PA12
+    GPIO_Mode_IPU_Init(GPIOA, GPIO_Pin_12, NO_REMAP, GPIO_AF_0);
+    //	Key3 => PA11
+    GPIO_Mode_IPU_Init(GPIOA, GPIO_Pin_11, NO_REMAP, GPIO_AF_0);
+    //	Key4 => PA10
+    GPIO_Mode_IPU_Init(GPIOA, GPIO_Pin_10, NO_REMAP, GPIO_AF_0);
+    
+#endif
+    
 #if defined(__MM32_MB018)
     COMMON_EnableIpClock(emCLOCK_GPIOA);
     COMMON_EnableIpClock(emCLOCK_GPIOC);
@@ -149,6 +132,25 @@ void BSP_KEY_Configure(void)
     GPIO_Mode_IPU_Init(GPIOC, GPIO_Pin_15, NO_REMAP, GPIO_AF_0);
     
 #endif
+    
+#if defined(__MM32_MB019)
+    COMMON_EnableIpClock(emCLOCK_GPIOA);
+    
+#if defined(__REGISTER)	 /* ----------- Register Access ------------- */
+    GPIOA->CRL = (GPIOA->CRL & 0xFFFFFFF0) | (u32)PORT_INWUD << PORT_BIT0;	// 0x00000008; 	// GPIOA_Pin0-IPD
+    GPIOA->BRR |= 1 << 0;
+    
+    GPIOA->CRH = (GPIOB->CRL & 0xFFFF00FF) | (u32)PORT_INWUD << PORT_BIT1;	// 0x00000800; 	// GPIOA_Pin1-IPU
+    GPIOA->BSRR |= 1 << 1;
+    
+#else     	/* ----------- Hardware Abstraction Layer Access ------------- */
+    //	Key1 => PA0
+    GPIO_Mode_IPD_Init(GPIOA, GPIO_Pin_0,  NO_REMAP, GPIO_AF_0);
+    //	Key2 => PA1
+    GPIO_Mode_IPU_Init(GPIOA, GPIO_Pin_1,  NO_REMAP, GPIO_AF_0);
+#endif
+#endif
+    
 }
 
 /* -----------------------------------------------------------------------------
@@ -160,12 +162,6 @@ void BSP_KEY_Configure(void)
 /// @retval bool: 1: key is set
 ///			0: kei is reset
 ////////////////////////////////////////////////////////////////////////////////
-#if defined(__MM32_MOTOR)
-bool Key4(void)	{   return !GPIO_ReadInputDataBit(GPIOB, GPIO_Pin_1);   }
-bool Key3(void)	{	return !GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_12);  }
-bool Key2(void)	{	return !GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_11);  }
-bool Key1(void)	{	return !GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_10);  }
-#endif
 #if defined(__MM32_EVB)
 #if defined(__REGISTER)	 /* ----------- Register Access ------------- */
 bool Key1(void)	{   return  false; }
@@ -178,19 +174,8 @@ bool Key2(void)	{	return  GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_0);	}
 bool Key3(void)	{	return !GPIO_ReadInputDataBit(GPIOC, GPIO_Pin_10);	}
 bool Key4(void)	{	return !GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_15);	}
 #endif
-#elif defined(__MM32_MB019)
-#if defined(__REGISTER)	 /* ----------- Register Access ------------- */
-bool Key1(void)	{	return  ((GPIOA->IDR & 0x0001)) ? 1 : 0;	}
-bool Key2(void)	{	return  ((GPIOA->IDR & 0x0002)) ? 0 : 1;	}
-bool Key3(void)	{	return  false;	}
-bool Key4(void)	{	return  false;	}
-#else     	/* ----------- Hardware Abstraction Layer Access ------------- */
-bool Key1(void)	{	return  GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_0);	}
-bool Key2(void)	{	return !GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_1);	}
-bool Key3(void)	{	return  false;	}
-bool Key4(void)	{	return  false;	}
 #endif
-#endif
+
 #if defined(__MM32_MINIBOARD)
 // MM32_MiniBoard
 #if defined(__REGISTER)	 /* ----------- Register Access ------------- */
@@ -206,25 +191,43 @@ bool Key4(void)	{	return !GPIO_ReadInputDataBit(GPIOB, GPIO_Pin_11);	}
 #endif
 #endif
 
-#if defined(__MM32_HMI)
+#if defined(__MM32_MB016)
 bool Key1(void) {   return !GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_7);   }
 bool Key2(void) {   return !GPIO_ReadInputDataBit(GPIOB, GPIO_Pin_0);   }
 bool Key3(void) {   return !GPIO_ReadInputDataBit(GPIOB, GPIO_Pin_1);   }
 bool Key4(void) {   return 0;}
 #endif
-
+#if defined(__MM32_MB017)
+bool Key4(void)	{   return !GPIO_ReadInputDataBit(GPIOB, GPIO_Pin_1);   }
+bool Key3(void)	{	return !GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_12);  }
+bool Key2(void)	{	return !GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_11);  }
+bool Key1(void)	{	return !GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_10);  }
+#endif
 #if defined(__MM32_MB018)
-    #if defined(__REGISTER)  /* ----------- Register Access ------------- */
-        bool Key1(void) {   return  ((GPIOA->IDR & 0x0001)) ? 1 : 0;    }
-        bool Key2(void) {   return  ((GPIOC->IDR & 0x2000)) ? 0 : 1;    }
-        bool Key3(void) {   return  ((GPIOC->IDR & 0x4000)) ? 0 : 1;    }
-        bool Key4(void) {   return  ((GPIOC->IDR & 0x8000)) ? 0 : 1;    }
-    #else       /* ----------- Hardware Abstraction Layer Access ------------- */
-        bool Key1(void) {   return  GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_0);   }
-        bool Key2(void) {   return !GPIO_ReadInputDataBit(GPIOC, GPIO_Pin_13);  }
-        bool Key3(void) {   return !GPIO_ReadInputDataBit(GPIOC, GPIO_Pin_14);  }
-        bool Key4(void) {   return !GPIO_ReadInputDataBit(GPIOC, GPIO_Pin_15);  }
-    #endif
+#if defined(__REGISTER)  /* ----------- Register Access ------------- */
+bool Key1(void) {   return  ((GPIOA->IDR & 0x0001)) ? 1 : 0;    }
+bool Key2(void) {   return  ((GPIOC->IDR & 0x2000)) ? 0 : 1;    }
+bool Key3(void) {   return  ((GPIOC->IDR & 0x4000)) ? 0 : 1;    }
+bool Key4(void) {   return  ((GPIOC->IDR & 0x8000)) ? 0 : 1;    }
+#else       /* ----------- Hardware Abstraction Layer Access ------------- */
+bool Key1(void) {   return  GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_0);   }
+bool Key2(void) {   return !GPIO_ReadInputDataBit(GPIOC, GPIO_Pin_13);  }
+bool Key3(void) {   return !GPIO_ReadInputDataBit(GPIOC, GPIO_Pin_14);  }
+bool Key4(void) {   return !GPIO_ReadInputDataBit(GPIOC, GPIO_Pin_15);  }
+#endif
+#endif
+#if defined(__MM32_MB019)
+#if defined(__REGISTER)	 /* ----------- Register Access ------------- */
+bool Key1(void)	{	return  ((GPIOA->IDR & 0x0001)) ? 1 : 0;	}
+bool Key2(void)	{	return  ((GPIOA->IDR & 0x0002)) ? 0 : 1;	}
+bool Key3(void)	{	return  false;	}
+bool Key4(void)	{	return  false;	}
+#else     	/* ----------- Hardware Abstraction Layer Access ------------- */
+bool Key1(void)	{	return  GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_0);	}
+bool Key2(void)	{	return !GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_1);	}
+bool Key3(void)	{	return  false;	}
+bool Key4(void)	{	return  false;	}
+#endif
 #endif
 
 /// @}
