@@ -43,7 +43,7 @@ bool ledFlag;
 ////////////////////////////////////////////////////////////////////////////////
 void AppTaskTick()
 {
-    if (ledTick++ >= 499) {
+    if (ledTick++ >= 249) {
         ledTick  = 0;
         ledFlag = true;
     }

@@ -107,7 +107,8 @@ int main(void)
 
     initPara();
     initPeripheral();
-
+    vdLED = 1;
+    
     while (1) {
         //----------- user code -----------
 
@@ -131,8 +132,10 @@ int main(void)
                 break;
             }
         }
-        if (ledFlag) {
-            (vdLED & 0x02) ? (vdLED &= ~0x02) : (vdLED |= 0x02);
+        if (ledFlag) {                
+            vdLED = vdLED << 1;
+            if(vdLED > 8)
+                vdLED = 1;
             ledFlag = false;
         }
         SysDisplay((u8*)&vdLED);

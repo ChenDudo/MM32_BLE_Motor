@@ -67,7 +67,12 @@ void DRV_Display(u8 led)
 	((led & 0x01) || (led & 0x04)) ? LD1_on() : LD1_off();
 	((led & 0x02) || (led & 0x08)) ? LD2_on() : LD2_off();
 #endif
-
+#if defined(__MM32_MB018)
+    (led & 0x01) ? LD3_on()  : LD3_off();
+	(led & 0x02) ? LD4_on()  : LD4_off();
+	(led & 0x04) ? LD5_on()  : LD5_off();
+	(led & 0x08) ? LD6_on()  : LD6_off();
+#endif
 #if defined(__MM32_MB019)
     (led & 0x01) ? LD3_on()  : LD3_off();
 	(led & 0x02) ? LD4_on()  : LD4_off();

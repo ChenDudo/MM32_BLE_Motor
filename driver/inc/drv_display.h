@@ -52,12 +52,6 @@ typedef struct {
 } tDISPLAY_INSTANCE;
 
 
-#if defined(__MM32_HMI)
-typedef struct {
-    bool status[4];
-} LED_Typedef;
-#endif
-
 /// @}
 
 
@@ -85,10 +79,6 @@ GLOBAL static tDISPLAY_INSTANCE  	instance[INSTANCE_NUM];
 
 
 
-#endif
-
-#if defined(__MM32_HMI)
-GLOBAL LED_Typedef LED;
 #endif
 
 #undef GLOBAL
