@@ -1949,6 +1949,9 @@
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\app\cc3_iot\iot.c</name>
+      <excluded>
+        <configuration>Debug</configuration>
+      </excluded>
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\app\cc3_iot\lps.c</name>
@@ -1958,9 +1961,6 @@
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\app\cc3_iot\main.c</name>
-      <excluded>
-        <configuration>Debug</configuration>
-      </excluded>
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\app\cc3_iot\sensor_common.c</name>
