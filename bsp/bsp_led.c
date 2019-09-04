@@ -155,6 +155,17 @@ void BSP_LED_Configure(void)
     GPIO_Mode_OUT_OD_20MHz_Init(GPIOC, GPIO_Pin_15, NO_REMAP, GPIO_AF_0);
 #endif
 #endif
+    
+#if defined(__MM32_MB018)
+        COMMON_EnableIpClock(emCLOCK_GPIOB);
+        GPIO_SetBits(GPIOB, GPIO_Pin_3 | GPIO_Pin_7 | GPIO_Pin_8 | GPIO_Pin_9);
+
+        GPIO_Mode_OUT_OD_20MHz_Init(GPIOB, GPIO_Pin_3,  EXTI_MAPR_SWJ_JTAGDISABLE, GPIO_AF_0);
+        GPIO_Mode_OUT_OD_20MHz_Init(GPIOB, GPIO_Pin_7,  NO_REMAP, GPIO_AF_0);
+        GPIO_Mode_OUT_OD_20MHz_Init(GPIOB, GPIO_Pin_8,  NO_REMAP, GPIO_AF_0);
+        GPIO_Mode_OUT_OD_20MHz_Init(GPIOB, GPIO_Pin_9,  NO_REMAP, GPIO_AF_0);
+        GPIO_Mode_OUT_PP_Init(GPIOB, GPIO_Pin_0);
+#endif
 
 }
 
@@ -282,6 +293,19 @@ void LD10_off(void)	{	GPIO_SetBits  (GPIOC, GPIO_Pin_15);	}
 void CloseLED(void)	{	LD3_off();LD4_off();LD5_off();LD6_off();LD7_off();LD8_off();LD9_off();LD10_off();	}
 void OpenLED(void)	{	LD3_on(); LD4_on(); LD5_on(); LD6_on();LD7_on(); LD8_on(); LD9_on(); LD10_on();		}
 #endif
+#endif
+
+#if defined(__MM32_MB018)
+        void LD3_on(void)   {   GPIO_ResetBits(GPIOB, GPIO_Pin_3);  }
+        void LD3_off(void)  {   GPIO_SetBits  (GPIOB, GPIO_Pin_3);  }
+        void LD4_on(void)   {   GPIO_ResetBits(GPIOB, GPIO_Pin_7);  }
+        void LD4_off(void)  {   GPIO_SetBits  (GPIOB, GPIO_Pin_7);  }
+        void LD5_on(void)   {   GPIO_ResetBits(GPIOB, GPIO_Pin_8);  }
+        void LD5_off(void)  {   GPIO_SetBits  (GPIOB, GPIO_Pin_8);  }
+        void LD6_on(void)   {   GPIO_ResetBits(GPIOB, GPIO_Pin_9);  }
+        void LD6_off(void)  {   GPIO_SetBits  (GPIOB, GPIO_Pin_9);  }
+        void CloseLED(void) {   LD3_off();LD4_off();LD5_off();LD6_off();    }
+        void OpenLED(void)  {   LD3_on(); LD4_on(); LD5_on(); LD6_on();     }
 #endif
 /// @}
 

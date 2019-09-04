@@ -55,7 +55,7 @@ bool delay(u16 ms)
     return false;
 }
 
-#if 1
+#if 0
 void UART_Configure()
 {
     UART_InitTypeDef InitStructure;
@@ -225,14 +225,14 @@ int main(void)
     tickFlag = true;
 
     while(1) {
-        //每小时发送一次sensor数据
+        //Send sensor data every hour
         if (tickFlag) {
             tickFlag = false;
             memset(txBuffer, 0, 24);
             getSensorInfo();
         }
 
-        //得到下发的命令的数组号
+        //Get the array number of the issued command 
         if(UART_GetITStatus(UART2, UART_IT_RXIEN)) {
             revStr[rxCnt] = UART_ReceiveData(UART2);
             UART_ClearITPendingBit(UART2, UART_IT_RXIEN);
@@ -245,7 +245,7 @@ int main(void)
             rxCnt++;
         }
 
-        //通过得到的下发命令产生对应的响应命令
+        //Generates a corresponding response command obtained by the command issued
         if(rxEnd) {
             respStr[0] = revStr[rxStart];
             respStr[1] = revStr[rxStart + 1] + 1;
@@ -270,7 +270,7 @@ int main(void)
             rxStart = 0;
         }
 
-        //响应命令准备好，开始上发
+        //The response command is ready and starts to be sent.
         if(rxReady) {
             for (u8 i = 0;i < 22;i++) {
                 UART_SendData(UART2, rxBuffer[i]);
@@ -289,7 +289,7 @@ int main(void)
 
 
 
-#if 0
+#if 1
 float avTemp;
 float avHum;
 double press;
@@ -304,33 +304,32 @@ int main(void)
 {
     MCUID = SetSystemClock(emSYSTICK_On, (u32*)&AppTaskTick);
 
-//-----------------------------初始化LED和KEY-----------------------------------
+//----------------------------- LED / KEY --------------------------------------
     BSP_LED_Configure();
     BSP_KEY_Configure();
     memset(&KEYB, 0x00, sizeof(KEYB));
-    GPIO_SetBits(GPIOB, GPIO_Pin_0);    //使用I2C必须将PB0置1
+    GPIO_SetBits(GPIOB, GPIO_Pin_0);    //PB0 must be set to 1 using I2C
 
-//---------------------------------测试LED--------------------------------------
     LD3_on();
     LD4_on();
     LD5_on();
     LD6_on();
     CloseLED();
 
-//------------------------------初始化sensor------------------------------------
-    if (HTS221_Init())  LD4_on();       //初始化成功LED5灯亮, htsRight置true
-    if (LPS22HB_Init()) LD5_on();       //初始化成功LED6灯亮, lpsRight置true
-    if (LSM6DSL_Init()) LD6_on();       //初始化成功LED7灯亮, lsmRight置true
+//------------------------------- sensor ---------------------------------------
+    if (HTS221_Init())  LD4_on();
+    if (LPS22HB_Init()) LD5_on();
+    if (LSM6DSL_Init()) LD6_on();
 
-//-------------------------------配置6轴传感器----------------------------------
+// Configuring 6-axis sensor
     LSM6DSL_6DOrientation_Init();
     LSM6DSL_6DOrientation_Process();
 
-//----------------------------得到温湿度的方程系数------------------------------
+// Obtain the equation coefficient of temperature and humidity
     HTS221_Get_Equation_Temp();
     HTS221_Get_Equation_Hum();
 
-//-------------------------------配置压力传感器---------------------------------
+// Configuring pressure sensor
     LPS22HB_Config();
 
     while (1) {
@@ -338,13 +337,13 @@ int main(void)
         avHum = (u8)HTS221_Get_AVHum();
         press = (u32)LPS22HB_Get_Press();
 
-//--------------------------------读取角速度------------------------------------
+// Read angular velocity
         Get_Angular_Rate(&angularRate);
 
-//--------------------------------读取加速度------------------------------------
+// Read acceleration
         Get_Acceleration_Rate(&accRate);
 
-//---------------------------------测试KEY--------------------------------------
+//-------------------------------- Test KEY ------------------------------------
         if (!KEYB.event[0] && Key1()) {
             if ((delay(20))) {
                 KEYB.event[0]  = true;
