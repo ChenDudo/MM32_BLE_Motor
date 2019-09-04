@@ -81,7 +81,7 @@ void initPeripheral()
     while(initRTC()){};
     
 }
-
+u8 trueLed;
 ////////////////////////////////////////////////////////////////////////////////
 int main(void)
 {
@@ -115,8 +115,9 @@ int main(void)
             if(vdLED > 8)
                 vdLED = 1;
             tickFlag = false;
+            trueLed = ~vdLED;
         }
-        SysDisplay((u8*)&vdLED);
+        SysDisplay((u8*)&trueLed);
         
         /*  This is old version without touch : 20190904
         //        if (SysKeyboard(&vkKey)) {

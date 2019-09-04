@@ -16,10 +16,10 @@
 void AlarmTick()
 {
     // 9:00~12:00 14:00 ~ 18:00
-    if(((gtp.hours  >= 9) && (gtp.hours  <= 12)) || ((gtp.hours  >= 14) && (gtp.hours  <= 18))) { 
+    //if(((gtp.hours  >= 9) && (gtp.hours  <= 12)) || ((gtp.hours  >= 14) && (gtp.hours  <= 18))) { 
         //if(gtp.minute == 0) {
         //    beepMode = bibi;
-        //    if(gtp.second > 1)
+        //    if(gtp.second > 2)
         //        beepMode = biNone;
         //}
         //if(gtp.minute == 30) { 
@@ -27,17 +27,15 @@ void AlarmTick()
         //    if(gtp.second > 1)
         //        beepMode = biNone;
         //}
+    
+    // 9:00 ~ 18:00
+    if((gtp.hours  >= 9) && (gtp.hours  <= 18)) { 
         if(autoModeFlag)
             ledCmd = 1;     //open logo led
     }
     else {
         if(autoModeFlag)
             ledCmd = 2;     //close logo led
-        //if(gtp.minute == 0) { 
-        //    beepMode = bi;
-        //    if(gtp.second > 2)
-        //        beepMode = biNone;
-        //}
     }
     
     if(gtp.minute == 0 && (gtp.hours != 13)) {
