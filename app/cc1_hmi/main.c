@@ -79,8 +79,10 @@ void initPeripheral()
     initBeepTimer();
     initLcdTimer();
     while(initRTC()){};
-    
+    while(TPAD_Init(6));
+    QueueConfig();
 }
+
 u8 trueLed;
 ////////////////////////////////////////////////////////////////////////////////
 int main(void)
@@ -90,25 +92,21 @@ int main(void)
     initPara();
     initPeripheral();
     vdLED = 0x01;
-    while(TPAD_Init(6));
-    QueueConfig();
     
     while(1){
         lcdTick();
         
-        if((SysKeyboard(&vkKey) && (vkKey == VK_K0)) || (TPAD_Scan0(0) == 1)){
+        if((SysKeyboard(&vkKey) && (vkKey == VK_K0)) || TPAD_Scan0(0)){
             beepMode = bi;
             autoModeFlag ? (autoModeFlag = false) : (autoModeFlag = true);
-            KeyProcess_Key0();
         }
-        if((SysKeyboard(&vkKey) && (vkKey == VK_K1)) || (TPAD_Scan1(0) == 1)){
+        if((SysKeyboard(&vkKey) && (vkKey == VK_K1)) || TPAD_Scan1(0)){
             beepEn ? (beepEn = false) : (beepEn = true);
             beepMode = bi;
         }
-        if((SysKeyboard(&vkKey) && (vkKey == VK_K2)) || (TPAD_Scan2(0) == 1)){
+        if((SysKeyboard(&vkKey) && (vkKey == VK_K2)) || TPAD_Scan2(0)){
             beepMode = bi;
             (ledCmd != 1) ? (ledCmd = 1) : (ledCmd = 2);
-            KeyProcess_Key2();
         }
         if (tickFlag) {                
             vdLED = vdLED << 1;

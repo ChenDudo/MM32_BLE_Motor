@@ -47,26 +47,18 @@ void AppTaskTick()
         ledTick  = 0;
         ledFlag = true;
     }
-
     adcTick();
     syncTick();
-
-
     decodeTick();
     exdecodeTick();
-
     changeSecMax();
-
     motorTick();
-
     if(!(--uartTimeOut)) {
         isFirstRx = true;
     }
-
     if(!(--exuartTimeOut)) {
         exisFirstRx = true;
     }
-
     encodeTick();
     exencodeTick();
 }
@@ -126,7 +118,6 @@ void initPara()
     ptrUart = uartRxBuf;
 }
 
-
 ////////////////////////////////////////////////////////////////////////////////
 void initPeripheral()
 {
@@ -148,7 +139,6 @@ int main(void)
 
     while (1) {
         //----------- user code -----------
-
 
 
         //----------- key && led ----------
@@ -175,7 +165,7 @@ int main(void)
             }
         }
         if (ledFlag) {
-            (vdLED & 0x02) ? (vdLED &= ~0x02) : (vdLED |= 0x02); // toggle LD3
+            (vdLED & 0x02) ? (vdLED &= ~0x02) : (vdLED |= 0x02);
             ledFlag = false;
         }
         SysDisplay((u8*)&vdLED);
