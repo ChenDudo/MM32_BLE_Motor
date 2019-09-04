@@ -183,7 +183,7 @@
           <name>CCDefines</name>
           <state>__IAR</state>
           <state>__MT304</state>
-          <state>__MM32_MINIBOARD</state>
+          <state>__MM32_MB018</state>
           <state>OVERTIME=0</state>
           <state>CLOCK=8000000</state>
           <state>_USER_RESOURCE</state>
@@ -1942,7 +1942,16 @@
   <group>
     <name>app</name>
     <file>
+      <name>$PROJ_DIR$\..\..\app\cc3_iot\adc.c</name>
+    </file>
+    <file>
       <name>$PROJ_DIR$\..\..\app\cc3_iot\iot.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\app\cc3_iot\main.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\app\cc3_iot\uart.c</name>
     </file>
   </group>
   <group>
