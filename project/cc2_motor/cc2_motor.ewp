@@ -1967,12 +1967,6 @@
       <name>$PROJ_DIR$\..\..\app\cc2_motor\motor.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\app\cc2_motor\step_motor.c</name>
-      <excluded>
-        <configuration>DC_motor</configuration>
-      </excluded>
-    </file>
-    <file>
       <name>$PROJ_DIR$\..\..\app\cc2_motor\sync.c</name>
     </file>
     <file>

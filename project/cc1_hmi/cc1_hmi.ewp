@@ -1954,10 +1954,16 @@
       <name>$PROJ_DIR$\..\..\app\cc1_hmi\main.c</name>
     </file>
     <file>
+      <name>$PROJ_DIR$\..\..\app\cc1_hmi\queue.c</name>
+    </file>
+    <file>
       <name>$PROJ_DIR$\..\..\app\cc1_hmi\rtc.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\app\cc1_hmi\tim.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\app\cc1_hmi\touch.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\app\cc1_hmi\uart.c</name>
