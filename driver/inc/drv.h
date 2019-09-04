@@ -67,7 +67,7 @@ typedef enum {
 //  emIP_DMA,                       ///< 
 //  emIP_EXTI,                      ///< 
 //  emIP_GPIO,                      ///< 
-//  emIP_I2C,                       ///< 
+    emIP_I2C,                       ///< 2
 //  emIP_IWDG,                      ///< 
 //  emIP_OPAMP,                     ///< 
 //  emIP_POWER,                     ///< 
@@ -80,7 +80,7 @@ typedef enum {
 //  emIP_WWDG,                      ///< 
 //  emIP_EEPROM,                    ///< 
 //  emIP_PROTECT,                   ///< 
-    emIP_COUNT                      ///< 2
+    emIP_COUNT                      ///< 3
 } EM_IP;
 
 
@@ -1116,7 +1116,7 @@ void DISPLAY_CreateFile(HANDLE handle);
 //void DMA_CreateFile(HANDLE handle);
 //void EXTI_CreateFile(HANDLE handle);
 //void GPIO_CreateFile(HANDLE handle);
-//void I2C_CreateFile(HANDLE handle);
+void I2C_CreateFile(HANDLE handle);
 //void IWDG_CreateFile(HANDLE handle);
 //void OPAMP_CreateFile(HANDLE handle);
 //void POWER_CreateFile(HANDLE handle);

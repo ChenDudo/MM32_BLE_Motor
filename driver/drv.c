@@ -46,7 +46,7 @@
 
 fpCreateFile createFileInterface[emIP_COUNT] = {
     KEYBOARD_CreateFile,            // 0
-    DISPLAY_CreateFile              // 1
+    DISPLAY_CreateFile,             // 1
 //  ADC_CreateFile,                 // 
 //  AES_CreateFile,                 // 
 //  BKP_CreateFile,                 // 
@@ -58,7 +58,7 @@ fpCreateFile createFileInterface[emIP_COUNT] = {
 //  DMA_CreateFile,                 // 
 //  EXTI_CreateFile,                // 
 //  GPIO_CreateFile,                // 
-//  I2C_CreateFile,                 // 
+    I2C_CreateFile                  // 2
 //  IWDG_CreateFile,                // 
 //  OPAMP_CreateFile,               // 
 //  POWER_CreateFile,               // 
