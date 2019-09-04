@@ -1945,6 +1945,9 @@
   <group>
     <name>app</name>
     <file>
+      <name>$PROJ_DIR$\..\..\app\cc1_hmi\adc.c</name>
+    </file>
+    <file>
       <name>$PROJ_DIR$\..\..\app\cc1_hmi\datetime.c</name>
     </file>
     <file>

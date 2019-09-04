@@ -34,7 +34,7 @@
 #include "lcd.h"
 #include "uart.h"
 #include "tim.h"
-
+#include "adc.h"
 
 #include "queue.h"
 #include "touch.h"
@@ -51,7 +51,8 @@ void AppTaskTick()
     beepTick();
     AlarmTick();
     encodeTick();
-    
+    adcTick();
+
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -78,6 +79,7 @@ void initPeripheral()
     initUART(COMx);
     initBeepTimer();
     initLcdTimer();
+    initADC();
     while(initRTC()){};
     while(TPAD_Init(6));
     QueueConfig();
@@ -88,14 +90,14 @@ u8 trueLed;
 int main(void)
 {
     MCUID = SetSystemClock(emSYSTICK_On, (u32*)&AppTaskTick);
-    
+
     initPara();
     initPeripheral();
     vdLED = 0x01;
-    
+
     while(1){
         lcdTick();
-        
+
         if((SysKeyboard(&vkKey) && (vkKey == VK_K0)) || TPAD_Scan0(0)){
             beepMode = bi;
             autoModeFlag ? (autoModeFlag = false) : (autoModeFlag = true);
@@ -108,7 +110,7 @@ int main(void)
             beepMode = bi;
             (ledCmd != 1) ? (ledCmd = 1) : (ledCmd = 2);
         }
-        if (tickFlag) {                
+        if (tickFlag) {
             vdLED = vdLED << 1;
             if(vdLED > 8)
                 vdLED = 1;
@@ -116,7 +118,7 @@ int main(void)
             trueLed = ~vdLED;
         }
         SysDisplay((u8*)&trueLed);
-        
+
         /*  This is old version without touch : 20190904
         //        if (SysKeyboard(&vkKey)) {
         //            switch  (vkKey) {
@@ -142,8 +144,8 @@ int main(void)
         //            }
         //        }
         */
-        
-        
+
+
     }
-    
+
 }
