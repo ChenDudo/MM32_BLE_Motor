@@ -124,7 +124,6 @@ int main(void)
     initPara();
     initPeripheral();
     
-    while (1) {
-    }
+    while (1) {}
 }
 

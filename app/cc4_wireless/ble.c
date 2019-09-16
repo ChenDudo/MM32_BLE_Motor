@@ -63,6 +63,12 @@ void wl_ble_mode()
 
     ble_run_interrupt_start(160*2);
     ble_running_flag = true;
+    
+    //ble_set_adv_type(0);
+    
+//    u8 adv_pack[] = {0x02, 0x01, 0x06, 0x03, 0x03, 0xE0, 0xFE};
+    u8 adv_pack[] = {0x02, 0x01, 0x06, 0x05, 0x03, 0x15, 0x11, 0x1F, 0x11};
+    ble_set_adv_data(adv_pack, strlen(adv_pack));
 }
 u32 tick_count = 0;
 void wl_ble_tick_task()
