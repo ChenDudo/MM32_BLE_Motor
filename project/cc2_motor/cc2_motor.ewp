@@ -1959,6 +1959,9 @@
       <name>$PROJ_DIR$\..\..\app\cc2_motor\adc.c</name>
     </file>
     <file>
+      <name>$PROJ_DIR$\..\..\app\cc2_motor\flash.c</name>
+    </file>
+    <file>
       <name>$PROJ_DIR$\..\..\app\cc2_motor\main.c</name>
     </file>
     <file>
