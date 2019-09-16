@@ -32,6 +32,7 @@
 #include "adc.h"
 #include "uart.h"
 #include "sync.h"
+#include "flash.h"
 
 u32  ledTick;
 bool ledFlag;
