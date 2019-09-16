@@ -21,7 +21,8 @@
 #define GLOBAL extern
 #endif
 
-GLOBAL u16 flashTickCnt;
+GLOBAL u16  flashTickCnt;
+GLOBAL bool isFirstOpen;
 
 #undef GLOBAL
 /// @}

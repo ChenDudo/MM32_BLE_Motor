@@ -11,6 +11,7 @@
 /// @brief MOTOR example modules
 /// @{
 
+#define PWM_DEFAULT_NUM 50
 ////////////////////////////////////////////////////////////////////////////////
 /// @defgroup MOTOR_Exported_Variables
 /// @{

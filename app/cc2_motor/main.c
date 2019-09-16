@@ -60,6 +60,7 @@ void AppTaskTick()
     if(!(--exuartTimeOut)) {
         exisFirstRx = true;
     }
+    flashTick();
     encodeTick();
     exencodeTick();
 }
@@ -74,6 +75,7 @@ void initPara()
     recFlag     = false;
     txSendFlag  = false;
     isFirstRx   = true;
+    isFirstOpen = true;
     adcVolFlag  = false;
     adcTempFlag = false;
 
@@ -89,6 +91,7 @@ void initPara()
     adcTempTick = 0;
     adcSendTick = 0;
     uartTimeOut = 2;
+    flashTickCnt= 0;
 
     //
     gDelayTime = 1;
@@ -97,19 +100,19 @@ void initPara()
     breathFlag  = false;
     breathValue = 0;
     pwmSetFlag  = false;
-    pwmSetValue = 0;
+    pwmSetValue = PWM_DEFAULT_NUM;       //190916 chend: default = 50
     finalPWMValueMax = 0;
     finalBreathLen   = 999;
 
     dcHandle.dcPulseMax     = 100;
-    dcHandle.dc1Sta         = emDC_Stop;
+    dcHandle.dc1Sta         = emDC_Run;            //190916 chend: default = run
     dcHandle.dc1Dir         = 0;
     dcHandle.dc1PulseWidth  = 0;
     dcHandle.dc2Sta         = emDC_Stop;
     dcHandle.dc2Dir         = 0;
     dcHandle.dc2PulseWidth  = 0;
 
-    securMax = (u16)(dcHandle.dcPulseMax * 0.8);
+    securMax = (u16)(dcHandle.dcPulseMax * 0.9);    //190916 chend: default = 90%
 
     memset(uartTxBuf, 0x00, sizeof(uartTxBuf));
     memset(uartRxBuf, 0x00, sizeof(uartRxBuf));
@@ -168,6 +171,7 @@ int main(void)
         if (ledFlag) {
             (vdLED & 0x02) ? (vdLED &= ~0x02) : (vdLED |= 0x02);
             ledFlag = false;
+            (dcHandle.dc1Sta == emDC_Run) ? (vdLED |= 0x01) : (vdLED &= ~0x01);
         }
         SysDisplay((u8*)&vdLED);
     }

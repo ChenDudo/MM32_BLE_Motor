@@ -15,6 +15,7 @@
 #include "tb6612.h"
 #include "adc.h"
 #include "motor.h"
+#include "flash.h"
 
 ////////////////////////////////////////////////////////////////////////////////
 /// @brief  This function handles App SysTick Handler.
@@ -28,8 +29,10 @@ void decodeTick()
         u8 *ptr = uartRxBuf;
         switch(*ptr) {
             case 0x01: {
-                if(*(ptr + 1) == 0x01)
+                if(*(ptr + 1) == 0x01) {
+                    isFirstOpen = true;             //190916 chend
                     dcHandle.dc1Sta = emDC_Run;
+                }
                 if(*(ptr + 1) == 0x02)
                     dcHandle.dc1Sta = emDC_Stop;
             }
@@ -76,8 +79,7 @@ void exdecodeTick()
         switch(*ptr) {
             case 0x01: {
                 if(*(ptr + 1) == 0x01) {
-                    if(!pwmSetValue)
-                      pwmSetValue = 70;
+                    isFirstOpen = true;
                     dcHandle.dc1Sta = emDC_Run;
                 }
                 if(*(ptr + 1) == 0x02)
