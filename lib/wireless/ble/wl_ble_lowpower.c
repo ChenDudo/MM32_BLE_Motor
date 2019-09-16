@@ -42,7 +42,11 @@ void SetSystemClock_HSI()
     FLASH->ACR=FLASH_ACR_LATENCY_1|FLASH_ACR_PRFTBE;	  //FLASH 2 delay clk cycles
 
 	RCC->CFGR &=~ RCC_CFGR_SW;
+#if defined(__MZ309)
 	RCC->CFGR |=  RCC_CFGR_SW_HSI;//PLL to be the sys clock
+#elif defined(__MZ306)
+    RCC->CFGR |= RCC_CFGR_SW_PLL;
+#endif
 }
 
 void SetSystemClock_HSI_6d()
