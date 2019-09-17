@@ -44,60 +44,22 @@ void AppTaskTick()
         ledTick  = 0;
         ledFlag = true;
     }
-    adcTick();
-    decodeTick();
-    exdecodeTick();
 
-    if(!(--uartTimeOut)) {
-        isFirstRx = true;
-    }
-    if(!(--exuartTimeOut)) {
-        exisFirstRx = true;
-    }
-    encodeTick();
-    exencodeTick();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 void initPara()
 {
     ledTick     = 0;
-    bufLen      = 0;
     ledFlag     = false;
-    recFlag     = false;
-    txSendFlag  = false;
-    isFirstRx   = true;
-    adcVolFlag  = false;
-    adcTempFlag = false;
 
-    ///////////////
-    exrecFlag       = false;
-    extxSendFlag    = false;
-    exisFirstRx     = true;
-    exuartTimeOut   = 2;
-    exbufLen        = 0;
-    exSendStaTick   = 0;
-
-    adcVolTick  = 0;
-    adcTempTick = 0;
-    adcSendTick = 0;
-    uartTimeOut = 2;
-
-    memset(uartTxBuf, 0x00, sizeof(uartTxBuf));
-    memset(uartRxBuf, 0x00, sizeof(uartRxBuf));
-    memset(exuartTxBuf, 0x00, sizeof(exuartTxBuf));
-    memset(exuartRxBuf, 0x00, sizeof(exuartRxBuf));
-
-    ptrUart = uartRxBuf;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 void initPeripheral()
 {
-    initADC();
-    initUART(COMx);
-    initUART(exCOMx);
-
+    initUART(UART1);
+    initUART(UART2);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -112,20 +74,34 @@ int main(void)
     while (1) {
         //----------- user code -----------
 
+        
+        
 
         //----------- key && led ----------
         if (SysKeyboard(&vkKey)) {
             switch  (vkKey) {
                 case  VK_K0:
+                
+                
+                
                 KeyProcess_Key0();
                 break;
                 case  VK_K1:
+                
+                
+                
                 KeyProcess_Key1();
                 break;
                 case  VK_K2:
+                
+                
+                
                 KeyProcess_Key2();
                 break;
                 case  VK_K3:
+                
+                
+                
                 KeyProcess_Key3();
                 break;
                 default:

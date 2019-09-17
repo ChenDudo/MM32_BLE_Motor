@@ -28,7 +28,7 @@ void flashTick()
         exFLASH_WriteEE(&tempValue, FLASHADDR, 2);    // set default value
         return;
     }
-    // if Open CMD = 1, using the reserved PWM value.
+    // if first Open = true, using the reserved PWM value.
     if(isFirstOpen) {
         pwmSetValue = pwmValueRsv;
         isFirstOpen = false;
